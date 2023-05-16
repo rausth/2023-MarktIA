@@ -15,14 +15,12 @@ export default function Input({ type, placeholder, label, name }: InputProps) {
     return (
         <div>
             <span className="w-full truncate">{label}</span>
-            <div className="w-full">
-                <input
-                    className="p-2 rounded-sm"
-                    type={type}
-                    placeholder={placeholder}
-                    {...register(name)}
-                />
-            </div>
+            <input
+                className="w-full p-2 rounded-lg"
+                type={type}
+                placeholder={placeholder}
+                {...register(name)}
+            />
         </div>
     )
 }
