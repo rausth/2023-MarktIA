@@ -5,7 +5,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <div className="h-screen flex justify-center items-center">
-          <div className="w-1/3 px-10 py-5 rounded-sm">
+          <div className="w-1/2 px-10 py-5 rounded-sm">
             <h1 className="text-center text-2xl mb-5">MarktIA</h1>
             {children}
           </div>

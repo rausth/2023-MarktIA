@@ -1,3 +1,4 @@
+import Sidebar from '@/components/sidebar'
 import '../globals.css'
 
 export default function RootLayout({
@@ -8,7 +9,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <div className="flex">
+          <Sidebar />
+          <div>
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   )
