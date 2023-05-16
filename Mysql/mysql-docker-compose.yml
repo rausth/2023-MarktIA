@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+  database:
+    image: mysql:8.0.32
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: 'Marktia'   
+      MYSQL_USER: 'PWWS2023'
+      MYSQL_PASSWORD: 'PWWS2023UFES'      
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - './volumes/mysql:/var/lib/mysql'
+      - "./db.sql:/docker-entrypoint-initdb.d/1.sql"
