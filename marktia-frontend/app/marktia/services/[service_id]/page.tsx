@@ -18,7 +18,7 @@ export default async function ServicePage({ params }: { params: { service_id: st
             {service ? (
                 <div className="text-2xl flex items-center border-b-2 border-black pb-2">
                     <Button>
-                        <Link href={"/services"}><FaArrowLeft /></Link>
+                        <Link href={"/marktia/services"}><FaArrowLeft /></Link>
                     </Button>
                     <div className="ml-5"><span>Serviço - {service.name}</span></div>
                 </div>

@@ -27,7 +27,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
                 </div>
             </div>
             <div>
-                <Button onClick={() => router.push("/services/" + service.id)}>
+                <Button onClick={() => router.push("/marktia/services/" + service.id)}>
                     <div className="flex items-center">
                         <span className="mr-5">Detalhes </span>
                         <span><FaExternalLinkAlt /></span>

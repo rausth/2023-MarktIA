@@ -7,7 +7,11 @@ export default function UserPage() {
 
     return (
         <div>
-            <p>Nome do Usuário: {session?.user.name}</p>
+            <div className="flex justify-between items-center border-b-2 border-black pb-2">
+                <div>
+                    <span className="text-2xl">Usuário - {session?.user.name}</span>
+                </div>
+            </div>
         </div>
     )
 }
