@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "@/components/common/forms/input";
 import Button from "@/components/common/button";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 const loginFormSchema = z.object({
     email: z.string(),
@@ -23,15 +24,25 @@ export default function LoginPage() {
     });
     const { handleSubmit, formState: { errors }, reset } = loginForm;
 
+    const handleLoginFormSubmission = async (email: string, password: string) => {
+        const result = await signIn("credentials", {
+            username: email,
+            password: password,
+            redirect: true,
+            callbackUrl: "/marktia"
+        });
+        
+        if (!result) {
+            /**
+             * Tratar erro futuramente
+             */
+        }
+    }
+
     return (
         <div>
             <FormProvider {...loginForm}>
-                <form onSubmit={handleSubmit((loginFormData: LoginFormData) => {
-                    /**
-                     * Por enquanto n faz nada
-                     */
-                    console.log("[loginForm]")
-                })}>
+                <form onSubmit={handleSubmit((loginFormData: LoginFormData) => handleLoginFormSubmission(loginFormData.email, loginFormData.password))}>
                     <div className="p-1">
                         <Input
                             type="email"
