@@ -36,6 +36,7 @@ const handler = NextAuth({
                  */
                 const user = {
                     ...MOCKED_USERS[0],
+                    id: MOCKED_USERS[0].id.toString(),
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
                 }
 
