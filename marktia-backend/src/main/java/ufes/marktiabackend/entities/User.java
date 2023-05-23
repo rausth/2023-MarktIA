@@ -1,39 +1,64 @@
 package ufes.marktiabackend.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ufes.marktiabackend.enums.UserRole;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "user")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @NotNull
     private String name;
 
-    @Column(unique = true)
+    @NotNull
     private String email;
 
-    @Column
+    @NotNull
     private String password;
 
-    @Column
+    @NotNull
+    @Size(min = 11, max = 11)
+    private String cpf;
+
+    @Size(min = 14, max = 14)
+    private String cnpj;
+
+    @NotNull
+    @Size(max = 15)
+    private String telephone;
+
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
+
+    @NotNull
+    @Column(name = "role")
     private UserRole userRole;
+
+    @Column(name = "dt_creation")
+    private LocalDate creationDate;
+
+    @Column(name = "dt_completion")
+    private LocalDate completionDate;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
