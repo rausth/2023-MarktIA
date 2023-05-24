@@ -12,3 +12,6 @@ CREATE TABLE `user` (
     `dt_update` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`address_id`) REFERENCES `address` (`id`)
 );
+
+INSERT INTO `user` (name, email, password, cpf, telephone, address_id, role)
+VALUES ('Fernando', 'fernando@gmail.com', '123456', '14772898794', '27998278371', 1, 1);
