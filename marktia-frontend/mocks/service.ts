@@ -27,10 +27,30 @@ export const MOCKED_SERVICES = [
         id: 2,
         provider: MOCKED_USERS[2],
         address: MOCKED_ADDRESSES[2],
-        title: "SERVICE_NAME_2",
+        title: "SERVICE_NAME_3",
         type: ServiceType.REDACAO_TRADUCAO,
         description: "Serviço para fazer TCC",
         price: 99.99,
+        picpayUser: "enzo.cussuol"
+    },
+    {
+        id: 3,
+        provider: MOCKED_USERS[2],
+        address: null,
+        title: "SERVICE_NAME_4",
+        type: ServiceType.FOTOGRAFIA,
+        description: "Tirar foto",
+        price: 20.00,
+        picpayUser: "enzo.cussuol"
+    },
+    {
+        id: 4,
+        provider: MOCKED_USERS[2],
+        address: null,
+        title: "SERVICE_NAME_5",
+        type: ServiceType.VIDEO_ANIMACAO,
+        description: "Editar um video",
+        price: 35.00,
         picpayUser: "enzo.cussuol"
     }
 ]

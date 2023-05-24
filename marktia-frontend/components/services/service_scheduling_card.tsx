@@ -1,11 +1,11 @@
-type SchedulingCardProps = {
+type ServiceSchedulingCardProps = {
     /**
      * Any por enquanto
      */
     scheduling: any;
 }
 
-export default function SchedulingCard({ scheduling }: SchedulingCardProps) {
+export default function ServiceSchedulingCard({ scheduling }: ServiceSchedulingCardProps) {
     return (
         <div className="m-5 bg-red-200">
             <div className="grid grid-cols-2 py-2">

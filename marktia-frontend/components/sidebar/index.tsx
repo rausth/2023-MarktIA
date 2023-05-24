@@ -33,7 +33,7 @@ export default function Sidebar() {
                         {isSidebarOpened && <span className="text-xl ml-5">Serviços</span>}
                     </div>
                     <div className={"flex items-center py-2 mt-10 mb-10" + (currentPage === 2 ? " bg-red-400" : "")}>
-                        <AiFillSchedule className="text-2xl cursor-pointer ml-7" onClick={() => changePage("/marktia/agendamentos", 2)} />
+                        <AiFillSchedule className="text-2xl cursor-pointer ml-7" onClick={() => changePage("/marktia/schedulings", 2)} />
                         {isSidebarOpened && <span className="text-xl ml-5">Agendamentos</span>}
                     </div>
                     <div className={"flex items-center py-2 mt-10" + (currentPage === 3 ? " bg-red-400" : "")}>

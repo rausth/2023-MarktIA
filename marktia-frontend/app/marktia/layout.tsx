@@ -9,7 +9,7 @@ export default function AuthenticatedRootLayout({ children, }: { children: React
         <AuthProvider>
           <div className="flex">
             <Sidebar />
-            <div className="w-full p-10">
+            <div className="w-full m-10">
               {children}
             </div>
           </div>

@@ -2,13 +2,16 @@
 
 import Button from "@/components/common/button";
 import ServicesFilterModal from "@/components/services/modals/services_filter_modal";
-import ServiceCard from "@/components/services/service_card";
+import ServicesList from "@/components/services/services_list";
 import { MOCKED_SERVICES } from "@/mocks/service";
-import { useEffect, useState } from "react";
+import { createRef, useEffect, useState } from "react";
 
 export default function ServicesPage() {
     const [services, setServices] = useState<any[]>([]);
     const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
+    const [currentExhibitedServices, setCurrentExhibitedServices] = useState(0);
+    const availableServices = createRef<HTMLSpanElement>();
+    const myServices = createRef<HTMLSpanElement>();
 
     useEffect(() => {
         const fetchServices = async () => {
@@ -16,11 +19,37 @@ export default function ServicesPage() {
              * Por enquanto, mockando dados e usando any
              */
 
-            setServices(MOCKED_SERVICES);
+            if (currentExhibitedServices === 0) {
+                /**
+                 * Pega todos os servicos (menos os meus)
+                 */
+                setServices(MOCKED_SERVICES);
+            } else if (currentExhibitedServices === 1) {
+                /**
+                 * Pega apenas os meus servicos
+                 * Por enquanto, (fingindo esses 2 sao meus)
+                 */
+                setServices([MOCKED_SERVICES[0], MOCKED_SERVICES[1]]);
+            }
         }
 
         fetchServices();
-    }, []);
+    }, [currentExhibitedServices]);
+
+    const changeCurrentExhibitedServices = (servicesToShow: number) => {
+        if (availableServices.current && myServices.current) {
+            availableServices.current.className = "cursor-pointer";
+            myServices.current.className = "cursor-pointer";
+
+            if (servicesToShow === 0) {
+                availableServices.current.className += " text-orange-500";
+            } else if (servicesToShow === 1) {
+                myServices.current.className += " text-orange-500";
+            }
+
+            setCurrentExhibitedServices(servicesToShow);
+        }
+    }
 
     return (
         <div>
@@ -35,12 +64,13 @@ export default function ServicesPage() {
                     <Button className="ml-2">Novo</Button>
                 </div>
             </div>
-            <div className="p-5">
-                {services.map((service: any, idx: number) => (
-                    <ServiceCard key={idx} {...{
-                        service: service
-                    }} />
-                ))}
+
+            <div className="mx-10">
+                <div className="text-lg flex justify-around border-b-2 border-black p-2 mt-5">
+                    <span ref={availableServices} className="cursor-pointer text-orange-500" onClick={() => changeCurrentExhibitedServices(0)}>Serviços Disponíveis</span>
+                    <span ref={myServices} className="cursor-pointer" onClick={() => changeCurrentExhibitedServices(1)}>Meus Serviços</span>
+                </div>
+                <ServicesList services={services} />
             </div>
         </div>
     )

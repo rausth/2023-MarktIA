@@ -1,13 +1,13 @@
 import Address from "@/components/common/address";
 import Button from "@/components/common/button";
-import ProviderInfo from "@/components/services/provider_info";
 import ScheduleService from "@/components/services/schedule_service";
-import SchedulingCard from "@/components/services/scheduling_card";
-import ServiceDetails from "@/components/services/service_details";
+import ServiceSchedulingCard from "@/components/services/service_scheduling_card";
+import ServiceDetails from "@/components/common/service_details";
 import { MOCKED_SCHEDULINGS } from "@/mocks/scheduling";
 import { MOCKED_SERVICES } from "@/mocks/service";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
+import UserInfo from "@/components/common/user_info";
 
 const fetchService = async (serviceId: string) => {
     /**
@@ -62,14 +62,14 @@ export default async function ServicePage({ params }: { params: { service_id: st
                     <div className="w-full py-2 px-5 bg-yellow-200">
                         <h1 className="text-xl">Informações do Provedor</h1>
 
-                        <ProviderInfo provider={service.provider} />
+                        <UserInfo user={service.provider} />
                     </div>
                     <div className="w-full p-5 bg-blue-200">
                         <h1 className="text-xl mb-2">Agendamentos</h1>
 
                         <div className="h-48 overflow-y-auto">
                             {schedulings.map((scheduling: any, idx: number) => (
-                                <SchedulingCard scheduling={scheduling} key={idx} />
+                                <ServiceSchedulingCard scheduling={scheduling} key={idx} />
                             ))}
                         </div>
 
