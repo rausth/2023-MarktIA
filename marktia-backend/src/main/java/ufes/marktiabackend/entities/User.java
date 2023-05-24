@@ -54,11 +54,11 @@ public class User implements UserDetails {
     @Column(name = "role")
     private UserRole userRole;
 
-    @Column(name = "dt_creation")
+    @Column(name = "dt_creation", insertable = false)
     private LocalDate creationDate;
 
-    @Column(name = "dt_completion")
-    private LocalDate completionDate;
+    @Column(name = "dt_update", insertable = false)
+    private LocalDate updateDate;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
