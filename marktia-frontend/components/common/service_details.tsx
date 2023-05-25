@@ -11,7 +11,7 @@ type ServiceDetailsProps = {
 
 export default function ServiceDetails({ type, description, price, picpayUser }: ServiceDetailsProps) {
     return (
-        <div>
+        <div className="p-5">
             <div className="py-2"><span>Tipo: {type}</span></div>
             <div className="py-2"><span>Descrição: {description}</span></div>
             <div className="py-2"><span>Preço: R$ {price}</span></div>

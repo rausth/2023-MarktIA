@@ -15,12 +15,12 @@ export default function SchedulingSituation({ scheduling }: SchedulingSituationP
     const { data: session } = useSession();
 
     return (
-        <div>
+        <div className="p-5">
             <div className="py-2"><span>Status: {scheduling.status}</span></div>
             <div className="py-2"><span>Data de Criação: {scheduling.creationDate.toDateString()}</span></div>
             <div className="py-2"><span>Data de Finalização: {scheduling.completionDate?.toDateString()}</span></div>
 
-            <div>
+            <div className="text-center">
                 {scheduling.status === SchedulingStatus.OPENED && (
                     <div>
                         {session?.user.id === scheduling.service.provider.id ? (

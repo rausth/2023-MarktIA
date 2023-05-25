@@ -62,7 +62,7 @@ export default function LoginPage() {
                     </div>
 
                     <div className="flex justify-between items-center mt-5">
-                        <div><span>Não possui uma conta? <Link href="/register">Registre-se</Link></span></div>
+                        <div><span>Não possui uma conta? <Link href="/auth/register">Registre-se</Link></span></div>
                         <Button type="submit" color="green">Login</Button>
                     </div>
                 </form>

@@ -38,42 +38,44 @@ export default async function ServicePage({ params }: { params: { service_id: st
                         <div className="ml-5"><span>Serviço - {service.title}</span></div>
                     </div>
 
-                    <div className="grid grid-cols-2 mt-5">
-                        <div className="p-5 bg-green-200">
-                            <h1 className="text-xl">Detalhes do Serviço</h1>
+                    <div className="mx-10">
+                        <div className="grid grid-cols-2 border-b-2 border-black">
+                            <div className="pt-5 pl-5 border-r-2 border-black">
+                                <h1 className="text-xl">Detalhes do Serviço</h1>
 
-                            <ServiceDetails {...{
-                                type: service.type,
-                                description: service.description,
-                                price: service.price,
-                                picpayUser: service.picpayUser
-                            }} />
+                                <ServiceDetails {...{
+                                    type: service.type,
+                                    description: service.description,
+                                    price: service.price,
+                                    picpayUser: service.picpayUser
+                                }} />
+                            </div>
+                            <div className="pt-5 pl-5">
+                                <h1 className="text-xl">Localização Geográfica</h1>
+
+                                {service.address ? (
+                                    <Address address={service.address} />
+                                ) : (
+                                    <Address address={service.provider.address} />
+                                )}
+                            </div>
                         </div>
-                        <div className="p-5 bg-red-200">
-                            <h1 className="text-xl">Localização Geográfica</h1>
+                        <div className="w-full py-2 px-5 border-b-2 border-black">
+                            <h1 className="text-xl">Informações do Provedor</h1>
 
-                            {service.address ? (
-                                <Address address={service.address} />
-                            ) : (
-                                <Address address={service.provider.address} />
-                            )}
+                            <UserInfo user={service.provider} />
                         </div>
-                    </div>
-                    <div className="w-full py-2 px-5 bg-yellow-200">
-                        <h1 className="text-xl">Informações do Provedor</h1>
+                        <div className="w-full p-5 border-b-2 border-black">
+                            <h1 className="text-xl mb-2">Agendamentos</h1>
 
-                        <UserInfo user={service.provider} />
-                    </div>
-                    <div className="w-full p-5 bg-blue-200">
-                        <h1 className="text-xl mb-2">Agendamentos</h1>
+                            <div className="h-44 overflow-y-auto">
+                                {schedulings.map((scheduling: any, idx: number) => (
+                                    <ServiceSchedulingCard scheduling={scheduling} key={idx} />
+                                ))}
+                            </div>
 
-                        <div className="h-48 overflow-y-auto">
-                            {schedulings.map((scheduling: any, idx: number) => (
-                                <ServiceSchedulingCard scheduling={scheduling} key={idx} />
-                            ))}
+                            <ScheduleService />
                         </div>
-
-                        <ScheduleService />
                     </div>
                 </div>
             ) : (

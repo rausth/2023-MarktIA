@@ -61,7 +61,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="flex justify-between items-center mt-5">
-                    <div><span>Já possui uma conta? <Link href="/login">Faça login</Link></span></div>
+                    <div><span>Já possui uma conta? <Link href="/auth/login">Faça login</Link></span></div>
                     <Button type="submit" color="green">Registrar</Button>
                 </div>
             </form>

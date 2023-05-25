@@ -26,32 +26,35 @@ export default async function SchedulingPage({ params }: { params: { scheduling_
                         </Button>
                         <div className="ml-5"><span>Agendamento</span></div>
                     </div>
-                    <div className="grid grid-cols-2 p-5 bg-purple-200">
-                        <div className="bg-green-200">
-                            <h1 className="text-xl">Informações do Provedor</h1>
 
-                            <UserInfo user={scheduling.service.provider} />
+                    <div className="mx-10">
+                        <div className="grid grid-cols-2 border-b-2 border-black">
+                            <div className="pt-5 pl-5 border-r-2 border-black">
+                                <h1 className="text-xl">Informações do Provedor</h1>
+
+                                <UserInfo user={scheduling.service.provider} />
+                            </div>
+                            <div className="pt-5 pl-5">
+                                <h1 className="text-xl">Informações do Cliente</h1>
+
+                                <UserInfo user={scheduling.consumer} />
+                            </div>
                         </div>
-                        <div className="bg-blue-200">
-                            <h1 className="text-xl">Informações do Cliente</h1>
+                        <div className="pt-5 pl-5 border-b-2 border-black">
+                            <h1 className="text-xl">Informações do Serviço</h1>
 
-                            <UserInfo user={scheduling.consumer} />
+                            <ServiceDetails {...{
+                                type: scheduling.service.type,
+                                description: scheduling.service.description,
+                                price: scheduling.service.price,
+                                picpayUser: scheduling.service.picpayUser
+                            }} />
                         </div>
-                    </div>
-                    <div className="p-5 bg-yellow-200">
-                        <h1 className="text-xl">Informações do Serviço</h1>
+                        <div className="pt-5 pl-5 border-b-2 border-black">
+                            <h1 className="text-xl">Andamento</h1>
 
-                        <ServiceDetails {...{
-                            type: scheduling.service.type,
-                            description: scheduling.service.description,
-                            price: scheduling.service.price,
-                            picpayUser: scheduling.service.picpayUser
-                        }} />
-                    </div>
-                    <div className="p-5 bg-red-200">
-                        <h1 className="text-xl">Andamento</h1>
-
-                        <SchedulingSituation scheduling={scheduling} />
+                            <SchedulingSituation scheduling={scheduling} />
+                        </div>
                     </div>
                 </div>
             ) : (
