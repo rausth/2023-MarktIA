@@ -3,10 +3,10 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Input from "@/components/common/forms/input";
 import Button from "@/components/common/button";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import TextField from "@/components/common/forms/text_field";
 
 const loginFormSchema = z.object({
     email: z.string(),
@@ -44,7 +44,7 @@ export default function LoginPage() {
             <FormProvider {...loginForm}>
                 <form onSubmit={handleSubmit((loginFormData: LoginFormData) => handleLoginFormSubmission(loginFormData.email, loginFormData.password))}>
                     <div className="p-1">
-                        <Input
+                        <TextField
                             type="email"
                             label="Email"
                             name="email"
@@ -53,7 +53,7 @@ export default function LoginPage() {
                     </div>
 
                     <div className="p-1">
-                        <Input
+                        <TextField
                             type="password"
                             label="Senha"
                             name="password"

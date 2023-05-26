@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/components/common/button";
-import Input from "@/components/common/forms/input";
+import TextField from "@/components/common/forms/text_field";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { FormProvider, useForm } from "react-hook-form";
@@ -34,7 +34,7 @@ export default function RegisterPage() {
                 console.log("[registerForm]")
             })}>
                 <div className="p-1">
-                    <Input
+                    <TextField
                         type="text"
                         label="Nome"
                         name="name"
@@ -43,7 +43,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="p-1">
-                    <Input
+                    <TextField
                         type="email"
                         label="Email"
                         name="email"
@@ -52,7 +52,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="p-1">
-                    <Input
+                    <TextField
                         type="password"
                         label="Senha"
                         name="password"
