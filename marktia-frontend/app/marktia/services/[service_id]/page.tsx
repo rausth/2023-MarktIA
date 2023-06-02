@@ -1,31 +1,40 @@
+"use client";
+
 import Address from "@/components/common/address";
 import Button from "@/components/common/button";
 import ScheduleService from "@/components/services/schedule_service";
 import ServiceSchedulingCard from "@/components/services/service_scheduling_card";
 import ServiceDetails from "@/components/common/service_details";
-import { MOCKED_SCHEDULINGS } from "@/mocks/scheduling";
 import { MOCKED_SERVICES } from "@/mocks/service";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
 import UserInfo from "@/components/common/user_info";
-
-const fetchService = async (serviceId: string) => {
-    /**
-     * Por enquanto, mockando dados
-     */
-    return MOCKED_SERVICES[Number(serviceId)];
-}
-
-const fetchSchedulings = async (serviceId: string) => {
-    /**
-     * Por enquanto, mockando dados
-     */
-    return MOCKED_SCHEDULINGS;
-}
+import { Service } from "@/models/service";
+import { ServicesController } from "@/controllers/services";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { AxiosError, AxiosResponse } from "axios";
+import { onError } from "@/configs/axios";
+import { enqueueSnackbar } from 'notistack';
+import { ServiceResponseDTO } from "@/dtos/responses/services/serviceResponseDTO";
+import { Scheduling } from "@/models/scheduling";
 
 export default async function ServicePage({ params }: { params: { service_id: string } }) {
-    const service = await fetchService(params.service_id);
-    const schedulings = await fetchSchedulings(params.service_id);
+    const [service, setService] = useState<Service>(MOCKED_SERVICES[0]);
+
+    const { data: session } = useSession();
+
+    useEffect(() => {
+        /**
+         * [TODO]
+         * Descomentar quando backend estiver pronto
+         */
+        // if (session) {
+        //     ServicesController.getById(params.service_id, session.user.token)
+        //         .then((response: AxiosResponse<ServiceResponseDTO>) => setService(response.data as Service))
+        //         .catch((error: AxiosError) => onError(enqueueSnackbar, error));
+        // }
+    }, [session]);
 
     return (
         <div>
@@ -69,8 +78,12 @@ export default async function ServicePage({ params }: { params: { service_id: st
                             <h1 className="text-xl mb-2">Agendamentos</h1>
 
                             <div className="h-44 overflow-y-auto">
-                                {schedulings.map((scheduling: any, idx: number) => (
-                                    <ServiceSchedulingCard scheduling={scheduling} key={idx} />
+                                {service.schedulings.map((scheduling: Scheduling, idx: number) => (
+                                    <ServiceSchedulingCard key={idx} {...{
+                                        consumerName: scheduling.consumer.name,
+                                        status: scheduling.status,
+                                        creationDate: scheduling.creationDate
+                                    }} />
                                 ))}
                             </div>
 
@@ -82,7 +95,10 @@ export default async function ServicePage({ params }: { params: { service_id: st
                 <div>
                     {
                         /**
+                         * [TODO]
                          * Tratamento de erro posteriormente
+                         * 
+                         * Provavelmente, mostrar mensagem de carregamento (testar)
                          */
                     }
                     <p>Serviço não encontrado</p>

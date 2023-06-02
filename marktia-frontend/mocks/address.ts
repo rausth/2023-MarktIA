@@ -1,6 +1,6 @@
 export const MOCKED_ADDRESSES = [
     {
-        id: 0,
+        id: "0",
         state: "Espirito Santo",
         county: "Vitoria",
         district: "Goiabeiras",
@@ -9,7 +9,7 @@ export const MOCKED_ADDRESSES = [
         complement: "Próximo a farmacia"
     },
     {
-        id: 1,
+        id: "1",
         state: "Espirito Santo",
         county: "Serra",
         district: "Colina de Laranjeiras",
@@ -18,7 +18,7 @@ export const MOCKED_ADDRESSES = [
         complement: "Do lado do hospital"
     },
     {
-        id: 2,
+        id: "2",
         state: "Rio de Janeiro",
         county: "Rio de Janeiro",
         district: "Copacabana",

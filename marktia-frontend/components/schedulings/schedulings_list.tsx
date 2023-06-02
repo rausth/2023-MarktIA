@@ -1,18 +1,16 @@
+import { SchedulingBasicInfo } from "@/models/scheduling";
 import SchedulingCard from "./scheduling_card";
 
 type SchedulingsListProps = {
-    /**
-     * Usando any por enquanto
-     */
-    schedulings: Array<any>;
+    schedulings: Array<SchedulingBasicInfo>;
 }
 
 export default function SchedulingsList({ schedulings }: SchedulingsListProps) {
     return (
         <div>
             <div className="h-[40rem] p-5 mt-5 overflow-y-auto">
-                {schedulings.map((scheduling: any, idx: number) => (
-                    <SchedulingCard scheduling={scheduling} />
+                {schedulings.map((scheduling: SchedulingBasicInfo, idx: number) => (
+                    <SchedulingCard key={idx} scheduling={scheduling} />
                 ))}
             </div>
         </div>

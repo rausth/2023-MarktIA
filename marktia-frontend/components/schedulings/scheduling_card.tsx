@@ -4,12 +4,10 @@ import { useRouter } from "next/navigation";
 import Avatar from "../common/avatar";
 import Button from "../common/button";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { SchedulingBasicInfo } from "@/models/scheduling";
 
 type SchedulingCardProps = {
-    /**
-     * Any por enquanto
-     */
-    scheduling: any;
+    scheduling: SchedulingBasicInfo;
 }
 
 export default function SchedulingCard({ scheduling }: SchedulingCardProps) {
@@ -19,9 +17,9 @@ export default function SchedulingCard({ scheduling }: SchedulingCardProps) {
         <div className="flex justify-between items-center m-5 p-5 bg-red-200">
             <div className="flex items-center">
                 <div className="w-[96px] h-[96px] rounded-full mr-2 bg-gray-400">
-                    <Avatar url={scheduling.service.provider.imageURL} />
+                    <Avatar url={scheduling.provider.imageURL} />
                 </div>
-                <div><span>Provedor: {scheduling.service.provider.name}</span></div>
+                <div><span>Provedor: {scheduling.provider.name}</span></div>
             </div>
             <div className="flex items-center">
                 <div className="w-[96px] h-[96px] rounded-full mr-2 bg-gray-400">

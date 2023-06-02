@@ -7,6 +7,8 @@ import Button from "@/components/common/button";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import TextField from "@/components/common/forms/text_field";
+import { enqueueSnackbar } from "notistack";
+import { useRouter } from "next/navigation";
 
 const loginFormSchema = z.object({
     email: z.string(),
@@ -15,6 +17,8 @@ const loginFormSchema = z.object({
 type LoginFormData = z.infer<typeof loginFormSchema>;
 
 export default function LoginPage() {
+    const router = useRouter();
+
     const loginForm = useForm<LoginFormData>({
         resolver: zodResolver(loginFormSchema),
         defaultValues: {
@@ -28,14 +32,14 @@ export default function LoginPage() {
         const result = await signIn("credentials", {
             username: email,
             password: password,
-            redirect: true,
-            callbackUrl: "/marktia"
+            redirect: false
         });
-        
-        if (!result) {
-            /**
-             * Tratar erro futuramente
-             */
+
+        if (result?.ok) {
+            enqueueSnackbar("Login realizado com sucesso!", { variant: "success" });
+            router.push("/marktia");
+        } else {
+            enqueueSnackbar("Ocorreu um erro ao realizar o login, tente novamente!", { variant: "error" });
         }
     }
 

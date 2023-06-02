@@ -9,12 +9,10 @@ import { FaPencilAlt } from "react-icons/fa";
 import Button from "../common/button";
 import TextField from "../common/forms/text_field";
 import Select, { getSelectOptionsOfEnum } from "../common/forms/select";
+import { User } from "@/models/user";
 
 type UserPersonalInfoProps = {
-    /**
-     * Por enquanto any
-     */
-    user: any;
+    user: User;
 }
 
 const editUserPersonalInfoFormSchema = z.object({

@@ -1,30 +1,29 @@
 import { SchedulingStatus } from "@/enums/schedulingStatus";
-import { MOCKED_SERVICES } from "./service";
 import { MOCKED_USERS } from "./user";
 
 export const MOCKED_SCHEDULINGS = [
     {
-        id: 0,
-        service: MOCKED_SERVICES[0],
+        id: "0",
+        serviceId: "0",
         consumer: MOCKED_USERS[1],
         status: SchedulingStatus.OPENED,
-        creationDate: new Date(),
-        completionDate: null
+        creationDate: "11-01-2001",
+        completionDate: undefined
     },
     {
-        id: 1,
-        service: MOCKED_SERVICES[1],
+        id: "1",
+        serviceId: "1",
         consumer: MOCKED_USERS[0],
         status: SchedulingStatus.DELIVERED,
-        creationDate: new Date(),
-        completionDate: null
+        creationDate: "11-01-2001",
+        completionDate: undefined
     },
     {
-        id: 2,
-        service: MOCKED_SERVICES[2],
+        id: "2",
+        serviceId: "2",
         consumer: MOCKED_USERS[1],
         status: SchedulingStatus.FINISHED,
-        creationDate: new Date("2023-05-22"),
-        completionDate: new Date()
+        creationDate: "11-01-2001",
+        completionDate: "12-01-2001"
     }
 ]

@@ -1,10 +1,8 @@
+import { Address } from "@/models/address";
 import { FaPencilAlt } from "react-icons/fa";
 
 type AddressProps = {
-    /**
-     * Por enquanto any
-     */
-    address: any;
+    address: Address;
     actionOnEditButton?: () => void;
 }
 

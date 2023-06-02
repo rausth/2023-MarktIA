@@ -1,10 +1,8 @@
+import { ServiceBasicInfo } from "@/models/service";
 import ServiceCard from "./service_card";
 
 type ServicesListProps = {
-    /**
-     * Any por enquanto
-     */
-    services: Array<any>;
+    services: Array<ServiceBasicInfo>;
 }
 
 export default function ServicesList({ services }: ServicesListProps) {

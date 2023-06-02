@@ -3,17 +3,40 @@
 import Button from "@/components/common/button";
 import ServicesFilterModal from "@/components/services/modals/services_filter_modal";
 import ServicesList from "@/components/services/services_list";
+import { onError } from "@/configs/axios";
+import { ServicesController } from "@/controllers/services";
 import { MOCKED_SERVICES } from "@/mocks/service";
+import { ServiceBasicInfo } from "@/models/service";
+import { AxiosError, AxiosResponse } from "axios";
+import { useSession } from "next-auth/react";
 import { createRef, useEffect, useState } from "react";
+import { enqueueSnackbar } from 'notistack';
+import { ServiceBasicInfoResponseDTO } from "@/dtos/responses/services/serviceBasicInfoResponseDTO";
 
 export default function ServicesPage() {
-    const [services, setServices] = useState<any[]>([]);
+    const [services, setServices] = useState<ServiceBasicInfo[]>([]);
+
     const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
+
     const [currentExhibitedServices, setCurrentExhibitedServices] = useState(0);
     const availableServices = createRef<HTMLSpanElement>();
     const myServices = createRef<HTMLSpanElement>();
 
+    const { data: session } = useSession();
+
     useEffect(() => {
+        /**
+         * [TODO]
+         * Descomentar quando backend estiver pronto
+         */
+        // if (session) {
+        //     ServicesController.getAll({
+        //         myServices: currentExhibitedServices === 1 ? true : false
+        //     }, session.user.token)
+        //         .then((response: AxiosResponse<ServiceBasicInfoResponseDTO[]>) => setServices(response.data))
+        //         .catch((error: AxiosError) => onError(enqueueSnackbar, error));
+        // }
+
         const fetchServices = async () => {
             /**
              * Por enquanto, mockando dados e usando any
@@ -34,7 +57,7 @@ export default function ServicesPage() {
         }
 
         fetchServices();
-    }, [currentExhibitedServices]);
+    }, [session, currentExhibitedServices]);
 
     const changeCurrentExhibitedServices = (servicesToShow: number) => {
         if (availableServices.current && myServices.current) {

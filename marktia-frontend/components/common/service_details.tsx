@@ -1,6 +1,7 @@
 import { ServiceType } from "@/enums/serviceType"
 import Link from "next/link";
 import { SiPicpay } from "react-icons/si";
+import FormattedMoney from "./formattedData/formatted_money";
 
 type ServiceDetailsProps = {
     type: ServiceType;
@@ -14,7 +15,7 @@ export default function ServiceDetails({ type, description, price, picpayUser }:
         <div className="p-5">
             <div className="py-2"><span>Tipo: {type}</span></div>
             <div className="py-2"><span>Descrição: {description}</span></div>
-            <div className="py-2"><span>Preço: R$ {price}</span></div>
+            <div className="py-2"><span>Preço: <FormattedMoney money={price} /></span></div>
             <div className="flex items-center">
                 <div className="py-2 mr-2"><span>Usuário do PicPay para Pagamento: {picpayUser}</span></div>
                 <div><Link href={"https://picpay.me/" + picpayUser}><SiPicpay /></Link></div>

@@ -4,12 +4,10 @@ import { useRouter } from "next/navigation";
 import Avatar from "../common/avatar";
 import Button from "../common/button";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { ServiceBasicInfo } from "@/models/service";
 
 type ServiceCardProps = {
-    /**
-     * Tipo any por enquanto
-     */
-    service: any;
+    service: ServiceBasicInfo;
 }
 
 export default function ServiceCard({ service }: ServiceCardProps) {

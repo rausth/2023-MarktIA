@@ -2,10 +2,16 @@
 
 import Button from "@/components/common/button";
 import TextField from "@/components/common/forms/text_field";
+import { AuthController } from "@/controllers/auth";
+import { RegisterRequestDTO } from "@/dtos/requests/auth/registerRequestDTO";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
+import { enqueueSnackbar } from 'notistack';
+import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
+import { onError } from "@/configs/axios";
 
 const registerFormSchema = z.object({
     name: z.string(),
@@ -15,6 +21,8 @@ const registerFormSchema = z.object({
 type RegisterFormData = z.infer<typeof registerFormSchema>;
 
 export default function RegisterPage() {
+    const router = useRouter();
+
     const registerForm = useForm<RegisterFormData>({
         resolver: zodResolver(registerFormSchema),
         defaultValues: {
@@ -25,14 +33,22 @@ export default function RegisterPage() {
     });
     const { handleSubmit, formState: { errors }, reset } = registerForm;
 
+    const handleRegisterFormSubmission = (registerRequestDTO: RegisterRequestDTO) => {
+        /**
+         * [TODO]
+         * Descomentar quando backend estiver pronto
+         */
+        // AuthController.register(registerRequestDTO)
+        //     .then(() => {
+        //         enqueueSnackbar("Registro realizado com sucesso. Faça login para continuar...");
+        //         router.push("/auth/login");
+        //     })
+        //     .catch((error: AxiosError) => onError(enqueueSnackbar, error));
+    }
+
     return (
         <FormProvider {...registerForm}>
-            <form onSubmit={handleSubmit((registerFormData: RegisterFormData) => {
-                /**
-                 * Por enquanto n faz nada
-                 */
-                console.log("[registerForm]")
-            })}>
+            <form onSubmit={handleSubmit((registerFormData: RegisterFormData) => handleRegisterFormSubmission(registerFormData))}>
                 <div className="p-1">
                     <TextField
                         type="text"

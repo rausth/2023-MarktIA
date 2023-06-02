@@ -1,21 +1,41 @@
 "use client";
 
 import SchedulingsList from "@/components/schedulings/schedulings_list";
+import { SchedulingsController } from "@/controllers/schedulings";
 import { MOCKED_SCHEDULINGS } from "@/mocks/scheduling";
+import { SchedulingBasicInfo } from "@/models/scheduling";
+import { AxiosError, AxiosResponse } from "axios";
+import { useSession } from "next-auth/react";
 import { createRef, useEffect, useState } from "react";
+import { enqueueSnackbar } from 'notistack';
+import { onError } from "@/configs/axios";
+import { MOCKED_SERVICES } from "@/mocks/service";
 
 export default function AgendamentosPage() {
-    const [schedulings, setSchedulings] = useState<any[]>([]);
+    const [schedulings, setSchedulings] = useState<SchedulingBasicInfo[]>([]);
+
     const [isClientSelected, setIsClientSelected] = useState(true);
     const [currentExhibitedSchedulings, setCurrentExhibitedSchedulings] = useState(0);
-
     const client = createRef<HTMLSpanElement>();
     const provider = createRef<HTMLSpanElement>();
     const openSchedulings = createRef<HTMLSpanElement>();
     const deliveredSchedulings = createRef<HTMLSpanElement>();
     const finishedSchedulings = createRef<HTMLSpanElement>();
 
+    const { data: session } = useSession();
+
     useEffect(() => {
+        /**
+         * [TODO]
+         * Descomentar quando backend estiver pronto
+         */
+        // if (session) {
+        //     SchedulingsController.getAll(session.user.id, isClientSelected, currentExhibitedSchedulings, session.user.token)
+        //         .then((response: AxiosResponse<SchedulingBasicInfo[]>) => setSchedulings(response.data))
+        //         .catch((error: AxiosError) => onError(enqueueSnackbar, error));
+        // }
+
+
         const fetchSchedulings = async () => {
             /**
              * Por enquanto, mockando dados e usando any
@@ -46,11 +66,22 @@ export default function AgendamentosPage() {
                  */
             }
 
-            setSchedulings(MOCKED_SCHEDULINGS);
+            setSchedulings([
+                {
+                    id: MOCKED_SCHEDULINGS[0].id,
+                    provider: MOCKED_SERVICES[0].provider,
+                    consumer: MOCKED_SCHEDULINGS[0].consumer
+                },
+                {
+                    id: MOCKED_SCHEDULINGS[0].id,
+                    provider: MOCKED_SERVICES[0].provider,
+                    consumer: MOCKED_SCHEDULINGS[0].consumer
+                },
+            ]);
         }
 
         fetchSchedulings();
-    }, [isClientSelected, currentExhibitedSchedulings]);
+    }, [session, isClientSelected, currentExhibitedSchedulings]);
 
     const changeIsClientSelected = (newIsClientSelectedValue: boolean) => {
         if (client.current && provider.current) {
@@ -95,13 +126,13 @@ export default function AgendamentosPage() {
 
             <div className="mx-10">
                 <div className="text-lg flex justify-around border-b-2 border-black p-2 mt-5">
-                    <span ref={client} className="cursor-pointer text-orange-500" onClick={() => {changeIsClientSelected(true)}}>Cliente</span>
-                    <span ref={provider} className="cursor-pointer" onClick={() => {changeIsClientSelected(false)}}>Provedor</span>
+                    <span ref={client} className="cursor-pointer text-orange-500" onClick={() => { changeIsClientSelected(true) }}>Cliente</span>
+                    <span ref={provider} className="cursor-pointer" onClick={() => { changeIsClientSelected(false) }}>Provedor</span>
                 </div>
                 <div className="text-lg flex justify-around border-b-2 border-black p-2 mt-5">
-                    <span ref={openSchedulings} className="cursor-pointer text-orange-500" onClick={() => {changeCurrentExhibitedSchedulings(0)}}>Agendamentos Abertos</span>
-                    <span ref={deliveredSchedulings} className="cursor-pointer" onClick={() => {changeCurrentExhibitedSchedulings(1)}}>Agendamentos Entregues</span>
-                    <span ref={finishedSchedulings} className="cursor-pointer" onClick={() => {changeCurrentExhibitedSchedulings(2)}}>Agendamentos Finalizados</span>
+                    <span ref={openSchedulings} className="cursor-pointer text-orange-500" onClick={() => { changeCurrentExhibitedSchedulings(0) }}>Agendamentos Abertos</span>
+                    <span ref={deliveredSchedulings} className="cursor-pointer" onClick={() => { changeCurrentExhibitedSchedulings(1) }}>Agendamentos Entregues</span>
+                    <span ref={finishedSchedulings} className="cursor-pointer" onClick={() => { changeCurrentExhibitedSchedulings(2) }}>Agendamentos Finalizados</span>
                 </div>
                 <SchedulingsList schedulings={schedulings} />
             </div>
