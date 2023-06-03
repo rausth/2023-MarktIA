@@ -29,7 +29,9 @@ const TextField: React.FC<Props> = ({
 					type={type}
 					placeholder={placeholder}
 					disabled={disabled}
-					{...register(name)}
+					{...register(name, {
+						valueAsNumber: type === "number" ? true : false
+					})}
 				/>
 				{sulfix}
 			</div>

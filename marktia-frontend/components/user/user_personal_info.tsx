@@ -8,11 +8,12 @@ import { z } from "zod";
 import { FaPencilAlt } from "react-icons/fa";
 import Button from "../common/button";
 import TextField from "../common/forms/text_field";
-import Select, { getSelectOptionsOfEnum } from "../common/forms/select";
-import { User } from "@/models/user";
+import Select from "../common/forms/select";
+import { User, UserPersonalData } from "@/models/user";
 
 type UserPersonalInfoProps = {
     user: User;
+    onSubmission: (userPersonalInfo: UserPersonalData) => void;
 }
 
 const editUserPersonalInfoFormSchema = z.object({
@@ -21,11 +22,11 @@ const editUserPersonalInfoFormSchema = z.object({
     cpf: z.string(),
     cnpj: z.string(),
     telephone: z.string(),
-    role: z.nativeEnum(UserRole)
+    role: z.string()
 });
 type EditUserPersonalInfoFormData = z.infer<typeof editUserPersonalInfoFormSchema>;
 
-export default function UserPersonalInfo({ user }: UserPersonalInfoProps) {
+export default function UserPersonalInfo({ user, onSubmission }: UserPersonalInfoProps) {
     const [isEditing, setIsEditing] = useState(false);
 
     const editUserPersonalInfoForm = useForm<EditUserPersonalInfoFormData>({
@@ -64,11 +65,10 @@ export default function UserPersonalInfo({ user }: UserPersonalInfoProps) {
             ) : (
                 <div>
                     <FormProvider {...editUserPersonalInfoForm} >
-                        <form onSubmit={handleSubmit((editUserPersonalInfoFormData: EditUserPersonalInfoFormData) => {
-                            /**
-                             * Por enquanto n faz nada
-                             */
-                        })}>
+                        <form onSubmit={handleSubmit((editUserPersonalInfoFormData: EditUserPersonalInfoFormData) => onSubmission({
+                            ...editUserPersonalInfoFormData,
+                            role: UserRole.toNumber(editUserPersonalInfoFormData.role)
+                        }))}>
                             <div className="grid grid-cols-2 gap-2 p-1">
                                 <div>
                                     <TextField
@@ -118,11 +118,12 @@ export default function UserPersonalInfo({ user }: UserPersonalInfoProps) {
                                     <Select
                                         title="Papel"
                                         name="role"
-                                        options={getSelectOptionsOfEnum(UserRole)}
+                                        options={Object.values(UserRole) as Array<string>}
                                     />
                                     {errors.role && <span className="text-xs text-red-500 mt-1">{errors.role.message}</span>}
                                 </div>
                             </div>
+
                             <div className="mt-5 pb-2">
                                 <div className="flex justify-center my-5">
                                     <Button color="outlined-grey" className="mr-5" onClick={() => {

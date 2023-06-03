@@ -11,7 +11,7 @@ type ButtonProps = {
 export default function Button({ color, onClick, children, className, type }: ButtonProps) {
     return (
         <button
-            className={`flex gap-1 rounded-lg text-white py-2 px-4 ${color ? `bg-${color}-500 hover:bg-${color}-700` : ""}`}
+            className={`flex gap-1 rounded-lg text-red-400 py-2 px-4 ${color ? `bg-${color}-500 hover:bg-${color}-700` : ""}`}
             onClick={() => {
                 if (onClick) onClick();
             }}

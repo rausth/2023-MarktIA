@@ -1,5 +1,5 @@
 export type ServiceRequestDTO = {
-    providerId: string;
+    providerId?: string;
     addressId?: string;
     title: string;
     type: number;

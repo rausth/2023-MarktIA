@@ -20,3 +20,12 @@ export type UserBasicInfo = {
     name: string;
     imageURL: string;
 }
+
+export type UserPersonalData = {
+    name: string;
+    email: string;
+    cpf: string;
+    cnpj?: string;
+    telephone: string;
+    role: number;
+}

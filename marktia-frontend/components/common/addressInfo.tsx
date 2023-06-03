@@ -6,7 +6,7 @@ type AddressProps = {
     actionOnEditButton?: () => void;
 }
 
-export default function Address({ address, actionOnEditButton }: AddressProps) {
+export default function AddressInfo({ address, actionOnEditButton }: AddressProps) {
     return (
         <div className="p-5">
             <div className="grid grid-cols-2 py-2">

@@ -1,18 +1,48 @@
 "use client";
 
-import { User } from "@/models/user";
+import { User, UserPersonalData } from "@/models/user";
 import Avatar from "../common/avatar";
 import Button from "../common/button";
-import UserPersonalInfo from "./user_personal_info";
 import UserAddressInfo from "./user_address_info";
+import { UserRequestDTO } from "@/dtos/requests/users/userRequestDTO";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { UsersController } from "@/controllers/users";
+import { useState } from "react";
+import { AxiosResponse } from "axios";
+import { UserResponseDTO } from "@/dtos/responses/users/userResponseDTO";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import UserPersonalInfo from "./user_personal_info";
+import { UserRole } from "@/enums/userRole";
+import { Address } from "@/models/address";
 
 type UserProps = {
     user: User;
 }
 
-export default function UserMainComponent({ user }: UserProps) {
+export default function UserMainComponent(userProps: UserProps) {
+    const [user, setUser] = useState<User>(userProps.user);
+
+    const {data: session} = useSession();
+    const router = useRouter();
+
+    const updateUser = (userRequestDTO: UserRequestDTO) => {
+        if (session) {
+            UsersController.update(session.user.id, userRequestDTO, session.user.token)
+                .then((response: AxiosResponse<UserResponseDTO>) => setUser({
+                    ...response.data,
+                    role: UserRole.fromNumber(response.data.role)
+                }))
+                .catch(() => enqueueSnackbar("Ocorreu um erro ao atualizar o usuário.", {
+                    variant: "error"
+                }));
+        } else {
+            router.push("/auth/login");
+        }
+    }
+
     return (
-        <div>
+        <SnackbarProvider>
             <div className="flex justify-between items-center border-b-2 border-black pb-2">
                 <div>
                     <span className="text-2xl">Usuário - {user.name}</span>
@@ -32,15 +62,22 @@ export default function UserMainComponent({ user }: UserProps) {
                     <div className="p-5 border-r-2 border-black pr-2">
                         <h1 className="text-xl">Informações Pessoais</h1>
 
-                        <UserPersonalInfo user={user} />
+                        <UserPersonalInfo user={user} onSubmission={(userPersonalData: UserPersonalData) => updateUser({
+                            ...user,
+                            ...userPersonalData,
+                            addressId: user.address.id
+                        })} />
                     </div>
                     <div className="p-5">
                         <h1 className="text-xl">Endereço</h1>
 
-                        <UserAddressInfo address={user.address} />
+                        <UserAddressInfo address={user.address} onSubmission={(address: Address) => updateUser({
+                            ...user,
+                            addressId: address.id
+                        })} />
                     </div>
                 </div>
             </div>
-        </div>
+        </SnackbarProvider>
     )
 }

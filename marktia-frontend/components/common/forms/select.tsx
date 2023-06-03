@@ -1,27 +1,7 @@
 import { useFormContext } from "react-hook-form";
 
-interface SelectOption {
-	label: string;
-	value: string;
-}
-
-export function getSelectOptionsOfEnum(e: any) {
-	let list: SelectOption[] = [];
-	const keys = Object.keys(e);
-	const values = Object.values(e);
-
-	keys.map((key: string, index: number) => {
-		list.push({
-			label: key,
-			value: values[index] as string
-		})
-	});
-
-	return list;
-}
-
 interface Props {
-	options: Array<SelectOption>;
+	options: Array<string>;
 	disabled?: boolean;
 	title?: string;
 	name: string;
@@ -46,8 +26,8 @@ const Select: React.FC<Props> = ({
 				})}
 			>
 				{options.map((opt, i) => (
-					<option key={i} value={opt.value}>
-						{opt.value}
+					<option key={i} value={opt}>
+						{opt}
 					</option>
 				))}
 			</select>

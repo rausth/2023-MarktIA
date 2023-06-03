@@ -4,15 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
-import Address from "../common/address";
+import AddressInfo from "../common/addressInfo";
 import TextField from "../common/forms/text_field";
 import Button from "../common/button";
+import { Address } from "@/models/address";
 
 type UserAddressInfoProps = {
-    /**
-     * Any por enquanto
-     */
-    address: any;
+    address: Address;
+    onSubmission: (address: Address) => void;
 }
 
 const editUserAddressFormSchema = z.object({
@@ -25,7 +24,7 @@ const editUserAddressFormSchema = z.object({
 });
 type EditUserAddressFormData = z.infer<typeof editUserAddressFormSchema>;
 
-export default function UserAddressInfo({ address }: UserAddressInfoProps) {
+export default function UserAddressInfo({ address, onSubmission }: UserAddressInfoProps) {
     const [isEditing, setIsEditing] = useState(false);
 
     const editUserAddressForm = useForm<EditUserAddressFormData>({
@@ -44,15 +43,14 @@ export default function UserAddressInfo({ address }: UserAddressInfoProps) {
     return (
         <div className="p-2">
             {!isEditing ? (
-                <Address address={address} actionOnEditButton={() => setIsEditing(true)} />
+                <AddressInfo address={address} actionOnEditButton={() => setIsEditing(true)} />
             ) : (
                 <div>
                     <FormProvider {...editUserAddressForm} >
-                        <form onSubmit={handleSubmit((editUserAddressFormData: EditUserAddressFormData) => {
-                            /**
-                             * Por enquanto n faz nada
-                             */
-                        })}>
+                        <form onSubmit={handleSubmit((editUserAddressFormData: EditUserAddressFormData) => onSubmission({
+                            ...editUserAddressFormData,
+                            id: address.id
+                        }))}>
                             <div className="grid grid-cols-2 gap-2 p-1">
                                 <div>
                                     <TextField

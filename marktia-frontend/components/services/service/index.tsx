@@ -1,4 +1,4 @@
-import Address from "@/components/common/address";
+import AddressInfo from "@/components/common/addressInfo";
 import ServiceDetails from "@/components/common/service_details";
 import UserInfo from "@/components/common/user_info";
 import { Scheduling } from "@/models/scheduling";
@@ -36,9 +36,9 @@ export default function ServiceMainComponent({ service }: ServiceProps) {
                         <h1 className="text-xl">Localização Geográfica</h1>
 
                         {service.address ? (
-                            <Address address={service.address} />
+                            <AddressInfo address={service.address} />
                         ) : (
-                            <Address address={service.provider.address} />
+                            <AddressInfo address={service.provider.address} />
                         )}
                     </div>
                 </div>
@@ -60,7 +60,7 @@ export default function ServiceMainComponent({ service }: ServiceProps) {
                         ))}
                     </div>
 
-                    <ScheduleService />
+                    <ScheduleService serviceId={service.id} />
                 </div>
             </div>
         </div>
