@@ -29,7 +29,7 @@ export const SchedulingsController = {
         });
     },
 
-    updateStatus(userId: string, schedulingId: string, token: string): Promise<AxiosResponse<void>> {
+    updateStatus(userId: string, schedulingId: string, token: string): Promise<AxiosResponse<SchedulingResponseDTO>> {
         return axiosAPI.put(`/schedulings/${schedulingId}`, userId, {
             headers: {
                 Authorization: `Bearer ${token}`
