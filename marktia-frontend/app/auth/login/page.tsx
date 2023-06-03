@@ -44,33 +44,31 @@ export default function LoginPage() {
     }
 
     return (
-        <div>
-            <FormProvider {...loginForm}>
-                <form onSubmit={handleSubmit((loginFormData: LoginFormData) => handleLoginFormSubmission(loginFormData.email, loginFormData.password))}>
-                    <div className="p-1">
-                        <TextField
-                            type="email"
-                            label="Email"
-                            name="email"
-                        />
-                        {errors.email && <span className="text-xs text-red-500 mt-1">{errors.email.message}</span>}
-                    </div>
+        <FormProvider {...loginForm}>
+            <form onSubmit={handleSubmit((loginFormData: LoginFormData) => handleLoginFormSubmission(loginFormData.email, loginFormData.password))}>
+                <div className="p-1">
+                    <TextField
+                        type="email"
+                        label="Email"
+                        name="email"
+                    />
+                    {errors.email && <span className="text-xs text-red-500 mt-1">{errors.email.message}</span>}
+                </div>
 
-                    <div className="p-1">
-                        <TextField
-                            type="password"
-                            label="Senha"
-                            name="password"
-                        />
-                        {errors.password && <span className="text-xs text-red-500 mt-1">{errors.password.message}</span>}
-                    </div>
+                <div className="p-1">
+                    <TextField
+                        type="password"
+                        label="Senha"
+                        name="password"
+                    />
+                    {errors.password && <span className="text-xs text-red-500 mt-1">{errors.password.message}</span>}
+                </div>
 
-                    <div className="flex justify-between items-center mt-5">
-                        <div><span>Não possui uma conta? <Link href="/auth/register">Registre-se</Link></span></div>
-                        <Button type="submit" color="green">Login</Button>
-                    </div>
-                </form>
-            </FormProvider>
-        </div>
+                <div className="flex justify-between items-center mt-5">
+                    <div><span>Não possui uma conta? <Link href="/auth/register">Registre-se</Link></span></div>
+                    <Button type="submit" color="green">Login</Button>
+                </div>
+            </form>
+        </FormProvider>
     )
 }

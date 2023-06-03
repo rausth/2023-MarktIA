@@ -1,4 +1,4 @@
-import FormattedDate from "../common/formattedData/formatted_date";
+import FormattedDate from "../../common/formattedData/formatted_date";
 import { SchedulingStatus } from "@/enums/schedulingStatus";
 
 type ServiceSchedulingCardProps = {

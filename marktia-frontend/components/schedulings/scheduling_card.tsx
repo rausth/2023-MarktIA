@@ -1,18 +1,14 @@
-"use client";
-
-import { useRouter } from "next/navigation";
 import Avatar from "../common/avatar";
 import Button from "../common/button";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { SchedulingBasicInfo } from "@/models/scheduling";
+import Link from "next/link";
 
 type SchedulingCardProps = {
     scheduling: SchedulingBasicInfo;
 }
 
 export default function SchedulingCard({ scheduling }: SchedulingCardProps) {
-    const router = useRouter();
-
     return (
         <div className="flex justify-between items-center m-5 p-5 bg-red-200">
             <div className="flex items-center">
@@ -28,12 +24,12 @@ export default function SchedulingCard({ scheduling }: SchedulingCardProps) {
                 <div><span>Cliente: {scheduling.consumer.name}</span></div>
             </div>
             <div>
-                <Button onClick={() => router.push("/marktia/schedulings/" + scheduling.id)}>
+                <Link href={`/marktia/schedulings/${scheduling.id}`}>
                     <div className="flex items-center">
                         <span className="mr-5">Detalhes </span>
                         <span><FaExternalLinkAlt /></span>
                     </div>
-                </Button>
+                </Link>
             </div>
         </div>
     )

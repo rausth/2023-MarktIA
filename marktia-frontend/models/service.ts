@@ -1,7 +1,7 @@
 import { ServiceType } from "@/enums/serviceType";
 import { Address } from "./address";
 import { User, UserBasicInfo } from "./user";
-import { Scheduling, SchedulingBasicInfo } from "./scheduling";
+import { Scheduling } from "./scheduling";
 
 export type Service = {
     id: string;

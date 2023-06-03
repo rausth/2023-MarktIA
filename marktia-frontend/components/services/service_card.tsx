@@ -1,18 +1,14 @@
-"use client";
-
-import { useRouter } from "next/navigation";
 import Avatar from "../common/avatar";
 import Button from "../common/button";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { ServiceBasicInfo } from "@/models/service";
+import Link from "next/link";
 
 type ServiceCardProps = {
     service: ServiceBasicInfo;
 }
 
 export default function ServiceCard({ service }: ServiceCardProps) {
-    const router = useRouter();
-
     return (
         <div className="flex justify-between items-center bg-green-200 rounded-md m-5 p-5">
             <div className="flex items-center">
@@ -25,12 +21,12 @@ export default function ServiceCard({ service }: ServiceCardProps) {
                 </div>
             </div>
             <div>
-                <Button onClick={() => router.push("/marktia/services/" + service.id)}>
+                <Link href={`/marktia/services/${service.id}`}>
                     <div className="flex items-center">
-                        <span className="mr-5">Detalhes </span>
+                        <span className="mr-5">Detalhes</span>
                         <span><FaExternalLinkAlt /></span>
                     </div>
-                </Button>
+                </Link>
             </div>
         </div>
     )
