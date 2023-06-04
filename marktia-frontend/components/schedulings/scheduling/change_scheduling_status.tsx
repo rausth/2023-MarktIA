@@ -3,8 +3,8 @@
 import Button from "@/components/common/button";
 import { SchedulingsController } from "@/controllers/schedulings";
 import { SchedulingResponseDTO } from "@/dtos/responses/schedulings/schedulingResponseDTO";
-import { SchedulingStatus } from "@/enums/schedulingStatus";
-import { UserRole } from "@/enums/userRole";
+import { SchedulingStatus, SchedulingStatusUtils } from "@/enums/schedulingStatus";
+import { UserRoleUtils } from "@/enums/userRole";
 import { Scheduling } from "@/models/scheduling";
 import { AxiosResponse } from "axios";
 import { useSession } from "next-auth/react";
@@ -34,8 +34,9 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
                         ...response.data,
                         consumer: {
                             ...response.data.consumer,
-                            role: UserRole.fromNumber(response.data.consumer.role)
-                        }
+                            role: UserRoleUtils.fromNumber(response.data.consumer.role)
+                        },
+                        status: SchedulingStatusUtils.fromNumber(response.data.status)
                     });
 
                     enqueueSnackbar("Status do agendamento atualizado com sucesso!", {
@@ -53,6 +54,7 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
     return (
         <SnackbarProvider>
             {isSchedulingReviewModalVisible && (<SchedulingReviewModal
+                schedulingId={scheduling.id}
                 onSubmission={() => {}}
                 close={() => setIsSchedulingReviewModalVisible(false)}
             />)}
@@ -63,7 +65,7 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
                         {session?.user.id === changeSchedulingStatusProps.providerId ? (
                             <div className="flex items-center">
                                 <div className="py-2 mr-2"><span>Você é o provedor desse agendamento</span></div>
-                                <div><Button onClick={() => updateStatus()}>Marcar como entregue</Button></div>
+                                <div><Button color="blue" onClick={() => updateStatus()}>Marcar como entregue</Button></div>
                             </div>
                         ) : (
                             <div className="py-2"><span>Aguardando até que o provedor marque o agendamento como entregue</span></div>
@@ -76,7 +78,7 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
                         {session?.user.id === scheduling.consumer.id ? (
                             <div className="flex items-center">
                                 <div className="py-2 mr-2"><span>Você é o cliente desse agendamento</span></div>
-                                <div><Button onClick={() => setIsSchedulingReviewModalVisible(true)}>Marcar como finalizado</Button></div>
+                                <div><Button color="blue" onClick={() => setIsSchedulingReviewModalVisible(true)}>Marcar como finalizado</Button></div>
                             </div>
                         ) : (
                             <div className="py-2"><span>Aguardando até que o cliente marque o agendamento como finalizado</span></div>

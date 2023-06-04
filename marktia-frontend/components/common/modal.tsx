@@ -32,14 +32,14 @@ export default function Modal({ title, children, close }: ModalProps) {
 
     return (
         <div className="fixed top-0 bottom-0 left-0 right-0 flex justify-center opacity-1">
-            <div ref={wrapperRef} className="absolute min-w-[50vw] rounded-[20px] mt-[10vh] bg-white">
+            <div ref={wrapperRef} className="absolute min-w-[50vw] rounded-[20px] mt-[50vh] -translate-y-1/2 bg-white-dark border-2 border-black">
                 <header className="flex justify-between py-4 px-8 border-b">
                     <div className="flex items-end">
                         <h1 className="text-2xl">{title}</h1>
                     </div>
 
                     <div className="flex justify-end">
-                        <Button onClick={close}><AiOutlineClose /></Button>
+                        <Button color="blue" onClick={close}><AiOutlineClose /></Button>
                     </div>
                 </header>
 

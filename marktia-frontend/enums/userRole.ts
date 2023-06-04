@@ -3,18 +3,20 @@ export enum UserRole {
     PROVIDER = "Provedor"
 }
 
-export namespace UserRole {
-    export const fromNumber = (number: number): UserRole => {
+export const UserRoleUtils = {
+    fromNumber: (number: number): UserRole => {
         if (number === 0)
             return UserRole.NORMAL_USER;
         else
             return UserRole.PROVIDER;
-    }
+    },
 
-    export const toNumber = (userRole: string): number => {
+    toNumber: (userRole: string): number | undefined => {
         if (userRole === UserRole.NORMAL_USER)
             return 0;
-        else
+        else if (userRole === UserRole.PROVIDER)
             return 1;
+        else
+            return undefined;
     }
 }

@@ -2,6 +2,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import UserMainComponent from "@/components/user";
 import { UsersController } from "@/controllers/users";
 import { UserResponseDTO } from "@/dtos/responses/users/userResponseDTO";
+import { UserRoleUtils } from "@/enums/userRole";
 import { MOCKED_USERS } from "@/mocks/user";
 import { User } from "@/models/user";
 import { AxiosResponse } from "axios";
@@ -13,7 +14,12 @@ const fetchUser = async () => {
 
     if (session) {
         return UsersController.getById(session.user.id, session.user.token)
-            .then((response: AxiosResponse<UserResponseDTO>) => response.data)
+            .then((response: AxiosResponse<UserResponseDTO>) => {
+                return {
+                    ...response.data,
+                    role: UserRoleUtils.fromNumber(response.data.role)
+                }
+            })
             .catch(() => MOCKED_USERS[0])
     } else {
         redirect("/auth/login");

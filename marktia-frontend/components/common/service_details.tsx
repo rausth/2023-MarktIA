@@ -18,7 +18,7 @@ export default function ServiceDetails({ type, description, price, picpayUser }:
             <div className="py-2"><span>Preço: <FormattedMoney money={price} /></span></div>
             <div className="flex items-center">
                 <div className="py-2 mr-2"><span>Usuário do PicPay para Pagamento: {picpayUser}</span></div>
-                <div><Link href={"https://picpay.me/" + picpayUser}><SiPicpay /></Link></div>
+                <div><Link href={"https://picpay.me/" + picpayUser} className="text-green-500 hover:text-green-700"><SiPicpay /></Link></div>
             </div>
         </div>
     )

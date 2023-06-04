@@ -5,5 +5,5 @@ export type UserRequestDTO = {
     cnpj?: string;
     telephone: string;
     addressId: string;
-    imageURL: string; 
+    imageURL?: string; 
 }

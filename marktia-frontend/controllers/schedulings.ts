@@ -22,7 +22,7 @@ export const SchedulingsController = {
     },
 
     create(schedulingRequestDTO: SchedulingRequestDTO, token: string): Promise<AxiosResponse<SchedulingResponseDTO>> {
-        return axiosAPI.post("/schedulings", {
+        return axiosAPI.post("/schedulings", schedulingRequestDTO, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

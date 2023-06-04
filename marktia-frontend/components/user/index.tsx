@@ -13,8 +13,9 @@ import { AxiosResponse } from "axios";
 import { UserResponseDTO } from "@/dtos/responses/users/userResponseDTO";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import UserPersonalInfo from "./user_personal_info";
-import { UserRole } from "@/enums/userRole";
+import { UserRoleUtils } from "@/enums/userRole";
 import { Address } from "@/models/address";
+import UserImage from "./user_image";
 
 type UserProps = {
     user: User;
@@ -31,7 +32,7 @@ export default function UserMainComponent(userProps: UserProps) {
             UsersController.update(session.user.id, userRequestDTO, session.user.token)
                 .then((response: AxiosResponse<UserResponseDTO>) => setUser({
                     ...response.data,
-                    role: UserRole.fromNumber(response.data.role)
+                    role: UserRoleUtils.fromNumber(response.data.role)
                 }))
                 .catch(() => enqueueSnackbar("Ocorreu um erro ao atualizar o usuário.", {
                     variant: "error"
@@ -51,12 +52,11 @@ export default function UserMainComponent(userProps: UserProps) {
 
             <div className="mx-10">
                 <div className="w-full flex justify-center mt-5 border-b-2 border-black pb-2">
-                    <div className="grid justify-items-center">
-                        <div className="w-[160px] h-[160px] rounded-full">
-                            <Avatar url={user.imageURL} />
-                        </div>
-                        <div className="my-2"><Button onClick={() => { }}>Alterar Imagem</Button></div>
-                    </div>
+                    <UserImage imageURL={user.imageURL} onSubmission={(imageURL: string | null) => updateUser({
+                        ...user,
+                        addressId: user.address.id,
+                        imageURL: imageURL ? imageURL : undefined
+                    })} />
                 </div>
                 <div className="grid grid-cols-2 border-b-2 border-black">
                     <div className="p-5 border-r-2 border-black pr-2">

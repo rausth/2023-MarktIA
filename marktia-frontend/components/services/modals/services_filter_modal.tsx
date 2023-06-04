@@ -2,7 +2,7 @@ import Button from "@/components/common/button";
 import Select from "@/components/common/forms/select";
 import TextField from "@/components/common/forms/text_field";
 import Modal from "@/components/common/modal"
-import { ServiceType } from "@/enums/serviceType";
+import { ServiceType, ServiceTypeUtils } from "@/enums/serviceType";
 import { ServicesFilter } from "@/utils/servicesFilter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
@@ -26,7 +26,7 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
         defaultValues: {
             name: "",
             addressId: undefined,
-            type: ServiceType.DESIGN_GRAFICO
+            type: ""
         }
     });
     const { handleSubmit, formState: { errors }, reset } = servicesFilterForm;
@@ -38,7 +38,7 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
                     onSubmission({
                         name: servicesFilterFormData.name,
                         addressId: servicesFilterFormData.addressId.toString(),
-                        type: ServiceType.toNumber(servicesFilterFormData.type)
+                        type: ServiceTypeUtils.toNumber(servicesFilterFormData.type)
                     });
 
                     close();
@@ -49,7 +49,7 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
                             label="Nome"
                             name="name"
                         />
-                        {errors.name && <span className="text-xs text-red-500 mt-1">{errors.name.message}</span>}
+                        {errors.name && <span className="text-xs text-red mt-1">{errors.name.message}</span>}
                     </div>
 
                     <div className="p-1">
@@ -58,7 +58,7 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
                             label="ID do Endereço"
                             name="addressId"
                         />
-                        {errors.addressId && <span className="text-xs text-red-500 mt-1">{errors.addressId.message}</span>}
+                        {errors.addressId && <span className="text-xs text-red mt-1">{errors.addressId.message}</span>}
                     </div>
 
                     <div className="p-1">
@@ -66,13 +66,14 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
                             title="Tipo"
                             name="type"
                             options={Object.values(ServiceType) as Array<string>}
+                            includeEmptyOption={true}
                         />
-                        {errors.type && <span className="text-xs text-red-500 mt-1">{errors.type.message}</span>}
+                        {errors.type && <span className="text-xs text-red mt-1">{errors.type.message}</span>}
                     </div>
 
                     <div className="flex justify-center items-center mt-5">
-                        <Button>Cancelar</Button>
-                        <Button type="submit" color="green">Login</Button>
+                        <Button color="gray" className="mr-2" onClick={() => reset()}>Cancelar</Button>
+                        <Button type="submit" color="green" className="ml-2">Filtrar</Button>
                     </div>
                 </form>
             </FormProvider>

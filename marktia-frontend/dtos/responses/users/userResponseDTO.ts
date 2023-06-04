@@ -11,5 +11,5 @@ export type UserResponseDTO = {
     role: number;
     creationDate: string;
     updateDate?: string;
-    imageURL: string;
+    imageURL?: string;
 }

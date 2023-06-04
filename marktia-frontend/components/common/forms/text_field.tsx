@@ -5,36 +5,34 @@ interface Props {
 	type: "text" | "password" | "email" | "number" | "time" | "date" | "radio";
 	placeholder?: string;
 	label?: string;
-	sulfix?: React.ReactNode;
 	name: string;
-	disabled?: boolean;
+	onChange?: (value: any) => void;
 }
 
 const TextField: React.FC<Props> = ({
 	type,
 	placeholder,
 	label,
-	sulfix,
 	name,
-	disabled
+	onChange,
 }: any) => {
 	const { register } = useFormContext();
 
 	return (
 		<label className="truncate">
-			<span className="w-full truncate">{label}</span>
-			<div className={`flex items-center text-zinc-500 w-100 justify-between ${disabled ? "bg-zinc-50 border border-gray-200 p-2 rounded-lg h-[40px]" : "input"}`}>
-				<input
-					className="w-full"
-					type={type}
-					placeholder={placeholder}
-					disabled={disabled}
-					{...register(name, {
-						valueAsNumber: type === "number" ? true : false
-					})}
-				/>
-				{sulfix}
-			</div>
+			<div><span>{label}</span></div>
+			<input
+				className="w-full text-zinc-500 w-100 justify-between rounded-lg p-2 mt-1 bg-white"
+				type={type}
+				placeholder={placeholder}
+				{...register(name, {
+					valueAsNumber: type === "number" ? true : false,
+					onChange: (e: any) => {
+						if (onChange)
+							onChange(e)
+					}
+				})}
+			/>
 		</label>
 	);
 };

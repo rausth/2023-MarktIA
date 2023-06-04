@@ -36,8 +36,8 @@ export default function ScheduleService({ serviceId }: ScheduleServiceProps) {
     return (
         <SnackbarProvider>
             <div className="flex justify-center items-center my-5">
-                <div className="text-xl"><span>Se interessou por esse serviço?</span></div>
-                <div><Button onClick={() => createScheduling()}>Agendar Serviço</Button></div>
+                <div className="text-xl mr-2"><span>Se interessou por esse serviço?</span></div>
+                <div><Button color="blue" onClick={() => createScheduling()}>Agendar Serviço</Button></div>
             </div>
         </SnackbarProvider>
     )

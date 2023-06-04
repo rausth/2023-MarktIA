@@ -18,31 +18,31 @@ export default function Sidebar() {
     }
 
     return (
-        <div className={`${isSidebarOpened ? "w-72" : "w-20"} h-screen bg-red-200 duration-300`}>
+        <div className={`${isSidebarOpened ? "w-72" : "w-20"} h-screen bg-blue-dark duration-300`}>
             <div className="h-full flex flex-col justify-between">
                 <div>
-                    <FaBars className="text-2xl cursor-pointer ml-7 mt-10" onClick={() => toggleIsSidebarOpened(!isSidebarOpened)} />
+                    <FaBars className="text-2xl cursor-pointer ml-6 mt-10 text-white" onClick={() => toggleIsSidebarOpened(!isSidebarOpened)} />
                 </div>
                 <div>
-                    <div className={"flex items-center py-2 mb-10" + (currentPage === 0 ? " bg-red-400" : "")}>
-                        <FaHome className="text-2xl cursor-pointer ml-7" onClick={() => changePage("/marktia", 0)} />
-                        {isSidebarOpened && <span className="text-xl ml-5">Página Principal</span>}
+                    <div className={"flex items-center py-2 mb-10" + (currentPage === 0 ? " bg-blue-light" : "")}>
+                        <FaHome className="text-2xl cursor-pointer ml-6 text-white" onClick={() => changePage("/marktia", 0)} />
+                        {isSidebarOpened && <span className="text-xl ml-5 text-white">Página Principal</span>}
                     </div>
-                    <div className={"flex items-center py-2 mt-10 mb-10" + (currentPage === 1 ? " bg-red-400" : "")}>
-                        <FaBusinessTime className="text-2xl cursor-pointer ml-7" onClick={() => changePage("/marktia/services", 1)} />
-                        {isSidebarOpened && <span className="text-xl ml-5">Serviços</span>}
+                    <div className={"flex items-center py-2 mt-10 mb-10" + (currentPage === 1 ? " bg-blue-light" : "")}>
+                        <FaBusinessTime className="text-2xl cursor-pointer ml-6 text-white" onClick={() => changePage("/marktia/services", 1)} />
+                        {isSidebarOpened && <span className="text-xl ml-5 text-white">Serviços</span>}
                     </div>
-                    <div className={"flex items-center py-2 mt-10 mb-10" + (currentPage === 2 ? " bg-red-400" : "")}>
-                        <AiFillSchedule className="text-2xl cursor-pointer ml-7" onClick={() => changePage("/marktia/schedulings", 2)} />
-                        {isSidebarOpened && <span className="text-xl ml-5">Agendamentos</span>}
+                    <div className={"flex items-center py-2 mt-10 mb-10" + (currentPage === 2 ? " bg-blue-light" : "")}>
+                        <AiFillSchedule className="text-2xl cursor-pointer ml-6 text-white" onClick={() => changePage("/marktia/schedulings", 2)} />
+                        {isSidebarOpened && <span className="text-xl ml-5 text-white">Agendamentos</span>}
                     </div>
-                    <div className={"flex items-center py-2 mt-10" + (currentPage === 3 ? " bg-red-400" : "")}>
-                        <FaUserAlt className="text-2xl cursor-pointer ml-7" onClick={() => changePage("/marktia/user", 3)} />
-                        {isSidebarOpened && <span className="text-xl ml-5">Informações Pessoais</span>}
+                    <div className={"flex items-center py-2 mt-10" + (currentPage === 3 ? " bg-blue-light" : "")}>
+                        <FaUserAlt className="text-2xl cursor-pointer ml-6 text-white" onClick={() => changePage("/marktia/user", 3)} />
+                        {isSidebarOpened && <span className="text-xl ml-5 text-white">Informações Pessoais</span>}
                     </div>
                 </div>
                 <div>
-                    <MdOutlineLogout className="text-2xl cursor-pointer ml-7 mb-10" onClick={() => { signOut() }} />
+                    <MdOutlineLogout className="text-2xl cursor-pointer ml-6 mb-10 text-white" onClick={() => { signOut() }} />
                 </div>
             </div>
         </div>

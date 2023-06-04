@@ -10,8 +10,8 @@ export enum ServiceType {
     SERVICOS_IA = "Serviços de IA"
 }
 
-export namespace ServiceType {
-    export const fromNumber = (number: number): ServiceType => {
+export const ServiceTypeUtils = {
+    fromNumber: (number: number): ServiceType => {
         if (number === 0)
             return ServiceType.DESIGN_GRAFICO;
         else if (number === 1)
@@ -30,9 +30,9 @@ export namespace ServiceType {
             return ServiceType.NEGOCIOS;
         else
             return ServiceType.SERVICOS_IA;
-    }
+    },
 
-    export const toNumber = (type: string): number => {
+    toNumber: (type: string): number | undefined => {
         if (type === ServiceType.DESIGN_GRAFICO)
             return 0;
         else if (type === ServiceType.MARKETING_DIGITAL)
@@ -49,7 +49,9 @@ export namespace ServiceType {
             return 6;
         else if (type === ServiceType.NEGOCIOS)
             return 7;
-        else
+        else if (type == ServiceType.SERVICOS_IA)
             return 8;
+        else
+            return undefined;
     }
 }

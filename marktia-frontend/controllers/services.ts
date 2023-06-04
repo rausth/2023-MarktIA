@@ -23,7 +23,7 @@ export const ServicesController = {
     },
 
     create(serviceRequestDTO: ServiceRequestDTO, token: string): Promise<AxiosResponse<ServiceResponseDTO>> {
-        return axiosAPI.post("/services", {
+        return axiosAPI.post("/services", serviceRequestDTO, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

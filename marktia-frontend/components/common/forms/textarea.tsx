@@ -18,15 +18,13 @@ const TextArea: React.FC<Props> = ({
 
     return (
         <label className="truncate">
-            <span className="w-full truncate">{label}</span>
-            <div className="text-zinc-500 border rounded-lg bg-white box-limited w-100 p-1">
-                <textarea
-                    rows={rows}
-                    className="w-full"
-                    placeholder={placeholder}
-                    {...register(name)}
-                />
-            </div>
+            <div><span className="w-full truncate">{label}</span></div>
+            <textarea
+                rows={rows}
+                className="w-full text-zinc-500 border rounded-lg bg-white box-limited p-2 mt-1"
+                placeholder={placeholder}
+                {...register(name)}
+            />
         </label>
     )
 }

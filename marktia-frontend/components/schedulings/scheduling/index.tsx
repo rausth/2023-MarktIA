@@ -15,7 +15,7 @@ export default function SchedulingMainComponent({ scheduling, service }: Schedul
     return (
         <div>
             <div className="text-2xl flex items-center border-b-2 border-black pb-2">
-                <Link href={"/marktia/schedulings"}><FaArrowLeft /></Link>
+                <Link href={"/marktia/schedulings"} className="text-white hover:text-blue-light"><FaArrowLeft /></Link>
                 <div className="ml-5"><span>Agendamento</span></div>
             </div>
 

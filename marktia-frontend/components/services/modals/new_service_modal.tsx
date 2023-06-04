@@ -8,9 +8,9 @@ import Modal from "@/components/common/modal";
 import { ServicesController } from "@/controllers/services";
 import { ServiceRequestDTO } from "@/dtos/requests/services/serviceRequestDTO";
 import { ServiceResponseDTO } from "@/dtos/responses/services/serviceResponseDTO";
-import { ServiceType } from "@/enums/serviceType";
+import { ServiceType, ServiceTypeUtils } from "@/enums/serviceType";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
@@ -23,12 +23,26 @@ type NewServiceModalProps = {
 }
 
 const newServiceFormSchema = z.object({
-    title: z.string(),
+    title: z.string()
+        .nonempty({
+            message: "O título não pode ser vazio."
+        }),
     type: z.string(),
-    description: z.string(),
+    description: z.string()
+        .nonempty({
+            message: "A descrição não pode ser vazia."
+        }),
     addressId: z.number(),
-    price: z.number(),
+    price: z.number({
+        invalid_type_error: "O preço não pode ser vazio."
+    })
+        .nonnegative({
+            message: "O preço não pode ser negativo."
+        }),
     picpayUser: z.string()
+        .nonempty({
+            message: "O usuário do PicPay não pode ser vazio."
+        })
 });
 type NewServiceFormData = z.infer<typeof newServiceFormSchema>;
 
@@ -55,7 +69,7 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                 providerId: session.user.id,
                 addressId: newServiceFormData.addressId.toString(),
                 title: newServiceFormData.title,
-                type: ServiceType.toNumber(newServiceFormData.type),
+                type: ServiceTypeUtils.toNumber(newServiceFormData.type)!,
                 description: newServiceFormData.description,
                 price: newServiceFormData.price,
                 picpayUser: newServiceFormData.picpayUser
@@ -84,7 +98,7 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                                 label="Nome"
                                 name="title"
                             />
-                            {errors.title && <span className="text-xs text-red-500 mt-1">{errors.title.message}</span>}
+                            {errors.title && <span className="text-xs text-red mt-1">{errors.title.message}</span>}
                         </div>
                         <div className="p-1">
                             <Select
@@ -92,7 +106,7 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                                 name="type"
                                 options={Object.values(ServiceType) as Array<string>}
                             />
-                            {errors.type && <span className="text-xs text-red-500 mt-1">{errors.type.message}</span>}
+                            {errors.type && <span className="text-xs text-red mt-1">{errors.type.message}</span>}
                         </div>
                     </div>
                     <div className="p-1">
@@ -100,7 +114,7 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                             label="Descrição"
                             name="description"
                         />
-                        {errors.description && <span className="text-xs text-red-500 mt-1">{errors.description.message}</span>}
+                        {errors.description && <span className="text-xs text-red mt-1">{errors.description.message}</span>}
                     </div>
                     <div className="p-1">
                         <TextField
@@ -108,7 +122,7 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                             label="ID do Endereço"
                             name="addressID"
                         />
-                        {errors.addressId && <span className="text-xs text-red-500 mt-1">{errors.addressId.message}</span>}
+                        {errors.addressId && <span className="text-xs text-red mt-1">{errors.addressId.message}</span>}
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                         <div className="p-1">
@@ -117,7 +131,7 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                                 label="Preço"
                                 name="price"
                             />
-                            {errors.price && <span className="text-xs text-red-500 mt-1">{errors.price.message}</span>}
+                            {errors.price && <span className="text-xs text-red mt-1">{errors.price.message}</span>}
                         </div>
                         <div className="p-1">
                             <TextField
@@ -125,13 +139,13 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                                 label="Usuário do PicPay para Pagamento"
                                 name="picpayUser"
                             />
-                            {errors.picpayUser && <span className="text-xs text-red-500 mt-1">{errors.picpayUser.message}</span>}
+                            {errors.picpayUser && <span className="text-xs text-red mt-1">{errors.picpayUser.message}</span>}
                         </div>
                     </div>
 
                     <div className="flex justify-center items-center mt-5">
-                        <Button>Cancelar</Button>
-                        <Button type="submit" color="green">Login</Button>
+                        <Button color="gray" className="mr-2" onClick={() => reset()}>Cancelar</Button>
+                        <Button type="submit" color="green" className="ml-2">Salvar</Button>
                     </div>
                 </form>
             </FormProvider>

@@ -58,7 +58,7 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
                                         label="Estado"
                                         name="state"
                                     />
-                                    {errors.state && <span className="text-xs text-red-500 mt-1">{errors.state.message}</span>}
+                                    {errors.state && <span className="text-xs text-red mt-1">{errors.state.message}</span>}
                                 </div>
                                 <div>
                                     <TextField
@@ -66,7 +66,7 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
                                         label="Município"
                                         name="county"
                                     />
-                                    {errors.county && <span className="text-xs text-red-500 mt-1">{errors.county.message}</span>}
+                                    {errors.county && <span className="text-xs text-red mt-1">{errors.county.message}</span>}
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-2 p-1">
@@ -76,7 +76,7 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
                                         label="Bairro"
                                         name="district"
                                     />
-                                    {errors.district && <span className="text-xs text-red-500 mt-1">{errors.district.message}</span>}
+                                    {errors.district && <span className="text-xs text-red mt-1">{errors.district.message}</span>}
                                 </div>
                                 <div>
                                     <TextField
@@ -84,7 +84,7 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
                                         label="Rua"
                                         name="publicPlace"
                                     />
-                                    {errors.publicPlace && <span className="text-xs text-red-500 mt-1">{errors.publicPlace.message}</span>}
+                                    {errors.publicPlace && <span className="text-xs text-red mt-1">{errors.publicPlace.message}</span>}
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-2 p-1">
@@ -94,7 +94,7 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
                                         label="Número"
                                         name="number"
                                     />
-                                    {errors.number && <span className="text-xs text-red-500 mt-1">{errors.number.message}</span>}
+                                    {errors.number && <span className="text-xs text-red mt-1">{errors.number.message}</span>}
                                 </div>
                                 <div>
                                     <TextField
@@ -102,12 +102,12 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
                                         label="Complemento"
                                         name="complement"
                                     />
-                                    {errors.complement && <span className="text-xs text-red-500 mt-1">{errors.complement.message}</span>}
+                                    {errors.complement && <span className="text-xs text-red mt-1">{errors.complement.message}</span>}
                                 </div>
                             </div>
                             <div className="mt-5 pb-2">
                                 <div className="flex justify-center my-5">
-                                    <Button color="outlined-grey" className="mr-5" onClick={() => {
+                                    <Button color="gray" className="mr-5" onClick={() => {
                                         reset();
                                         setIsEditing(false);
                                     }}>Cancelar</Button>

@@ -96,8 +96,8 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
                     <span className="text-2xl">Serviços</span>
                 </div>
                 <div className="flex justify-end">
-                    <Button className="mr-2" onClick={() => setIsFilterModalVisible(true)}>Filtrar</Button>
-                    <Button className="ml-2" onClick={() => setIsNewServiceModalVisible(true)}>Novo</Button>
+                    <Button color="blue" className="mr-2" onClick={() => setIsFilterModalVisible(true)}>Filtrar</Button>
+                    <Button color="blue" className="ml-2" onClick={() => setIsNewServiceModalVisible(true)}>Novo</Button>
                 </div>
             </div>
 

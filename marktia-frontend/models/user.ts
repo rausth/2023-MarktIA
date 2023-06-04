@@ -12,13 +12,13 @@ export type User = {
     role: UserRole;
     creationDate: string;
     updateDate?: string;
-    imageURL: string;
+    imageURL?: string;
 }
 
 export type UserBasicInfo = {
     id: string;
     name: string;
-    imageURL: string;
+    imageURL?: string;
 }
 
 export type UserPersonalData = {

@@ -9,7 +9,7 @@ type ServiceSchedulingCardProps = {
 
 export default function ServiceSchedulingCard({ consumerName, status, creationDate }: ServiceSchedulingCardProps) {
     return (
-        <div className="m-5 bg-red-200">
+        <div className="m-5 bg-blue-dark text-white rounded-md p-5">
             <div className="grid grid-cols-2 py-2">
                 <div><span>Cliente: {consumerName}</span></div>
                 <div><span>Status: {status}</span></div>
