@@ -1,0 +1,26 @@
+package ufes.marktiabackend.controllers;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import ufes.marktiabackend.dtos.requests.EvaluationRequestDTO;
+import ufes.marktiabackend.dtos.responses.EvaluationResponseDTO;
+import ufes.marktiabackend.services.EvaluationService;
+
+@RestController
+@RequestMapping("/evaluations")
+@RequiredArgsConstructor
+public class EvaluationController {
+    private final EvaluationService evaluationService;
+
+    @GetMapping
+    public ResponseEntity<EvaluationResponseDTO> getByService(@RequestParam String serviceId) {
+        return ResponseEntity.ok(evaluationService.getByService(serviceId));
+    }
+
+    @PostMapping
+    public ResponseEntity<EvaluationResponseDTO> crete(@RequestBody @Valid EvaluationRequestDTO evaluationRequestDTO) {
+        return ResponseEntity.ok(evaluationService.create(evaluationRequestDTO));
+    }
+}

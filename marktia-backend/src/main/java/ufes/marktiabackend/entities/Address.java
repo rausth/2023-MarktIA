@@ -33,4 +33,5 @@ public class Address {
     @NotNull
     private String number;
 
+    private String complement;
 }

@@ -20,6 +20,15 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class AuthRequestFilter extends OncePerRequestFilter {
+    private String[] AUTH_WHITELIST = {
+            "/auth",
+            "/swagger-ui",
+            "/swagger-resources",
+            "/swagger-ui.html",
+            "/v3/api-docs",
+            "/webjars"
+    };
+
     private final JWTService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
 
@@ -55,5 +64,16 @@ public class AuthRequestFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        for (String urlPattern : AUTH_WHITELIST) {
+            if (request.getServletPath().startsWith(urlPattern)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

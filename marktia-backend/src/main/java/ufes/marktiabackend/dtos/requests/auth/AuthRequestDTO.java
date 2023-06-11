@@ -1,12 +1,14 @@
 package ufes.marktiabackend.dtos.requests.auth;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuthRequestDTO {
-    private final String email;
+    private String email;
 
-    private final String password;
+    private String password;
 }

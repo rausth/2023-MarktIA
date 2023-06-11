@@ -18,13 +18,13 @@ import ufes.marktiabackend.services.auth.AuthService;
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponseDTO> register(@RequestBody @Valid RegisterRequestDTO registerRequestDTO) {
-        return ResponseEntity.ok(authService.register(registerRequestDTO));
-    }
-
     @PostMapping("/authenticate")
     public ResponseEntity<AuthResponseDTO> authenticate(@RequestBody @Valid AuthRequestDTO authRequestDTO) {
         return ResponseEntity.ok(authService.authenticate(authRequestDTO));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponseDTO> register(@RequestBody @Valid RegisterRequestDTO registerRequestDTO) {
+        return ResponseEntity.ok(authService.register(registerRequestDTO));
     }
 }

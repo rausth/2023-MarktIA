@@ -1,8 +1,6 @@
-import { Scheduling } from "@/models/scheduling";
-
 export type EvaluationResponseDTO = {
     id: string;
-    scheduling: Scheduling;
+    schedulingId: string;
     rating: number;
     assessment: string;
 }

@@ -1,5 +1,5 @@
 export type RegisterRequestDTO = {
-    role: number;
+    userRole: number;
     name: string;
     email: string;
     password: string;

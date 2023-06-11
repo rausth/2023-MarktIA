@@ -8,7 +8,7 @@ export type UserResponseDTO = {
     cnpj?: string;
     telephone: string;
     address: AddressResponseDTO;
-    role: number;
+    userRole: number;
     creationDate: string;
     updateDate?: string;
     imageURL?: string;

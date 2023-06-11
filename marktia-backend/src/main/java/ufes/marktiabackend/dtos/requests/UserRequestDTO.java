@@ -1,4 +1,4 @@
-package ufes.marktiabackend.dtos.requests.auth;
+package ufes.marktiabackend.dtos.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,14 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterRequestDTO {
-    private Integer userRole;
-
+public class UserRequestDTO {
     private String name;
 
     private String email;
-
-    private String password;
 
     private String cpf;
 
@@ -22,10 +18,6 @@ public class RegisterRequestDTO {
 
     private String telephone;
 
-    /**
-     * [TODO]
-     * Ver como será questão do endereço
-     */
     private String addressId;
 
     private String imageURL;

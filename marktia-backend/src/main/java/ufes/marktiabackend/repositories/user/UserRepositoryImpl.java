@@ -6,7 +6,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import ufes.marktiabackend.dtos.UserDTO;
+import ufes.marktiabackend.dtos.responses.UserResponseDTO;
 import ufes.marktiabackend.entities.User;
 
 import java.util.List;
@@ -17,13 +17,13 @@ public class UserRepositoryImpl implements UserRepositoryQuery {
     private EntityManager manager;
 
     @Override
-    public List<UserDTO> resume() {
+    public List<UserResponseDTO> resume() {
 
         CriteriaBuilder builder = manager.getCriteriaBuilder();
-        CriteriaQuery<UserDTO> criteria = builder.createQuery(UserDTO.class);
+        CriteriaQuery<UserResponseDTO> criteria = builder.createQuery(UserResponseDTO.class);
         Root<User> root = criteria.from(User.class);
 
-        criteria.select(builder.construct(UserDTO.class
+        criteria.select(builder.construct(UserResponseDTO.class
             , root.get("id")
             , root.get("name")
             , root.get("email")
@@ -35,7 +35,7 @@ public class UserRepositoryImpl implements UserRepositoryQuery {
             , root.get("creationDate")
             , root.get("updateDate")));
 
-        TypedQuery<UserDTO> query = manager.createQuery(criteria);
+        TypedQuery<UserResponseDTO> query = manager.createQuery(criteria);
 
         return query.getResultList();
     }

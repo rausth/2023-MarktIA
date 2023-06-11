@@ -2,7 +2,9 @@ package ufes.marktiabackend.services;
 
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
-import ufes.marktiabackend.dtos.UserDTO;
+import ufes.marktiabackend.dtos.requests.UserRequestDTO;
+import ufes.marktiabackend.dtos.responses.AddressResponseDTO;
+import ufes.marktiabackend.dtos.responses.UserResponseDTO;
 import ufes.marktiabackend.entities.Address;
 import ufes.marktiabackend.entities.User;
 import ufes.marktiabackend.repositories.AddressRepository;
@@ -23,7 +25,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserDTO verifyAndSave(@Valid User user) {
+    public UserResponseDTO verifyAndSave(@Valid User user) {
         Long id = user.getAddress().getId();
         if (id == null) throw new NullAddressIdException();
 
@@ -36,18 +38,33 @@ public class UserService {
         return project(savedUser);
     }
 
-    public UserDTO project(@Valid User user) {
-        return new UserDTO(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getCpf(),
-                user.getCnpj(),
-                user.getTelephone(),
-                user.getAddress(),
-                user.getUserRole(),
-                user.getCreationDate(),
-                user.getUpdateDate());
+    public UserResponseDTO project(@Valid User user) {
+        return UserResponseDTO.builder()
+                .id(user.getId().toString())
+                .name(user.getName())
+                .email(user.getEmail())
+                .cpf(user.getCpf())
+                .cnpj(user.getCnpj())
+                .telephone(user.getTelephone())
+                .address(AddressResponseDTO.builder()
+                        .id(user.getAddress().getId().toString())
+                        .state(user.getAddress().getState())
+                        .county(user.getAddress().getCounty())
+                        .district(user.getAddress().getDistrict())
+                        .publicPlace(user.getAddress().getPublic_place())
+                        .number(user.getAddress().getNumber())
+                        .complement(user.getAddress().getComplement())
+                        .build())
+                .userRole(user.getUserRole().getValue())
+                .creationDate(user.getCreationDate().toString())
+                .updateDate(user.getUpdateDate().toString())
+                .build();
     }
 
+    public UserResponseDTO update(String userId, UserRequestDTO userRequestDTO) {
+        /**
+         * [TODO
+         */
+        return null;
+    }
 }
