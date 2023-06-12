@@ -2,13 +2,12 @@ package ufes.marktiabackend.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "address")
 public class Address {
@@ -18,17 +17,16 @@ public class Address {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @NotNull
-    private String state;
-
-    @NotNull
-    private String county;
+    @OneToOne
+    @JoinColumn(name = "federation_id")
+    private Federation federation;
 
     @NotNull
     private String district;
 
     @NotNull
-    private String public_place;
+    @Column(name = "public_place")
+    private String publicPlace;
 
     @NotNull
     private String number;

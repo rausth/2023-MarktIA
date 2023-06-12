@@ -1,6 +1,8 @@
 package ufes.marktiabackend.services;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ufes.marktiabackend.dtos.requests.UserRequestDTO;
 import ufes.marktiabackend.dtos.responses.AddressResponseDTO;
@@ -15,14 +17,20 @@ import ufes.marktiabackend.services.exception.NullAddressIdException;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    AddressRepository addressRepository;
-    UserRepository userRepository;
+    private final AddressRepository addressRepository;
+    private final UserRepository userRepository;
 
-    public UserService(AddressRepository addressRepository, UserRepository userRepository) {
-        this.addressRepository = addressRepository;
-        this.userRepository = userRepository;
+    public User getById(Long user_id) {
+        Optional<User> user = userRepository.findById(user_id);
+
+        if (user.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+
+        return user.get();
     }
 
     public UserResponseDTO verifyAndSave(@Valid User user) {
@@ -48,10 +56,10 @@ public class UserService {
                 .telephone(user.getTelephone())
                 .address(AddressResponseDTO.builder()
                         .id(user.getAddress().getId().toString())
-                        .state(user.getAddress().getState())
-                        .county(user.getAddress().getCounty())
+                        .state(user.getAddress().getFederation().getState())
+                        .county(user.getAddress().getFederation().getCounty())
                         .district(user.getAddress().getDistrict())
-                        .publicPlace(user.getAddress().getPublic_place())
+                        .publicPlace(user.getAddress().getPublicPlace())
                         .number(user.getAddress().getNumber())
                         .complement(user.getAddress().getComplement())
                         .build())
