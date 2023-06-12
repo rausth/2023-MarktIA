@@ -1,9 +1,9 @@
+import { FederationResponseDTO } from "../federations/federationResponseDTO";
+
 export type AddressResponseDTO = {
     id: string;
-    state: string;
-    county: string;
-    district: string;
+    federation: FederationResponseDTO;
     publicPlace: string;
-    number: string;
+    number: number;
     complement: string;
 }

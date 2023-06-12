@@ -1,9 +1,9 @@
+import { Federation } from "./federation";
+
 export type Address = {
     id: string;
-    state: string;
-    county: string;
-    district: string;
+    federation: Federation;
     publicPlace: string;
-    number: string;
+    number: number;
     complement: string;
 }

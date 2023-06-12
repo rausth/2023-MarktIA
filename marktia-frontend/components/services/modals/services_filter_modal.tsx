@@ -1,3 +1,4 @@
+import AddressForm from "@/components/addresses/address_form";
 import Button from "@/components/common/button";
 import Select from "@/components/common/forms/select";
 import TextField from "@/components/common/forms/text_field";
@@ -14,9 +15,16 @@ type ServicesFilterModalProps = {
 }
 
 const servicesFilterFormSchema = z.object({
-    name: z.string(),
-    addressId: z.number(),
+    name: z.string()
+        .nullable(),
     type: z.string()
+        .nullable(),
+    state: z.number()
+        .nullable(),
+    region: z.number()
+        .nullable(),
+    district: z.number()
+        .nullable()
 });
 type ServicesFilterFormData = z.infer<typeof servicesFilterFormSchema>;
 
@@ -25,8 +33,10 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
         resolver: zodResolver(servicesFilterFormSchema),
         defaultValues: {
             name: "",
-            addressId: undefined,
-            type: ""
+            type: "",
+            state: undefined,
+            region: undefined,
+            district: undefined
         }
     });
     const { handleSubmit, formState: { errors }, reset } = servicesFilterForm;
@@ -37,8 +47,12 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
                 <form onSubmit={handleSubmit((servicesFilterFormData: ServicesFilterFormData) => {
                     onSubmission({
                         name: servicesFilterFormData.name,
-                        addressId: servicesFilterFormData.addressId.toString(),
-                        type: ServiceTypeUtils.toNumber(servicesFilterFormData.type)
+                        type: servicesFilterFormData.type ? ServiceTypeUtils.toNumber(servicesFilterFormData.type) : null,
+                        federation: {
+                            stateId: servicesFilterFormData.state ? servicesFilterFormData.state.toString() : null,
+                            regionId: servicesFilterFormData.region ? servicesFilterFormData.region.toString() : null,
+                            districtId: servicesFilterFormData.district ? servicesFilterFormData.district.toString() : null,
+                        }
                     });
 
                     close();
@@ -53,15 +67,6 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
                     </div>
 
                     <div className="p-1">
-                        <TextField
-                            type="number"
-                            label="ID do Endereço"
-                            name="addressId"
-                        />
-                        {errors.addressId && <span className="text-xs text-red mt-1">{errors.addressId.message}</span>}
-                    </div>
-
-                    <div className="p-1">
                         <Select
                             title="Tipo"
                             name="type"
@@ -70,6 +75,8 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
                         />
                         {errors.type && <span className="text-xs text-red mt-1">{errors.type.message}</span>}
                     </div>
+
+                    <AddressForm onlyFederationInfo={true} errors={errors} />
 
                     <div className="flex justify-center items-center mt-5">
                         <Button color="gray" className="mr-2" onClick={() => reset()}>Cancelar</Button>

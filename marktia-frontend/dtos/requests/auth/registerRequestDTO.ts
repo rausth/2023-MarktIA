@@ -1,3 +1,5 @@
+import { AddressRequestDTO } from "../addresses/addressRequestDTO";
+
 export type RegisterRequestDTO = {
     userRole: number;
     name: string;
@@ -6,6 +8,6 @@ export type RegisterRequestDTO = {
     cpf: string;
     cnpj?: string | null;
     telephone: string;
-    addressId: string;
+    address: AddressRequestDTO;
     imageURL?: string | null;
 }

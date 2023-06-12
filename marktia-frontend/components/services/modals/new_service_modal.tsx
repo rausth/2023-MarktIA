@@ -1,19 +1,24 @@
 "use client";
 
+import AddressForm from "@/components/addresses/address_form";
 import Button from "@/components/common/button";
 import Select from "@/components/common/forms/select";
 import TextField from "@/components/common/forms/text_field";
 import TextArea from "@/components/common/forms/textarea";
 import Modal from "@/components/common/modal";
 import { ServicesController } from "@/controllers/services";
+import { UsersController } from "@/controllers/users";
 import { ServiceRequestDTO } from "@/dtos/requests/services/serviceRequestDTO";
+import { AddressResponseDTO } from "@/dtos/responses/address/AddressResponseDTO";
 import { ServiceResponseDTO } from "@/dtos/responses/services/serviceResponseDTO";
 import { ServiceType, ServiceTypeUtils } from "@/enums/serviceType";
+import { Address } from "@/models/address";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosResponse } from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -32,7 +37,6 @@ const newServiceFormSchema = z.object({
         .nonempty({
             message: "A descrição não pode ser vazia."
         }),
-    addressId: z.number(),
     price: z.number({
         invalid_type_error: "O preço não pode ser vazio."
     })
@@ -42,11 +46,35 @@ const newServiceFormSchema = z.object({
     picpayUser: z.string()
         .nonempty({
             message: "O usuário do PicPay não pode ser vazio."
-        })
+        }),
+    state: z.number({
+            required_error: "O estado não pode ser vazio.",
+            invalid_type_error: "Estado inválido"
+        }),
+    region: z.number({
+        required_error: "A região não pode ser vazia.",
+        invalid_type_error: "Região inválida"
+    }),
+    district: z.number({
+        required_error: "O município não pode ser vazio.",
+        invalid_type_error: "Município inválido"
+    }),
+    publicPlace: z.string()
+        .nonempty({
+            message: "A rua não pode ser vazia."
+        }),
+    number: z.number({
+        required_error: "O número não pode ser vazio.",
+        invalid_type_error: "Número inválido"
+    }),
+    complement: z.string()
+        .nullable()
 });
 type NewServiceFormData = z.infer<typeof newServiceFormSchema>;
 
 export default function NewServiceModal({ onSubmission, close }: NewServiceModalProps) {
+    const [useMyAddress, setUseMyAddress] = useState(false);
+    
     const { data: session } = useSession();
     const router = useRouter();
 
@@ -56,23 +84,27 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
             title: "",
             type: ServiceType.DESIGN_GRAFICO,
             description: "",
-            addressId: undefined,
             price: undefined,
             picpayUser: ""
         }
     });
-    const { handleSubmit, formState: { errors }, reset } = newServiceForm;
+    const { handleSubmit, formState: { errors }, reset, setValue } = newServiceForm;
 
     const handleNewServiceFormSubmission = (newServiceFormData: NewServiceFormData) => {
         if (session) {
             const serviceRequestDTO: ServiceRequestDTO = {
                 providerId: session.user.id,
-                addressId: newServiceFormData.addressId.toString(),
                 title: newServiceFormData.title,
                 type: ServiceTypeUtils.toNumber(newServiceFormData.type)!,
                 description: newServiceFormData.description,
                 price: newServiceFormData.price,
-                picpayUser: newServiceFormData.picpayUser
+                picpayUser: newServiceFormData.picpayUser,
+                address: !useMyAddress ? {
+                    districtId: newServiceFormData.district.toString(),
+                    publicPlace: newServiceFormData.publicPlace,
+                    number: newServiceFormData.number,
+                    complement: newServiceFormData.complement
+                } : null
             }
 
             ServicesController.create(serviceRequestDTO, session.user.token)
@@ -84,6 +116,32 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                 .catch(() => enqueueSnackbar("Houve um erro ao criar o serviço!", { variant: "error" }))
         } else {
             router.push("/auth/login");
+        }
+    }
+
+    const handleUseMyAddress = () => {
+        if (!useMyAddress) {
+            if (session) {
+                UsersController.getAddress(session.user.id, session.user.token)
+                    .then((response: AxiosResponse<AddressResponseDTO>) => {
+                        const address: Address = response.data;
+
+                        setValue("state", Number(address.federation.state.id));
+                        setValue("region", Number(address.federation.region.id));
+                        setValue("district", Number(address.federation.district.id));
+
+                        setValue("publicPlace", address.publicPlace);
+                        setValue("number", address.number);
+                        setValue("complement", address.complement);
+
+                        setUseMyAddress(true);
+                    })
+                    .catch(() => enqueueSnackbar("Houve um erro ao carregar o endereço do usuário!", {
+                        variant: "error"
+                    }))
+            } else {
+                router.push("/auth/login");
+            }
         }
     }
 
@@ -116,14 +174,6 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                         />
                         {errors.description && <span className="text-xs text-red mt-1">{errors.description.message}</span>}
                     </div>
-                    <div className="p-1">
-                        <TextField
-                            type="number"
-                            label="ID do Endereço"
-                            name="addressId"
-                        />
-                        {errors.addressId && <span className="text-xs text-red mt-1">{errors.addressId.message}</span>}
-                    </div>
                     <div className="grid grid-cols-2 gap-2">
                         <div className="p-1">
                             <TextField
@@ -143,8 +193,18 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                         </div>
                     </div>
 
+                    <div className="flex justify-between items-center p-1 my-2">
+                        <div className="mr-2"><span>Deseja usar seu endereço para o serviço? Preencha o formulário abaixo caso contrário.</span></div>
+                        <Button color="blue" onClick={() => handleUseMyAddress()}>Carregar meu endereço</Button>
+                    </div>
+
+                    <AddressForm errors={errors} />
+
                     <div className="flex justify-center items-center mt-5">
-                        <Button color="gray" className="mr-2" onClick={() => reset()}>Cancelar</Button>
+                        <Button color="gray" className="mr-2" onClick={() => {
+                            reset();
+                            setUseMyAddress(false);
+                        }}>Cancelar</Button>
                         <Button type="submit" color="green" className="ml-2">Salvar</Button>
                     </div>
                 </form>
