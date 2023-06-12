@@ -15,7 +15,9 @@ const loginFormSchema = z.object({
         .nonempty({
             message: "O email não pode ser vazio."
         })
-        .email(),
+        .email({
+            message: "Endereço de email inválido."
+        }),
     password: z.string()
         .nonempty({
             message: "A senha não pode ser vazia."
@@ -42,7 +44,7 @@ export default function LoginPage() {
             redirect: false
         });
 
-        if (result?.ok) {
+        if (!result?.error) {
             enqueueSnackbar("Login realizado com sucesso!", { variant: "success" });
             router.push("/marktia");
         } else {

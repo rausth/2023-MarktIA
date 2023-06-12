@@ -1,5 +1,4 @@
 import Avatar from "../common/avatar";
-import Button from "../common/button";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { SchedulingBasicInfo } from "@/models/scheduling";
 import Link from "next/link";

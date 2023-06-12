@@ -7,8 +7,6 @@ import { ServiceResponseDTO } from "@/dtos/responses/services/serviceResponseDTO
 import { SchedulingStatusUtils } from "@/enums/schedulingStatus";
 import { ServiceTypeUtils } from "@/enums/serviceType";
 import { UserRoleUtils } from "@/enums/userRole";
-import { MOCKED_SCHEDULINGS } from "@/mocks/scheduling";
-import { MOCKED_SERVICES } from "@/mocks/service";
 import { Scheduling } from "@/models/scheduling";
 import { Service } from "@/models/service";
 import { AxiosResponse } from "axios";
@@ -22,12 +20,12 @@ const fetchScheduling = async (schedulingId: string, token: string) => {
                 ...response.data,
                 consumer: {
                     ...response.data.consumer,
-                    role: UserRoleUtils.fromNumber(response.data.consumer.role)
+                    userRole: UserRoleUtils.fromNumber(response.data.consumer.userRole)
                 },
                 status: SchedulingStatusUtils.fromNumber(response.data.status)
             }
         })
-        .catch(() => MOCKED_SCHEDULINGS[0]);
+        .catch(() => undefined);
 }
 
 const fetchService = async (serviceId: string, token: string) => {
@@ -40,7 +38,7 @@ const fetchService = async (serviceId: string, token: string) => {
                     ...schedulingResponseDTO,
                     consumer: {
                         ...schedulingResponseDTO.consumer,
-                        role: UserRoleUtils.fromNumber(schedulingResponseDTO.consumer.role)
+                        userRole: UserRoleUtils.fromNumber(schedulingResponseDTO.consumer.userRole)
                     },
                     status: SchedulingStatusUtils.fromNumber(schedulingResponseDTO.status)
                 });
@@ -51,22 +49,26 @@ const fetchService = async (serviceId: string, token: string) => {
                 type: ServiceTypeUtils.fromNumber(response.data.type),
                 provider: {
                     ...response.data.provider,
-                    role: UserRoleUtils.fromNumber(response.data.provider.role)
+                    userRole: UserRoleUtils.fromNumber(response.data.provider.userRole)
                 },
                 schedulings: schedulings
             };
 
             return service;
         })
-        .catch(() => MOCKED_SERVICES[0]);
+        .catch(() => undefined);
 }
 
 export default async function SchedulingPage({ params }: { params: { scheduling_id: string } }) {
     const session = await getServerSession(authOptions);
 
     if (session) {
-        const scheduling: Scheduling = await fetchScheduling(params.scheduling_id, session.user.token);
-        const service: Service = await fetchService(scheduling.serviceId, session.user.token);
+        const scheduling: Scheduling | undefined = await fetchScheduling(params.scheduling_id, session.user.token);
+        let service: Service | undefined;
+
+        if (scheduling) {
+            service = await fetchService(scheduling.serviceId, session.user.token);
+        }
 
         return <SchedulingMainComponent scheduling={scheduling} service={service} />
     } else {

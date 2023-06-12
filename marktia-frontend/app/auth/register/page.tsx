@@ -23,7 +23,9 @@ const registerFormSchema = z.object({
         .nonempty({
             message: "O email não pode ser vazio."
         })
-        .email(),
+        .email({
+            message: "Endereço de email inválido."
+        }),
     password: z.string()
         .nonempty({
             message: "A senha não pode ser vazia."
@@ -98,7 +100,7 @@ export default function RegisterPage() {
         <FormProvider {...registerForm}>
             <form onSubmit={handleSubmit((registerFormData: RegisterFormData) => handleRegisterFormSubmission({
                 ...registerFormData,
-                role: UserRoleUtils.toNumber(registerFormData.role)!,
+                userRole: UserRoleUtils.toNumber(registerFormData.role)!,
                 addressId: registerFormData.addressId.toString()
             }))}>
                 <div className="grid grid-cols-2 gap-2">

@@ -17,7 +17,7 @@ type UserPersonalInfoProps = {
 }
 
 const editUserPersonalInfoFormSchema = z.object({
-    role: z.string(),
+    userRole: z.string(),
     name: z.string()
         .nonempty({
             message: "O nome não pode ser vazio."
@@ -68,7 +68,7 @@ export default function UserPersonalInfo({ user, onSubmission }: UserPersonalInf
             cpf: user.cpf,
             cnpj: user.cnpj,
             telephone: user.telephone,
-            role: user.role
+            userRole: user.userRole
         }
     });
     const { handleSubmit, formState: { errors }, reset } = editUserPersonalInfoForm;
@@ -88,7 +88,7 @@ export default function UserPersonalInfo({ user, onSubmission }: UserPersonalInf
                     <div className="grid grid-cols-2 py-2">
                         <div><span>Telefone: {user.telephone}</span></div>
                         <div className="flex justify-between items-center">
-                            <div><span>Papel: {user.role}</span></div>
+                            <div><span>Papel: {user.userRole}</span></div>
                             <div><FaPencilAlt className="cursor-pointer" onClick={() => setIsEditing(true)} /></div>
                         </div>
                     </div>
@@ -98,7 +98,7 @@ export default function UserPersonalInfo({ user, onSubmission }: UserPersonalInf
                     <FormProvider {...editUserPersonalInfoForm} >
                         <form onSubmit={handleSubmit((editUserPersonalInfoFormData: EditUserPersonalInfoFormData) => onSubmission({
                             ...editUserPersonalInfoFormData,
-                            role: UserRoleUtils.toNumber(editUserPersonalInfoFormData.role)!,
+                            userRole: UserRoleUtils.toNumber(editUserPersonalInfoFormData.userRole)!,
                             cnpj: editUserPersonalInfoFormData.cnpj ? editUserPersonalInfoFormData.cnpj : undefined
                         }))}>
                             <div className="grid grid-cols-2 gap-2 p-1">
@@ -149,10 +149,10 @@ export default function UserPersonalInfo({ user, onSubmission }: UserPersonalInf
                                 <div>
                                     <Select
                                         title="Classificação"
-                                        name="role"
+                                        name="userRole"
                                         options={Object.values(UserRole)}
                                     />
-                                    {errors.role && <span className="text-xs text-red mt-1">{errors.role.message}</span>}
+                                    {errors.userRole && <span className="text-xs text-red mt-1">{errors.userRole.message}</span>}
                                 </div>
                             </div>
 

@@ -4,8 +4,6 @@ import { useSession } from "next-auth/react";
 import Button from "../../common/button";
 import { useRouter } from "next/navigation";
 import { SchedulingsController } from "@/controllers/schedulings";
-import { AxiosResponse } from "axios";
-import { SchedulingResponseDTO } from "@/dtos/responses/schedulings/schedulingResponseDTO";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 
 type ScheduleServiceProps = {
@@ -22,7 +20,7 @@ export default function ScheduleService({ serviceId }: ScheduleServiceProps) {
                 serviceId: serviceId,
                 consumerId: session.user.id
             }, session.user.token)
-                .then((response: AxiosResponse<SchedulingResponseDTO>) => enqueueSnackbar("Agendamento criado com sucesso! Vá para a página de agendamentos para acessá-lo.", {
+                .then(() => enqueueSnackbar("Agendamento criado com sucesso! Vá para a página de agendamentos para acessá-lo.", {
                     variant: "success"
                 }))
                 .catch(() => enqueueSnackbar("Ocorreu um erro ao criar o agendamento.", {

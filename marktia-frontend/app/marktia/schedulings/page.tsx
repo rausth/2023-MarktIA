@@ -1,8 +1,6 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import SchedulingsMainComponent from "@/components/schedulings";
 import { SchedulingsController } from "@/controllers/schedulings";
-import { MOCKED_SCHEDULINGS } from "@/mocks/scheduling";
-import { MOCKED_SERVICES } from "@/mocks/service";
 import { SchedulingBasicInfo } from "@/models/scheduling";
 import { AxiosResponse } from "axios";
 import { getServerSession } from "next-auth";
@@ -14,18 +12,7 @@ const fetchSchedulings = async () => {
     if (session) {
         return SchedulingsController.getAll(session.user.id, true, 0, session.user.token)
             .then((response: AxiosResponse<SchedulingBasicInfo[]>) => response.data)
-            .catch(() => [
-                {
-                    id: MOCKED_SCHEDULINGS[0].id,
-                    provider: MOCKED_SERVICES[0].provider,
-                    consumer: MOCKED_SCHEDULINGS[0].consumer
-                },
-                {
-                    id: MOCKED_SCHEDULINGS[0].id,
-                    provider: MOCKED_SERVICES[0].provider,
-                    consumer: MOCKED_SCHEDULINGS[0].consumer
-                },
-            ]);
+            .catch(() => []);
     } else {
         redirect("/auth/login");
     }

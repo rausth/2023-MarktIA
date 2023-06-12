@@ -3,7 +3,6 @@ import UserMainComponent from "@/components/user";
 import { UsersController } from "@/controllers/users";
 import { UserResponseDTO } from "@/dtos/responses/users/userResponseDTO";
 import { UserRoleUtils } from "@/enums/userRole";
-import { MOCKED_USERS } from "@/mocks/user";
 import { User } from "@/models/user";
 import { AxiosResponse } from "axios";
 import { getServerSession } from "next-auth";
@@ -17,17 +16,17 @@ const fetchUser = async () => {
             .then((response: AxiosResponse<UserResponseDTO>) => {
                 return {
                     ...response.data,
-                    role: UserRoleUtils.fromNumber(response.data.role)
+                    userRole: UserRoleUtils.fromNumber(response.data.userRole)
                 }
             })
-            .catch(() => MOCKED_USERS[0])
+            .catch(() => undefined)
     } else {
         redirect("/auth/login");
     }
 }
 
 export default async function UserPage() {
-    const user: User = await fetchUser();
+    const user: User | undefined = await fetchUser();
 
     return <UserMainComponent user={user} />;
 }

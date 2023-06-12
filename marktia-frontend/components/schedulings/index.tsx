@@ -1,14 +1,13 @@
 "use client";
 
 import { SchedulingsController } from "@/controllers/schedulings";
-import { MOCKED_SCHEDULINGS } from "@/mocks/scheduling";
-import { MOCKED_SERVICES } from "@/mocks/service";
 import { SchedulingBasicInfo } from "@/models/scheduling";
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { useSession } from "next-auth/react";
-import { enqueueSnackbar } from "notistack";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { createRef, useEffect, useRef, useState } from "react";
 import SchedulingsList from "./schedulings_list";
+import { useRouter } from "next/navigation";
 
 type SchedulingsProps = {
     schedulings: SchedulingBasicInfo[];
@@ -26,33 +25,19 @@ export default function SchedulingsMainComponent(schedulingsProps: SchedulingsPr
     const finishedSchedulings = createRef<HTMLSpanElement>();
 
     const { data: session } = useSession();
+    const router = useRouter();
 
     const isFirstRender = useRef(true);
 
     useEffect(() => {
         const fetchSchedulings = () => {
-            /**
-             * [TODO]
-             * Descomentar quando backend estiver pronto
-             */
-            // if (session) {
-            //     SchedulingsController.getAll(session.user.id, isClientSelected, currentExhibitedSchedulings, session.user.token)
-            //         .then((response: AxiosResponse<SchedulingBasicInfo[]>) => setSchedulings(response.data))
-            //         .catch((error: AxiosError) => enqueueSnackbar("Houve um erro ao atualizar os agendamentos.", { variant: "error" }));
-            // }
-
-            setSchedulings([
-                {
-                    id: MOCKED_SCHEDULINGS[0].id,
-                    provider: MOCKED_SERVICES[0].provider,
-                    consumer: MOCKED_SCHEDULINGS[0].consumer
-                },
-                {
-                    id: MOCKED_SCHEDULINGS[0].id,
-                    provider: MOCKED_SERVICES[0].provider,
-                    consumer: MOCKED_SCHEDULINGS[0].consumer
-                },
-            ]);
+            if (session) {
+                SchedulingsController.getAll(session.user.id, isClientSelected, currentExhibitedSchedulings, session.user.token)
+                    .then((response: AxiosResponse<SchedulingBasicInfo[]>) => setSchedulings(response.data))
+                    .catch(() => enqueueSnackbar("Houve um erro ao atualizar os agendamentos.", { variant: "error" }));
+            } else {
+                router.push("/auth/login");
+            }
         }
 
         if (isFirstRender.current) {
@@ -96,25 +81,27 @@ export default function SchedulingsMainComponent(schedulingsProps: SchedulingsPr
     }
 
     return (
-        <div>
-            <div className="flex justify-between items-center border-b-2 border-black pb-2">
-                <div>
-                    <span className="text-2xl">Agendamentos</span>
+        <SnackbarProvider>
+            <div>
+                <div className="flex justify-between items-center border-b-2 border-black pb-2">
+                    <div>
+                        <span className="text-2xl">Agendamentos</span>
+                    </div>
                 </div>
-            </div>
 
-            <div className="mx-10">
-                <div className="text-lg flex justify-around border-b-2 border-black p-2 mt-5">
-                    <span ref={client} className="cursor-pointer text-orange-500" onClick={() => { changeIsClientSelected(true) }}>Cliente</span>
-                    <span ref={provider} className="cursor-pointer" onClick={() => { changeIsClientSelected(false) }}>Provedor</span>
+                <div className="mx-10">
+                    <div className="text-lg flex justify-around border-b-2 border-black p-2 mt-5">
+                        <span ref={client} className="cursor-pointer text-orange-500" onClick={() => { changeIsClientSelected(true) }}>Cliente</span>
+                        <span ref={provider} className="cursor-pointer" onClick={() => { changeIsClientSelected(false) }}>Provedor</span>
+                    </div>
+                    <div className="text-lg flex justify-around border-b-2 border-black p-2 mt-5">
+                        <span ref={openSchedulings} className="cursor-pointer text-orange-500" onClick={() => { changeCurrentExhibitedSchedulings(0) }}>Agendamentos Abertos</span>
+                        <span ref={deliveredSchedulings} className="cursor-pointer" onClick={() => { changeCurrentExhibitedSchedulings(1) }}>Agendamentos Entregues</span>
+                        <span ref={finishedSchedulings} className="cursor-pointer" onClick={() => { changeCurrentExhibitedSchedulings(2) }}>Agendamentos Finalizados</span>
+                    </div>
+                    <SchedulingsList schedulings={schedulings} />
                 </div>
-                <div className="text-lg flex justify-around border-b-2 border-black p-2 mt-5">
-                    <span ref={openSchedulings} className="cursor-pointer text-orange-500" onClick={() => { changeCurrentExhibitedSchedulings(0) }}>Agendamentos Abertos</span>
-                    <span ref={deliveredSchedulings} className="cursor-pointer" onClick={() => { changeCurrentExhibitedSchedulings(1) }}>Agendamentos Entregues</span>
-                    <span ref={finishedSchedulings} className="cursor-pointer" onClick={() => { changeCurrentExhibitedSchedulings(2) }}>Agendamentos Finalizados</span>
-                </div>
-                <SchedulingsList schedulings={schedulings} />
             </div>
-        </div>
+        </SnackbarProvider>
     )
 }

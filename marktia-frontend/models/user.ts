@@ -9,7 +9,7 @@ export type User = {
     cnpj?: string;
     telephone: string;
     address: Address;
-    role: UserRole;
+    userRole: UserRole;
     creationDate: string;
     updateDate?: string;
     imageURL?: string;
@@ -27,5 +27,5 @@ export type UserPersonalData = {
     cpf: string;
     cnpj?: string;
     telephone: string;
-    role: number;
+    userRole: number;
 }

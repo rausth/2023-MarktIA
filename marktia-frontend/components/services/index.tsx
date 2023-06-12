@@ -7,12 +7,12 @@ import { useSession } from "next-auth/react";
 import ServicesFilterModal from "./modals/services_filter_modal";
 import ServicesList from "./services_list";
 import { ServicesController } from "@/controllers/services";
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { ServiceBasicInfoResponseDTO } from "@/dtos/responses/services/serviceBasicInfoResponseDTO";
-import { MOCKED_SERVICES } from "@/mocks/service";
-import { enqueueSnackbar } from "notistack";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { ServicesFilter } from "@/utils/servicesFilter";
 import NewServiceModal from "./modals/new_service_modal";
+import { useRouter } from "next/navigation";
 
 type ServicesProps = {
     services: ServiceBasicInfo[];
@@ -29,25 +29,22 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
     const myServices = createRef<HTMLSpanElement>();
 
     const { data: session } = useSession();
+    const router = useRouter();
 
     const isFirstRender = useRef(true);
 
     const fetchServices = (servicesFilter: ServicesFilter) => {
-        /**
-         * [TODO]
-         * Descomentar quando backend estiver pronto
-         */
-        // if (session) {
-        //     ServicesController.getAll(servicesFilter, session.user.token)
-        //         .then((response: AxiosResponse<ServiceBasicInfoResponseDTO[]>) => {
-        //             setServices(response.data);
+        if (session) {
+            ServicesController.getAll(servicesFilter, session.user.token)
+                .then((response: AxiosResponse<ServiceBasicInfoResponseDTO[]>) => {
+                    setServices(response.data);
 
-        //             enqueueSnackbar("Serviços atualizados com sucesso.", { variant: "success" });
-        //         })
-        //         .catch((error: AxiosError) => enqueueSnackbar("Houve um erro ao atualizar os serviços.", { variant: "error" }));
-        // }
-
-        setServices(MOCKED_SERVICES);
+                    enqueueSnackbar("Serviços atualizados com sucesso.", { variant: "success" });
+                })
+                .catch(() => enqueueSnackbar("Houve um erro ao atualizar os serviços.", { variant: "error" }));
+        } else {
+            router.push("/auth/login");
+        }
     }
 
     useEffect(() => {
@@ -76,38 +73,40 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
     }
 
     return (
-        <div>
-            {isFilterModalVisible && (<ServicesFilterModal
-                onSubmission={(servicesFilter: ServicesFilter) => fetchServices({
-                    ...servicesFilter,
-                    myServices: currentExhibitedServices === 0 ? false : true
-                })}
-                close={() => setIsFilterModalVisible(false)}
-            />)}
+        <SnackbarProvider>
+            <div>
+                {isFilterModalVisible && (<ServicesFilterModal
+                    onSubmission={(servicesFilter: ServicesFilter) => fetchServices({
+                        ...servicesFilter,
+                        myServices: currentExhibitedServices === 0 ? false : true
+                    })}
+                    close={() => setIsFilterModalVisible(false)}
+                />)}
 
-            {isNewServiceModalVisible && (<NewServiceModal
-                onSubmission={(serviceTitle: string) => enqueueSnackbar(`Serviço de nome ${serviceTitle} criado com sucesso! Atualize a página para acessá-lo`,
-                    { variant: "success" })}
-                close={() => setIsNewServiceModalVisible(false)}
-            />)}
+                {isNewServiceModalVisible && (<NewServiceModal
+                    onSubmission={(serviceTitle: string) => enqueueSnackbar(`Serviço de nome ${serviceTitle} criado com sucesso! Atualize a página para acessá-lo`,
+                        { variant: "success" })}
+                    close={() => setIsNewServiceModalVisible(false)}
+                />)}
 
-            <div className="flex justify-between items-center border-b-2 border-black pb-2">
-                <div>
-                    <span className="text-2xl">Serviços</span>
+                <div className="flex justify-between items-center border-b-2 border-black pb-2">
+                    <div>
+                        <span className="text-2xl">Serviços</span>
+                    </div>
+                    <div className="flex justify-end">
+                        <Button color="blue" className="mr-2" onClick={() => setIsFilterModalVisible(true)}>Filtrar</Button>
+                        <Button color="blue" className="ml-2" onClick={() => setIsNewServiceModalVisible(true)}>Novo</Button>
+                    </div>
                 </div>
-                <div className="flex justify-end">
-                    <Button color="blue" className="mr-2" onClick={() => setIsFilterModalVisible(true)}>Filtrar</Button>
-                    <Button color="blue" className="ml-2" onClick={() => setIsNewServiceModalVisible(true)}>Novo</Button>
+
+                <div className="mx-10">
+                    <div className="text-lg flex justify-around border-b-2 border-black p-2 mt-5">
+                        <span ref={availableServices} className="cursor-pointer text-orange-500" onClick={() => changeCurrentExhibitedServices(0)}>Serviços Disponíveis</span>
+                        <span ref={myServices} className="cursor-pointer" onClick={() => changeCurrentExhibitedServices(1)}>Meus Serviços</span>
+                    </div>
+                    <ServicesList services={services} />
                 </div>
             </div>
-
-            <div className="mx-10">
-                <div className="text-lg flex justify-around border-b-2 border-black p-2 mt-5">
-                    <span ref={availableServices} className="cursor-pointer text-orange-500" onClick={() => changeCurrentExhibitedServices(0)}>Serviços Disponíveis</span>
-                    <span ref={myServices} className="cursor-pointer" onClick={() => changeCurrentExhibitedServices(1)}>Meus Serviços</span>
-                </div>
-                <ServicesList services={services} />
-            </div>
-        </div>
+        </SnackbarProvider>
     )
 }

@@ -34,7 +34,7 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
                         ...response.data,
                         consumer: {
                             ...response.data.consumer,
-                            role: UserRoleUtils.fromNumber(response.data.consumer.role)
+                            userRole: UserRoleUtils.fromNumber(response.data.consumer.userRole)
                         },
                         status: SchedulingStatusUtils.fromNumber(response.data.status)
                     });

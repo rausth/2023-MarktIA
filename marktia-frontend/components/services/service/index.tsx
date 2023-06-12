@@ -11,72 +11,80 @@ import { Evaluation } from "@/models/evaluation";
 import EvaluationCard from "./evaluation_card";
 
 type ServiceProps = {
-    service: Service;
+    service?: Service;
     evaluations: Evaluation[];
 }
 
 export default function ServiceMainComponent({ service, evaluations }: ServiceProps) {
     return (
-        <div>
-            <div className="text-2xl flex items-center border-b-2 border-black pb-2">
-                <Link href={"/marktia/services"} className="text-white hover:text-blue-light"><FaArrowLeft /></Link>
-                <div className="ml-5"><span>Serviço - {service.title}</span></div>
-            </div>
-
-            <div className="mx-10">
-                <div className="grid grid-cols-2 border-b-2 border-black">
-                    <div className="pt-2 pl-5 border-r-2 border-black">
-                        <h1 className="text-xl">Detalhes do Serviço</h1>
-
-                        <ServiceDetails {...{
-                            type: service.type,
-                            description: service.description,
-                            price: service.price,
-                            picpayUser: service.picpayUser
-                        }} />
+        <div className="h-full">
+            {service ? (
+                <div>
+                    <div className="text-2xl flex items-center border-b-2 border-black pb-2">
+                        <Link href={"/marktia/services"} className="text-white hover:text-blue-light"><FaArrowLeft /></Link>
+                        <div className="ml-5"><span>Serviço - {service.title}</span></div>
                     </div>
-                    <div className="pt-2 pl-5">
-                        <h1 className="text-xl">Localização Geográfica</h1>
 
-                        {service.address ? (
-                            <AddressInfo address={service.address} />
-                        ) : (
-                            <AddressInfo address={service.provider.address} />
-                        )}
-                    </div>
-                </div>
-                <div className="grid grid-cols-2 border-b-2 border-black">
-                    <div className="pt-2 pl-5 border-r-2 border-black">
-                        <h1 className="text-xl">Informações do Provedor</h1>
+                    <div className="mx-10">
+                        <div className="grid grid-cols-2 border-b-2 border-black">
+                            <div className="pt-2 pl-5 border-r-2 border-black">
+                                <h1 className="text-xl">Detalhes do Serviço</h1>
 
-                        <UserInfo user={service.provider} />
-                    </div>
-                    <div className="pt-2 pl-5">
-                        <h1 className="text-xl">Avaliações</h1>
+                                <ServiceDetails {...{
+                                    type: service.type,
+                                    description: service.description,
+                                    price: service.price,
+                                    picpayUser: service.picpayUser
+                                }} />
+                            </div>
+                            <div className="pt-2 pl-5">
+                                <h1 className="text-xl">Localização Geográfica</h1>
 
-                        <div className="h-44 overflow-y-auto mb-2">
-                            {evaluations.map((evaluation: Evaluation, idx: number) => (
-                                <EvaluationCard key={idx} evaluation={evaluation} />
-                            ))}
+                                {service.address ? (
+                                    <AddressInfo address={service.address} />
+                                ) : (
+                                    <AddressInfo address={service.provider.address} />
+                                )}
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 border-b-2 border-black">
+                            <div className="pt-2 pl-5 border-r-2 border-black">
+                                <h1 className="text-xl">Informações do Provedor</h1>
+
+                                <UserInfo user={service.provider} />
+                            </div>
+                            <div className="pt-2 pl-5">
+                                <h1 className="text-xl">Avaliações</h1>
+
+                                <div className="h-44 overflow-y-auto mb-2">
+                                    {evaluations.map((evaluation: Evaluation, idx: number) => (
+                                        <EvaluationCard key={idx} evaluation={evaluation} />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full p-5 border-b-2 border-black">
+                            <h1 className="text-xl mb-2">Agendamentos</h1>
+
+                            <div className="h-44 overflow-y-auto">
+                                {service.schedulings.map((scheduling: Scheduling, idx: number) => (
+                                    <ServiceSchedulingCard key={idx} {...{
+                                        consumerName: scheduling.consumer.name,
+                                        status: scheduling.status,
+                                        creationDate: scheduling.creationDate
+                                    }} />
+                                ))}
+                            </div>
+
+                            <ScheduleService serviceId={service.id} />
                         </div>
                     </div>
                 </div>
-                <div className="w-full p-5 border-b-2 border-black">
-                    <h1 className="text-xl mb-2">Agendamentos</h1>
-
-                    <div className="h-44 overflow-y-auto">
-                        {service.schedulings.map((scheduling: Scheduling, idx: number) => (
-                            <ServiceSchedulingCard key={idx} {...{
-                                consumerName: scheduling.consumer.name,
-                                status: scheduling.status,
-                                creationDate: scheduling.creationDate
-                            }} />
-                        ))}
-                    </div>
-
-                    <ScheduleService serviceId={service.id} />
+            ) : (
+                <div className="h-full flex justify-center items-center text-xl">
+                    <div><span>Oops... Serviço não encontrado!</span></div>
                 </div>
-            </div>
+            )}
         </div>
     )
 }

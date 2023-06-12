@@ -1,11 +1,7 @@
 import axios from "axios";
 
 const axiosAPI = axios.create({
-    /**
-     * [TODO]
-     * Mudar para usar variavel de ambiente
-     */
-    baseURL: "http://localhost:8080"
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL
 });
 
 export { axiosAPI };

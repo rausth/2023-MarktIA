@@ -1,8 +1,6 @@
-import { Scheduling } from "./scheduling";
-
 export type Evaluation = {
     id: string;
-    scheduling: Scheduling;
+    schedulingId: string;
     rating: number;
     assessment: string;
 }

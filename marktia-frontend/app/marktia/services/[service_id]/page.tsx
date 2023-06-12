@@ -8,8 +8,6 @@ import { ServiceResponseDTO } from "@/dtos/responses/services/serviceResponseDTO
 import { SchedulingStatusUtils } from "@/enums/schedulingStatus";
 import { ServiceTypeUtils } from "@/enums/serviceType";
 import { UserRoleUtils } from "@/enums/userRole";
-import { MOCKED_EVALUATIONS } from "@/mocks/evaluation";
-import { MOCKED_SERVICES } from "@/mocks/service";
 import { Evaluation } from "@/models/evaluation";
 import { Scheduling } from "@/models/scheduling";
 import { Service } from "@/models/service";
@@ -27,7 +25,7 @@ const fetchService = async (serviceId: string, token: string) => {
                     ...schedulingResponseDTO,
                     consumer: {
                         ...schedulingResponseDTO.consumer,
-                        role: UserRoleUtils.fromNumber(schedulingResponseDTO.consumer.role)
+                        userRole: UserRoleUtils.fromNumber(schedulingResponseDTO.consumer.userRole)
                     },
                     status: SchedulingStatusUtils.fromNumber(schedulingResponseDTO.status)
                 });
@@ -38,28 +36,32 @@ const fetchService = async (serviceId: string, token: string) => {
                 type: ServiceTypeUtils.fromNumber(response.data.type),
                 provider: {
                     ...response.data.provider,
-                    role: UserRoleUtils.fromNumber(response.data.provider.role)
+                    userRole: UserRoleUtils.fromNumber(response.data.provider.userRole)
                 },
                 schedulings: schedulings
             };
 
             return service;
         })
-        .catch(() => MOCKED_SERVICES[0]);
+        .catch(() => undefined);
 }
 
 const fetchEvaluations = async (serviceId: string, token: string) => {
     return EvaluationsController.getByService(serviceId, token)
         .then((response: AxiosResponse<EvaluationResponseDTO[]>) => response.data)
-        .catch(() => MOCKED_EVALUATIONS);
+        .catch(() => []);
 }
 
 export default async function ServicePage({ params }: { params: { service_id: string } }) {
     const session = await getServerSession(authOptions);
 
     if (session) {
-        const service: Service = await fetchService(params.service_id, session.user.token);
-        const evaluations: Evaluation[] = await fetchEvaluations(params.service_id, session.user.token);
+        const service: Service | undefined = await fetchService(params.service_id, session.user.token);
+        let evaluations: Evaluation[] = [];
+
+        if (service) {
+            evaluations = await fetchEvaluations(service.id, session.user.token);
+        }
 
         return <ServiceMainComponent service={service} evaluations={evaluations} />;
     } else {

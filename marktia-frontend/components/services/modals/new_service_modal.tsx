@@ -120,7 +120,7 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                         <TextField
                             type="number"
                             label="ID do Endereço"
-                            name="addressID"
+                            name="addressId"
                         />
                         {errors.addressId && <span className="text-xs text-red mt-1">{errors.addressId.message}</span>}
                     </div>
