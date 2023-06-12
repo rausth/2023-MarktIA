@@ -3,11 +3,12 @@ package ufes.marktiabackend.entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "federation")
 public class Federation {
 
@@ -17,7 +18,7 @@ public class Federation {
     private Long uf;
 
     @Column(name = "nome_uf")
-    private String nomeUf;
+    private String state;
 
     @Column(name = "regiao_geografica_intermediaria")
     private Long regiaoGeograficaIntermediaria;
@@ -49,6 +50,6 @@ public class Federation {
     private Long codigoMunicipioCompleto;
 
     @Column(name = "nome_municipio")
-    private String nome_municipio;
+    private String county;
 
 }

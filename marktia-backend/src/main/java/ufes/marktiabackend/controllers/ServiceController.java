@@ -29,7 +29,12 @@ public class ServiceController {
 
     @GetMapping("/{service-id}")
     public ResponseEntity<ServiceResponseDTO> getById(@PathVariable("service-id") String serviceId) {
-        return ResponseEntity.ok(serviceService.getById(serviceId));
+        ServiceResponseDTO serviceResponseDTO = serviceService.getById(serviceId);
+
+        if (serviceResponseDTO != null) {
+            return ResponseEntity.ok(serviceResponseDTO);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping

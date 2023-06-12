@@ -1,7 +1,7 @@
 package ufes.marktiabackend.controllers;
 
 import jakarta.validation.Valid;
-import org.springframework.context.ApplicationEventPublisher;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ufes.marktiabackend.dtos.requests.UserRequestDTO;
 import ufes.marktiabackend.dtos.responses.UserResponseDTO;
-import ufes.marktiabackend.exceptionhandler.MarktIAExceptionHandler;
 import ufes.marktiabackend.entities.User;
+import ufes.marktiabackend.exceptionhandler.MarktIAExceptionHandler;
 import ufes.marktiabackend.repositories.UserRepository;
 import ufes.marktiabackend.services.UserService;
 import ufes.marktiabackend.services.exception.NonExistentAddressException;
@@ -20,20 +20,13 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
     private final MessageSource messageSource;
     private final UserRepository userRepository;
-    private final ApplicationEventPublisher publisher;
-
-    public UserController(UserService userService, MessageSource messageSource, UserRepository userRepository, ApplicationEventPublisher publisher) {
-        this.userService = userService;
-        this.messageSource = messageSource;
-        this.userRepository = userRepository;
-        this.publisher = publisher;
-    }
 
     @GetMapping("/{user-id}")
     public ResponseEntity<UserResponseDTO> getById(@PathVariable("user-id") String userId) {
