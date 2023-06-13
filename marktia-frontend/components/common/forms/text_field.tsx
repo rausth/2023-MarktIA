@@ -32,6 +32,7 @@ const TextField: React.FC<Props> = ({
 							onChange(e)
 					}
 				})}
+				step={type === "number" ? ".01" : ""}
 			/>
 		</label>
 	);

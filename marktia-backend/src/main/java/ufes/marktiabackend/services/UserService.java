@@ -1,5 +1,6 @@
 package ufes.marktiabackend.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,8 +11,8 @@ import ufes.marktiabackend.entities.Address;
 import ufes.marktiabackend.entities.User;
 import ufes.marktiabackend.repositories.AddressRepository;
 import ufes.marktiabackend.repositories.UserRepository;
-import ufes.marktiabackend.services.exception.NonExistentAddressException;
-import ufes.marktiabackend.services.exception.NullAddressIdException;
+import ufes.marktiabackend.exceptionhandler.custom.NonExistentAddressException;
+import ufes.marktiabackend.exceptionhandler.custom.NullAddressIdException;
 
 import java.util.Optional;
 
@@ -43,6 +44,13 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         return project(savedUser);
+    }
+
+    public AddressResponseDTO getAddress(String userId) {
+        User user = userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
+
+        return addressService.project(user.getAddress());
     }
 
     public UserResponseDTO project(@Valid User user) {

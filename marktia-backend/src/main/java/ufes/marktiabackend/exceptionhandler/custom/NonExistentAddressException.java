@@ -1,4 +1,4 @@
-package ufes.marktiabackend.services.exception;
+package ufes.marktiabackend.exceptionhandler.custom;
 
 public class NonExistentAddressException extends RuntimeException {
 }

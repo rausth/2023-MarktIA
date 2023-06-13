@@ -11,7 +11,7 @@ const fetchServices = async () => {
     const session = await getServerSession(authOptions);
 
     if (session) {
-        return ServicesController.getAll({ myServices: false }, session.user.token)
+        return ServicesController.getAll({}, session.user.token)
             .then((response: AxiosResponse<ServiceBasicInfoResponseDTO[]>) => response.data)
             .catch(() => [])
     } else {

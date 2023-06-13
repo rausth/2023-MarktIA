@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ufes.marktiabackend.exceptionhandler.custom.NonAvailableTokenException;
+import ufes.marktiabackend.exceptionhandler.custom.NonExistentAddressException;
+import ufes.marktiabackend.exceptionhandler.custom.NullAddressIdException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,6 +119,24 @@ public class MarktIAExceptionHandler extends ResponseEntityExceptionHandler {
         List<Error> errors = List.of(new Error(userMessage, developerMessage));
 
         return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+
+    @ExceptionHandler({ NonExistentAddressException.class })
+    public ResponseEntity<Object> handleNonExistentAddressException(NonExistentAddressException ex) {
+        String userMessage = messageSource.getMessage("resource.non-existent-address", null, LocaleContextHolder.getLocale());
+        String developerMessage = ex.toString();
+        List<MarktIAExceptionHandler.Error> errors = List.of(new MarktIAExceptionHandler.Error(userMessage, developerMessage));
+
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler({ NullAddressIdException.class })
+    public ResponseEntity<Object> handleNullAddressIdException(NullAddressIdException ex) {
+        String userMessage = messageSource.getMessage("resource.null-address-id", null, LocaleContextHolder.getLocale());
+        String developerMessage = ex.toString();
+        List<MarktIAExceptionHandler.Error> errors = List.of(new MarktIAExceptionHandler.Error(userMessage, developerMessage));
+
+        return ResponseEntity.badRequest().body(errors);
     }
 
     private List<Error> createErrorList(BindingResult bindingResult) {

@@ -3,7 +3,8 @@ import { FederationResponseDTO } from "../federations/federationResponseDTO";
 export type AddressResponseDTO = {
     id: string;
     federation: FederationResponseDTO;
+    district: string;
     publicPlace: string;
-    number: number;
+    number: string;
     complement: string;
 }

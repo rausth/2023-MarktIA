@@ -8,13 +8,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ufes.marktiabackend.dtos.requests.UserRequestDTO;
+import ufes.marktiabackend.dtos.responses.AddressResponseDTO;
 import ufes.marktiabackend.dtos.responses.user.UserResponseDTO;
 import ufes.marktiabackend.entities.User;
 import ufes.marktiabackend.exceptionhandler.MarktIAExceptionHandler;
 import ufes.marktiabackend.repositories.UserRepository;
 import ufes.marktiabackend.services.UserService;
-import ufes.marktiabackend.services.exception.NonExistentAddressException;
-import ufes.marktiabackend.services.exception.NullAddressIdException;
+import ufes.marktiabackend.exceptionhandler.custom.NonExistentAddressException;
+import ufes.marktiabackend.exceptionhandler.custom.NullAddressIdException;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,6 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    private final MessageSource messageSource;
     private final UserRepository userRepository;
 
     @GetMapping("/{user-id}")
@@ -37,6 +37,11 @@ public class UserController {
             return ResponseEntity.ok(userDTO);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{user-id}/address")
+    public ResponseEntity<AddressResponseDTO> getAddress(@PathVariable("user-id") String userId) {
+        return ResponseEntity.ok(userService.getAddress(userId));
     }
 
     @PutMapping("/{user-id}")
@@ -51,23 +56,5 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("user-id") String userId) {
         userRepository.deleteById(Long.valueOf(userId));
-    }
-
-    @ExceptionHandler({ NonExistentAddressException.class })
-    public ResponseEntity<Object> handleNonExistentAddressException(NonExistentAddressException ex) {
-        String userMessage = messageSource.getMessage("resource.non-existent-address", null, LocaleContextHolder.getLocale());
-        String developerMessage = ex.toString();
-        List<MarktIAExceptionHandler.Error> errors = List.of(new MarktIAExceptionHandler.Error(userMessage, developerMessage));
-
-        return ResponseEntity.badRequest().body(errors);
-    }
-
-    @ExceptionHandler({ NullAddressIdException.class })
-    public ResponseEntity<Object> handleNullAddressIdException(NullAddressIdException ex) {
-        String userMessage = messageSource.getMessage("resource.null-address-id", null, LocaleContextHolder.getLocale());
-        String developerMessage = ex.toString();
-        List<MarktIAExceptionHandler.Error> errors = List.of(new MarktIAExceptionHandler.Error(userMessage, developerMessage));
-
-        return ResponseEntity.badRequest().body(errors);
     }
 }

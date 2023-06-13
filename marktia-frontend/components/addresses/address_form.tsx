@@ -1,12 +1,12 @@
 "use client";
 
 import { FederationController } from "@/controllers/federation";
-import { DistrictResponseDTO } from "@/dtos/responses/federations/districtResponseDTO";
+import { DistrictResponseDTO } from "@/dtos/responses/federations/countyResponseDTO";
 import { RegionResponseDTO } from "@/dtos/responses/federations/regionResponseDTO";
 import { StateResponseDTO } from "@/dtos/responses/federations/stateResponseDTO";
 import { AxiosResponse } from "axios";
 import { enqueueSnackbar } from "notistack";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TextField from "../common/forms/text_field";
 import TextArea from "../common/forms/textarea";
 import SelectObject from "../common/forms/select_object";
@@ -25,6 +25,9 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors }: Ad
     const [currentSelectedRegionId, setCurrentSelectedRegionId] = useState<string | undefined>(undefined);
 
     const [countys, setCountys] = useState<Array<{ id: string, name: string }>>([]);
+    const [currentSelectedCountyId, setCurrentSelectedCountyId] = useState<string | undefined>(undefined);
+
+    const isFirstRender = useRef(true);
 
     const fetchStates = () => {
         FederationController.getStates()
@@ -56,7 +59,12 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors }: Ad
 
     useEffect(() => {
         if (states.length > 0) {
-            setCurrentSelectedStateId(states[0].id);
+            if (isFirstRender.current && onlyFederationInfo) {
+                setCurrentSelectedStateId(undefined);
+                isFirstRender.current = false;
+            } else {
+                setCurrentSelectedStateId(states[0].id);
+            }
         } else {
             setCurrentSelectedStateId(undefined);
         }
@@ -67,6 +75,7 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors }: Ad
             setValue("state", currentSelectedStateId);
             fetchRegions(currentSelectedStateId);
         } else {
+            setValue("state", undefined);
             setRegions([]);
         }
     }, [currentSelectedStateId]);
@@ -84,15 +93,26 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors }: Ad
             setValue("region", currentSelectedRegionId);
             fetchCountys(currentSelectedStateId, currentSelectedRegionId);
         } else {
+            setValue("region", undefined);
             setCountys([]);
         }
     }, [currentSelectedRegionId]);
 
     useEffect(() => {
         if (countys.length > 0) {
-            setValue("county", countys[0].id);
+            setCurrentSelectedCountyId(countys[0].id);
+        } else {
+            setCurrentSelectedCountyId(undefined);
         }
-    }, [countys])
+    }, [countys]);
+
+    useEffect(() => {
+        if (currentSelectedStateId && currentSelectedRegionId && currentSelectedCountyId) {
+            setValue("county", countys[0].id);
+        } else {
+            setValue("county", undefined);
+        }
+    }, [currentSelectedCountyId]);
 
     return (
         <div>

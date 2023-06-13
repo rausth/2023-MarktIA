@@ -4,13 +4,12 @@ import Select from "@/components/common/forms/select";
 import TextField from "@/components/common/forms/text_field";
 import Modal from "@/components/common/modal"
 import { ServiceType, ServiceTypeUtils } from "@/enums/serviceType";
-import { ServicesFilter } from "@/utils/servicesFilter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 
 type ServicesFilterModalProps = {
-    onSubmission: (servicesFilter: ServicesFilter) => void;
+    onSubmission: (name: string | null, type: number | null, stateId: string | null, regionId: string | null, countyId: string | null) => void;
     close: () => void;
 }
 
@@ -20,11 +19,11 @@ const servicesFilterFormSchema = z.object({
     type: z.string()
         .nullable(),
     state: z.number()
-        .nullable(),
+        .nullish(),
     region: z.number()
-        .nullable(),
-    district: z.number()
-        .nullable()
+        .nullish(),
+    county: z.number()
+        .nullish(),
 });
 type ServicesFilterFormData = z.infer<typeof servicesFilterFormSchema>;
 
@@ -32,28 +31,25 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
     const servicesFilterForm = useForm<ServicesFilterFormData>({
         resolver: zodResolver(servicesFilterFormSchema),
         defaultValues: {
-            name: "",
-            type: "",
+            name: null,
+            type: null,
             state: undefined,
             region: undefined,
-            district: undefined
+            county: undefined
         }
     });
-    const { handleSubmit, formState: { errors }, reset } = servicesFilterForm;
+    const { handleSubmit, formState: { errors }, reset, setValue } = servicesFilterForm;
 
     return (
         <Modal title="Filtrar Serviços" close={close}>
             <FormProvider {...servicesFilterForm}>
                 <form onSubmit={handleSubmit((servicesFilterFormData: ServicesFilterFormData) => {
-                    onSubmission({
-                        name: servicesFilterFormData.name,
-                        type: servicesFilterFormData.type ? ServiceTypeUtils.toNumber(servicesFilterFormData.type) : null,
-                        federation: {
-                            stateId: servicesFilterFormData.state ? servicesFilterFormData.state.toString() : null,
-                            regionId: servicesFilterFormData.region ? servicesFilterFormData.region.toString() : null,
-                            districtId: servicesFilterFormData.district ? servicesFilterFormData.district.toString() : null,
-                        }
-                    });
+                    onSubmission(servicesFilterFormData.name,
+                        servicesFilterFormData.type ? ServiceTypeUtils.toNumber(servicesFilterFormData.type)! : null,
+                        servicesFilterFormData.state ? servicesFilterFormData.state.toString() : null,
+                        servicesFilterFormData.region ? servicesFilterFormData.region.toString() : null,
+                        servicesFilterFormData.county ? servicesFilterFormData.county.toString() : null,
+                    );
 
                     close();
                 })}>
@@ -76,7 +72,7 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
                         {errors.type && <span className="text-xs text-red mt-1">{errors.type.message}</span>}
                     </div>
 
-                    <AddressForm onlyFederationInfo={true} errors={errors} />
+                    <AddressForm onlyFederationInfo={true} setValue={setValue} errors={errors} />
 
                     <div className="flex justify-center items-center mt-5">
                         <Button color="gray" className="mr-2" onClick={() => reset()}>Cancelar</Button>

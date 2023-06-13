@@ -1,5 +1,5 @@
 import { axiosAPI } from "@/configs/axios";
-import { DistrictResponseDTO } from "@/dtos/responses/federations/districtResponseDTO";
+import { DistrictResponseDTO } from "@/dtos/responses/federations/countyResponseDTO";
 import { RegionResponseDTO } from "@/dtos/responses/federations/regionResponseDTO";
 import { StateResponseDTO } from "@/dtos/responses/federations/stateResponseDTO";
 import { AxiosResponse } from "axios";

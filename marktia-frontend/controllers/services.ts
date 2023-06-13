@@ -34,15 +34,13 @@ export const ServicesController = {
 const getURLParams = (servicesFilter: ServicesFilter) => {
     let url = "?";
 
-    if (servicesFilter.myServices) url += `myServices=${servicesFilter.myServices}&`;
-    if (servicesFilter.name) url += `name=${servicesFilter.name}&`;
-    if (servicesFilter.type) url += `type=${servicesFilter.type}&`;
+    url += `providerId=${servicesFilter.providerId ? servicesFilter.providerId : ""}&`;
+    url += `name=${servicesFilter.name ? servicesFilter.name : ""}&`;
+    url += `type=${servicesFilter.type ? servicesFilter.type : ""}&`;
 
-    if (servicesFilter.federation) {
-        if (servicesFilter.federation.stateId) url += `stateId=${servicesFilter.federation.stateId}&`;
-        if (servicesFilter.federation.regionId) url += `stateId=${servicesFilter.federation.regionId}&`;
-        if (servicesFilter.federation.countyId) url += `countyId=${servicesFilter.federation.stateId}&`;
-    }
+    url += `stateId=${servicesFilter.federation?.stateId ? servicesFilter.federation.stateId : ""}&`;
+    url += `regionId=${servicesFilter.federation?.regionId ? servicesFilter.federation.regionId : ""}&`;
+    url += `countyId=${servicesFilter.federation?.countyId ? servicesFilter.federation.countyId : ""}&`;
 
     return url;
 }
