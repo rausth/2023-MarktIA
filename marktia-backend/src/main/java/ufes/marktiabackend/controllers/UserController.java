@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ufes.marktiabackend.dtos.requests.UserRequestDTO;
-import ufes.marktiabackend.dtos.responses.UserResponseDTO;
+import ufes.marktiabackend.dtos.responses.user.UserResponseDTO;
 import ufes.marktiabackend.entities.User;
 import ufes.marktiabackend.exceptionhandler.MarktIAExceptionHandler;
 import ufes.marktiabackend.repositories.UserRepository;

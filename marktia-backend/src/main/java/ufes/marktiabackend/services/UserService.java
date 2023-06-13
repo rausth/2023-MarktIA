@@ -2,11 +2,10 @@ package ufes.marktiabackend.services;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ufes.marktiabackend.dtos.requests.UserRequestDTO;
 import ufes.marktiabackend.dtos.responses.AddressResponseDTO;
-import ufes.marktiabackend.dtos.responses.UserResponseDTO;
+import ufes.marktiabackend.dtos.responses.user.UserResponseDTO;
 import ufes.marktiabackend.entities.Address;
 import ufes.marktiabackend.entities.User;
 import ufes.marktiabackend.repositories.AddressRepository;
@@ -23,14 +22,13 @@ public class UserService {
     private final AddressRepository addressRepository;
     private final UserRepository userRepository;
 
-    public User getById(Long user_id) {
-        Optional<User> user = userRepository.findById(user_id);
+    public Optional<User> userById(String userId) {
+        return userRepository.findById(Long.valueOf(userId));
+    }
+    public UserResponseDTO responseDTOById(String userId) {
+        Optional<User> user = userRepository.findById(Long.valueOf(userId));
 
-        if (user.isEmpty()) {
-            throw new EmptyResultDataAccessException(1);
-        }
-
-        return user.get();
+        return user.map(this::project).orElse(null);
     }
 
     public UserResponseDTO verifyAndSave(@Valid User user) {

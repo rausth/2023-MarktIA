@@ -2,6 +2,7 @@ package ufes.marktiabackend.services;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ufes.marktiabackend.dtos.requests.ServiceRequestDTO;
 import ufes.marktiabackend.dtos.responses.AddressResponseDTO;
@@ -34,7 +35,11 @@ public class ServiceService {
         return new LinkedList<>();
     }
 
-    public ServiceResponseDTO getById(String serviceId) {
+    public Optional<ufes.marktiabackend.entities.Service> serviceById(String serviceId) {
+        return serviceRepository.findById(Long.valueOf(serviceId));
+    }
+
+    public ServiceResponseDTO responseDTOById(String serviceId) {
         Optional<ufes.marktiabackend.entities.Service> service = serviceRepository.findById(Long.valueOf(serviceId));
 
         return service.map(this::project).orElse(null);
@@ -81,7 +86,12 @@ public class ServiceService {
     }
 
     public ServiceResponseDTO create(@Valid ServiceRequestDTO serviceRequestDTO) {
-        User provider = userService.getById(Long.valueOf(serviceRequestDTO.getProviderId()));
+        Optional<User> optUser = userService.userById(serviceRequestDTO.getProviderId());
+
+        if (optUser.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        User provider = optUser.get();
         Address address;
 
         if (serviceRequestDTO.getAddress() != null) {
@@ -94,6 +104,8 @@ public class ServiceService {
                     .number(serviceRequestDTO.getAddress().getNumber())
                     .complement(serviceRequestDTO.getAddress().getComplement())
                     .build();
+
+            addressService.save(address);
         } else {
             address = addressService.getById(provider.getAddress().getId());
         }
