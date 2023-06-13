@@ -3,6 +3,7 @@ package ufes.marktiabackend.dtos.requests.auth;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ufes.marktiabackend.dtos.requests.AddressRequestDTO;
 
 @Data
 @NoArgsConstructor
@@ -22,11 +23,7 @@ public class RegisterRequestDTO {
 
     private String telephone;
 
-    /**
-     * [TODO]
-     * Ver como será questão do endereço
-     */
-    private String addressId;
+    private AddressRequestDTO address;
 
     private String imageURL;
 }

@@ -46,7 +46,7 @@ public class Federation {
 
     private Long municipio;
 
-    @Column(name = "codigo_municipio_completo")
+    @Column(name = "codigo_municipio_completo", unique = true)
     private Long codigoMunicipioCompleto;
 
     @Column(name = "nome_municipio")
