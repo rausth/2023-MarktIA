@@ -13,18 +13,12 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
-                /**
-                 * [TODO]
-                 */
-                // return AuthController.authenticate(credentials!)
-                //     .then((response: AxiosResponse<AuthResponseDTO>) => response.data)
-                //     .catch(() => null)
-
-                return {
-                    id: "0",
-                    name: "aaaa",
-                    token: "dsadsad"
-                }
+                return AuthController.authenticate({
+                    email: credentials?.email!,
+                    password: credentials?.password!
+                })
+                    .then((response: AxiosResponse<AuthResponseDTO>) => response.data)
+                    .catch(() => null)
             }
         })
     ],
@@ -39,6 +33,9 @@ export const authOptions: NextAuthOptions = {
     },
     pages: {
         signIn: "/auth/login"
+    },
+    session: {
+        maxAge: 1 * 60 * 60
     }
 }
 

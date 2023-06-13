@@ -13,17 +13,18 @@ import SelectObject from "../common/forms/select_object";
 
 type AddressFormProps = {
     onlyFederationInfo?: boolean;
+    setValue: any;
     errors: any;
 }
 
-export default function AddressForm({ onlyFederationInfo, errors }: AddressFormProps) {
+export default function AddressForm({ onlyFederationInfo, setValue, errors }: AddressFormProps) {
     const [states, setStates] = useState<Array<{ id: string, name: string }>>([]);
     const [currentSelectedStateId, setCurrentSelectedStateId] = useState<string | undefined>(undefined);
 
     const [regions, setRegions] = useState<Array<{ id: string, name: string }>>([]);
     const [currentSelectedRegionId, setCurrentSelectedRegionId] = useState<string | undefined>(undefined);
 
-    const [districts, setDistricts] = useState<Array<{ id: string, name: string }>>([]);
+    const [countys, setCountys] = useState<Array<{ id: string, name: string }>>([]);
 
     const fetchStates = () => {
         FederationController.getStates()
@@ -41,9 +42,9 @@ export default function AddressForm({ onlyFederationInfo, errors }: AddressFormP
             }));
     }
 
-    const fetchDistricts = (regionId: string) => {
-        FederationController.getDistrictsByRegion(regionId)
-            .then((response: AxiosResponse<DistrictResponseDTO[]>) => setDistricts(response.data))
+    const fetchCountys = (stateId: string, regionId: string) => {
+        FederationController.getCountysByStateAndRegion(stateId, regionId)
+            .then((response: AxiosResponse<DistrictResponseDTO[]>) => setCountys(response.data))
             .catch(() => enqueueSnackbar("Erro ao carregar os municípios", {
                 variant: "error"
             }));
@@ -63,6 +64,7 @@ export default function AddressForm({ onlyFederationInfo, errors }: AddressFormP
 
     useEffect(() => {
         if (currentSelectedStateId) {
+            setValue("state", currentSelectedStateId);
             fetchRegions(currentSelectedStateId);
         } else {
             setRegions([]);
@@ -78,12 +80,19 @@ export default function AddressForm({ onlyFederationInfo, errors }: AddressFormP
     }, [regions]);
 
     useEffect(() => {
-        if (currentSelectedRegionId) {
-            fetchDistricts(currentSelectedRegionId);
+        if (currentSelectedStateId && currentSelectedRegionId) {
+            setValue("region", currentSelectedRegionId);
+            fetchCountys(currentSelectedStateId, currentSelectedRegionId);
         } else {
-            setDistricts([]);
+            setCountys([]);
         }
     }, [currentSelectedRegionId]);
+
+    useEffect(() => {
+        if (countys.length > 0) {
+            setValue("county", countys[0].id);
+        }
+    }, [countys])
 
     return (
         <div>
@@ -97,6 +106,7 @@ export default function AddressForm({ onlyFederationInfo, errors }: AddressFormP
                         toStringFunction={(state: { id: string, name: string }) => state.name}
                         onChangeFunction={(stateId: string) => setCurrentSelectedStateId(stateId)}
                     />
+                    {errors.state && <span className="text-xs text-red mt-1">{errors.state.message}</span>}
                 </div>
                 <div className="p-1">
                     <SelectObject
@@ -107,21 +117,31 @@ export default function AddressForm({ onlyFederationInfo, errors }: AddressFormP
                         toStringFunction={(region: { id: string, name: string }) => region.name}
                         onChangeFunction={(regionId: string) => setCurrentSelectedRegionId(regionId)}
                     />
+                    {errors.region && <span className="text-xs text-red mt-1">{errors.region.message}</span>}
                 </div>
                 <div className="p-1">
                     <SelectObject
                         title="Município"
-                        name="district"
-                        objects={districts}
+                        name="county"
+                        objects={countys}
                         includeEmptyOption={onlyFederationInfo ? true : false}
-                        toStringFunction={(district: { id: string, name: string }) => district.name}
+                        toStringFunction={(county: { id: string, name: string }) => county.name}
                     />
+                    {errors.county && <span className="text-xs text-red mt-1">{errors.county.message}</span>}
                 </div>
             </div>
 
             {!onlyFederationInfo && (
                 <div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-3 gap-2">
+                        <div className="p-1">
+                            <TextField
+                                type="text"
+                                label="Bairro"
+                                name="district"
+                            />
+                            {errors.district && <span className="text-xs text-red mt-1">{errors.district.message}</span>}
+                        </div>
                         <div className="p-1">
                             <TextField
                                 type="text"
@@ -132,7 +152,7 @@ export default function AddressForm({ onlyFederationInfo, errors }: AddressFormP
                         </div>
                         <div className="p-1">
                             <TextField
-                                type="number"
+                                type="text"
                                 label="Número"
                                 name="number"
                             />

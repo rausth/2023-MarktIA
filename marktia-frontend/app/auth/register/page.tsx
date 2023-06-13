@@ -17,7 +17,7 @@ import AddressForm from "@/components/addresses/address_form";
 import { BiMap, BiUser } from "react-icons/bi";
 
 const registerFormSchema = z.object({
-    role: z.string(),
+    userRole: z.string(),
     name: z.string()
         .nonempty({
             message: "O nome não pode ser vazio."
@@ -70,18 +70,22 @@ const registerFormSchema = z.object({
         required_error: "A região não pode ser vazia.",
         invalid_type_error: "Região inválida"
     }),
-    district: z.number({
+    county: z.number({
         required_error: "O município não pode ser vazio.",
         invalid_type_error: "Município inválido"
     }),
+    district: z.string()
+        .nonempty({
+            message: "O bairro não pode ser vazio."
+        }),
     publicPlace: z.string()
         .nonempty({
             message: "A rua não pode ser vazia."
         }),
-    number: z.number({
-        required_error: "O número não pode ser vazio.",
-        invalid_type_error: "Número inválido"
-    }),
+    number: z.string()
+        .nonempty({
+            message: "O número não pode ser vazio."
+        }),
     complement: z.string()
         .nullable()
 });
@@ -96,23 +100,24 @@ export default function RegisterPage() {
     const registerForm = useForm<RegisterFormData>({
         resolver: zodResolver(registerFormSchema),
         defaultValues: {
-            role: UserRole.NORMAL_USER,
+            userRole: UserRole.NORMAL_USER,
             name: "",
             email: "",
             password: "",
             cpf: "",
-            cnpj: undefined,
+            cnpj: null,
             telephone: "",
-            imageURL: undefined,
+            imageURL: null,
             state: undefined,
             region: undefined,
-            district: undefined,
+            county: undefined,
+            district: "",
             publicPlace: "",
-            number: undefined,
+            number: "",
             complement: ""
         }
     });
-    const { handleSubmit, trigger, formState: { errors, isValidating } } = registerForm;
+    const { handleSubmit, trigger, setValue, formState: { errors, isValidating } } = registerForm;
 
     useEffect(() => {
         if (isTriggered && !isValidating && !errors.name && !errors.email && !errors.password && !errors.cpf && !errors.telephone) {
@@ -138,14 +143,21 @@ export default function RegisterPage() {
     return (
         <FormProvider {...registerForm}>
             <form onSubmit={handleSubmit((registerFormData: RegisterFormData) => handleRegisterFormSubmission({
-                ...registerFormData,
-                userRole: UserRoleUtils.toNumber(registerFormData.role)!,
+                userRole: UserRoleUtils.toNumber(registerFormData.userRole)!,
+                name: registerFormData.name,
+                email: registerFormData.email,
+                password: registerFormData.password,
+                cpf: registerFormData.cpf,
+                cnpj: registerFormData.cnpj,
+                telephone: registerFormData.telephone,
                 address: {
-                    districtId: registerFormData.district.toString(),
+                    countyId: registerFormData.county.toString(),
+                    district: registerFormData.district,
                     publicPlace: registerFormData.publicPlace,
                     number: registerFormData.number,
                     complement: registerFormData.complement
-                }
+                },
+                imageURL: registerFormData.imageURL
             }))}>
                 {!isAddressSectionVisible ? (
                     <div>
@@ -153,10 +165,10 @@ export default function RegisterPage() {
                             <div className="p-1">
                                 <Select
                                     title="Classificação"
-                                    name="role"
+                                    name="userRole"
                                     options={Object.values(UserRole)}
                                 />
-                                {errors.role && <span className="text-xs text-red mt-1">{errors.role.message}</span>}
+                                {errors.userRole && <span className="text-xs text-red mt-1">{errors.userRole.message}</span>}
                             </div>
                             <div className="p-1">
                                 <TextField
@@ -227,7 +239,7 @@ export default function RegisterPage() {
                         </div>
                     </div>
                 ) : (
-                    <AddressForm errors={errors} />
+                    <AddressForm setValue={setValue} errors={errors} />
                 )}
 
                 <div className="flex justify-between items-center mt-5">

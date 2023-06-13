@@ -39,7 +39,7 @@ export default function LoginPage() {
 
     const handleLoginFormSubmission = async (email: string, password: string) => {
         const result = await signIn("credentials", {
-            username: email,
+            email: email,
             password: password,
             redirect: false
         });

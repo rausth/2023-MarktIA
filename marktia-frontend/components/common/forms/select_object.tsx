@@ -18,6 +18,7 @@ export default function SelectObject({ title, name, objects, includeEmptyOption,
 			<select
 				className="w-full text-zinc-500 w-100 justify-between rounded-lg p-2 mt-1 bg-white"
 				{...register(name, {
+                    valueAsNumber: true,
 					onChange: (e) => {
                         setValue(name, e.target.value);
                 
@@ -26,12 +27,13 @@ export default function SelectObject({ title, name, objects, includeEmptyOption,
                         }
                     }
 				})}
+                name={name}
 			>
                 {includeEmptyOption && (
 					<option value={undefined}></option>
 				)}
 				{objects.map((object, i) => (
-					<option key={i} value={object.id}>
+					<option key={i} value={Number(object.id)}>
 						{toStringFunction(object)}
 					</option>
 				))}

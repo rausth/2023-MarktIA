@@ -13,7 +13,7 @@ export const FederationController = {
         return axiosAPI.get(`/federations/regions?stateId=${stateId}`);
     },
 
-    getDistrictsByRegion(regionId: string): Promise<AxiosResponse<DistrictResponseDTO[]>> {
-        return axiosAPI.get(`/federations/districts?regionId=${regionId}`);
+    getCountysByStateAndRegion(stateId: string, regionId: string): Promise<AxiosResponse<DistrictResponseDTO[]>> {
+        return axiosAPI.get(`/federations/countys?stateId=${stateId}&regionId=${regionId}`);
     }
 }

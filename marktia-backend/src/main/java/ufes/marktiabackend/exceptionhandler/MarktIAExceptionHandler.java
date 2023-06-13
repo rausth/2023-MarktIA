@@ -39,6 +39,7 @@ public class MarktIAExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers,
                                                                   HttpStatusCode status,
                                                                   WebRequest request) {
+        ex.printStackTrace();
 
         String userMessage = messageSource.getMessage("invalid.message", null, LocaleContextHolder.getLocale());
         String developerMessage = Optional.ofNullable(ex.getCause()).orElse(ex).toString();
@@ -70,6 +71,8 @@ public class MarktIAExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ DataIntegrityViolationException.class })
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
+        ex.printStackTrace();
+
         String userMessage = messageSource.getMessage("resource.operation-not-allowed", null, LocaleContextHolder.getLocale());
         String developerMessage = ExceptionUtils.getRootCauseMessage(ex);
         List<Error> errors = List.of(new Error(userMessage, developerMessage));

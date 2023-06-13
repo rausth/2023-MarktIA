@@ -7,7 +7,7 @@ export type Federation = {
         id: string;
         name: string;
     };
-    district: {
+    county: {
         id: string;
         name: string;
     };
