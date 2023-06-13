@@ -2,6 +2,7 @@ package ufes.marktiabackend.exceptionhandler;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -59,6 +60,17 @@ public class MarktIAExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, errors, headers, HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler({ RuntimeException.class })
+    public ResponseEntity<Object> runtimeExceptionHandler(RuntimeException ex, WebRequest request) {
+        ex.printStackTrace();
+
+        String userMessage = messageSource.getMessage("resource.runtime-error", null, LocaleContextHolder.getLocale());
+        String developerMessage = ExceptionUtils.getRootCauseMessage(ex);
+        List<Error> errors = List.of(new Error(userMessage, developerMessage));
+
+        return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
     @ExceptionHandler({ EmptyResultDataAccessException.class })
     public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex, WebRequest request) {
 
@@ -78,6 +90,15 @@ public class MarktIAExceptionHandler extends ResponseEntityExceptionHandler {
         List<Error> errors = List.of(new Error(userMessage, developerMessage));
 
         return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({MalformedJwtException.class})
+    public ResponseEntity<Object> malformedJwtExceptionHandler(MalformedJwtException ex, WebRequest request) {
+        String userMessage = messageSource.getMessage("resource.malformed-jwt", null, LocaleContextHolder.getLocale());
+        String developerMessage = ExceptionUtils.getRootCauseMessage(ex);
+        List<Error> errors = List.of(new Error(userMessage, developerMessage));
+
+        return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
     @ExceptionHandler({ExpiredJwtException.class})

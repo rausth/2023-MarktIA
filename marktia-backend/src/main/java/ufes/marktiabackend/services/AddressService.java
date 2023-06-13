@@ -3,6 +3,8 @@ package ufes.marktiabackend.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import ufes.marktiabackend.dtos.responses.AddressResponseDTO;
+import ufes.marktiabackend.dtos.responses.federation.FederationFieldResponseDTO;
 import ufes.marktiabackend.entities.Address;
 import ufes.marktiabackend.repositories.AddressRepository;
 
@@ -28,4 +30,25 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
+    public AddressResponseDTO project(Address address) {
+        return AddressResponseDTO.builder()
+                .id(address.getId().toString())
+                .state(FederationFieldResponseDTO.builder()
+                        .id(address.getFederation().getUf().toString())
+                        .name(address.getFederation().getState())
+                        .build())
+                .region(FederationFieldResponseDTO.builder()
+                        .id(address.getFederation().getMicrorregiaoGeografica().toString())
+                        .name(address.getFederation().getNomeMicrorregiao())
+                        .build())
+                .county(FederationFieldResponseDTO.builder()
+                        .id(address.getFederation().getCodigoMunicipioCompleto().toString())
+                        .name(address.getFederation().getCounty())
+                        .build())
+                .district(address.getDistrict())
+                .publicPlace(address.getPublicPlace())
+                .number(address.getNumber())
+                .complement(address.getComplement())
+                .build();
+    }
 }

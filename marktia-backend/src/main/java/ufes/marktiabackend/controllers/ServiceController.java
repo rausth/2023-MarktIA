@@ -19,12 +19,14 @@ public class ServiceController {
 
     @GetMapping
     public ResponseEntity<List<ServiceBasicResponseDTO>> getAll(
-            @RequestParam Boolean myServices,
-            @RequestParam String name,
-            @RequestParam String addressId,
-            @RequestParam Integer type
+            @RequestParam(required = false) String providerId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer type,
+            @RequestParam(required = false) String stateId,
+            @RequestParam(required = false) String regionId,
+            @RequestParam(required = false) String countyId
     ) {
-        return ResponseEntity.ok(serviceService.getAll(myServices, name, addressId, type));
+        return ResponseEntity.ok(serviceService.getAll(providerId, name, type, stateId, regionId, countyId));
     }
 
     @GetMapping("/{service-id}")

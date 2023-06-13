@@ -18,6 +18,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final AddressService addressService;
 
     private final AddressRepository addressRepository;
     private final UserRepository userRepository;
@@ -52,15 +53,7 @@ public class UserService {
                 .cpf(user.getCpf())
                 .cnpj(user.getCnpj())
                 .telephone(user.getTelephone())
-                .address(AddressResponseDTO.builder()
-                        .id(user.getAddress().getId().toString())
-                        .state(user.getAddress().getFederation().getState())
-                        .county(user.getAddress().getFederation().getCounty())
-                        .district(user.getAddress().getDistrict())
-                        .publicPlace(user.getAddress().getPublicPlace())
-                        .number(user.getAddress().getNumber())
-                        .complement(user.getAddress().getComplement())
-                        .build())
+                .address(addressService.project(user.getAddress()))
                 .userRole(user.getUserRole().getValue())
                 .creationDate(user.getCreationDate().toString())
                 .updateDate(user.getUpdateDate().toString())
