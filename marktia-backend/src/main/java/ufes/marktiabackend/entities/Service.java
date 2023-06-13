@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ufes.marktiabackend.enums.ServiceType;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -26,7 +28,7 @@ public class Service {
     @JoinColumn(name = "provider_id")
     private User provider;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "address_id")
     private Address address;
 
@@ -47,5 +49,8 @@ public class Service {
     @Size(min = 5, max = 100)
     @Column(name = "picpay_user")
     private String picpayUser;
+
+    @OneToMany(mappedBy = "service", fetch = FetchType.EAGER)
+    private List<Scheduling> schedulings;
 
 }

@@ -1,16 +1,14 @@
 package ufes.marktiabackend.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ufes.marktiabackend.dtos.requests.ServiceRequestDTO;
 import ufes.marktiabackend.dtos.responses.AddressResponseDTO;
-import ufes.marktiabackend.dtos.responses.federation.FederationFieldResponseDTO;
 import ufes.marktiabackend.dtos.responses.service.ServiceBasicResponseDTO;
 import ufes.marktiabackend.dtos.responses.service.ServiceResponseDTO;
 import ufes.marktiabackend.dtos.responses.user.UserBasicResponseDTO;
-import ufes.marktiabackend.dtos.responses.user.UserResponseDTO;
 import ufes.marktiabackend.entities.Address;
 import ufes.marktiabackend.entities.Federation;
 import ufes.marktiabackend.entities.User;
@@ -19,7 +17,6 @@ import ufes.marktiabackend.filters.servicesfilter.ServicesFilter;
 import ufes.marktiabackend.filters.servicesfilter.ServicesFilterSpecification;
 import ufes.marktiabackend.repositories.ServiceRepository;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,11 +72,11 @@ public class ServiceService {
         Optional<User> optUser = userService.userById(serviceRequestDTO.getProviderId());
 
         if (optUser.isEmpty()) {
-            throw new EmptyResultDataAccessException(1);
+            throw new EntityNotFoundException("Usuário não encontrado.");
         }
         User provider = optUser.get();
 
-        Address address = null;
+        Address address = provider.getAddress();
         if (serviceRequestDTO.getAddress() != null) {
             Federation federation = federationService.getByCounty(Long.valueOf(serviceRequestDTO.getAddress().getCountyId()));
 

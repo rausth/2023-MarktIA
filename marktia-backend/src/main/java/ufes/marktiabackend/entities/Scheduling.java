@@ -40,4 +40,6 @@ public class Scheduling {
     @Column(name = "dt_completion")
     private LocalDate completionDate;
 
+    @OneToOne(mappedBy = "scheduling")
+    private Evaluation evaluation;
 }
