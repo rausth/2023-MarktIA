@@ -186,7 +186,6 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                                 type="number"
                                 label="Preço"
                                 name="price"
-                                step=".0.1"
                             />
                             {errors.price && <span className="text-xs text-red mt-1">{errors.price.message}</span>}
                         </div>
