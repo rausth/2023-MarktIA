@@ -12,4 +12,10 @@ public class SchedulingResponseDTO {
     private String serviceId;
 
     private UserResponseDTO consumer;
+
+    private Integer status;
+
+    private String creationDate;
+
+    private String completionDate;
 }

@@ -27,6 +27,8 @@ public class ServiceService {
 
     private final UserService userService;
     private final AddressService addressService;
+    private final SchedulingService schedulingService;
+
     private final ServiceRepository serviceRepository;
     private final FederationService federationService;
 
@@ -120,6 +122,11 @@ public class ServiceService {
                 .description(service.getDescription())
                 .price(service.getPrice())
                 .picpayUser(service.getPicpayUser())
+                .schedulings(service.getSchedulings()
+                        .stream()
+                        .map(scheduling -> schedulingService.project(scheduling))
+                        .collect(Collectors.toList())
+                )
                 .build();
     }
 }

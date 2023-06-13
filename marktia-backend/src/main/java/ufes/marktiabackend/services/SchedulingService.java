@@ -16,6 +16,7 @@ import ufes.marktiabackend.enums.SchedulingStatus;
 import ufes.marktiabackend.filters.schedulingsfilter.SchedulingsFilter;
 import ufes.marktiabackend.filters.schedulingsfilter.SchedulingsFilterSpecification;
 import ufes.marktiabackend.repositories.SchedulingRepository;
+import ufes.marktiabackend.repositories.ServiceRepository;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,8 +28,8 @@ import java.util.stream.Collectors;
 public class SchedulingService {
 
     private final UserService userService;
-    private final ServiceService serviceService;
     private final SchedulingRepository schedulingRepository;
+    private final ServiceRepository serviceRepository;
 
     public List<SchedulingBasicResponseDTO> getAll(String userId, Boolean asConsumer, Integer schedulingStatus) {
         SchedulingsFilter schedulingsFilter = SchedulingsFilter.builder()
@@ -64,8 +65,7 @@ public class SchedulingService {
     }
 
     public SchedulingResponseDTO create(@Valid SchedulingRequestDTO schedulingRequestDTO) {
-
-        Optional<ufes.marktiabackend.entities.Service> optService = serviceService.serviceById(schedulingRequestDTO.getServiceId());
+        Optional<ufes.marktiabackend.entities.Service> optService = serviceRepository.findById(Long.valueOf(schedulingRequestDTO.getServiceId()));
         Optional<User> optConsumer = userService.userById(schedulingRequestDTO.getConsumerId());
 
         if (optService.isEmpty() || optConsumer.isEmpty()) {
@@ -87,11 +87,13 @@ public class SchedulingService {
     }
 
     public SchedulingResponseDTO project(Scheduling scheduling) {
-
         return SchedulingResponseDTO.builder()
                 .id(scheduling.getId().toString())
                 .serviceId(scheduling.getService().getId().toString())
                 .consumer(userService.project(scheduling.getConsumer()))
+                .status(scheduling.getStatus().getValue())
+                .creationDate(scheduling.getCreationDate().toString())
+                .completionDate(scheduling.getCompletionDate() != null ? scheduling.getCompletionDate().toString() : null)
                 .build();
     }
 
