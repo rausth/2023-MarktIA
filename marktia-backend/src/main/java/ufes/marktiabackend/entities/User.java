@@ -45,8 +45,11 @@ public class User implements UserDetails {
     @Size(max = 15)
     private String telephone;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @NotNull
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
 

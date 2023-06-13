@@ -81,12 +81,12 @@ public class ServiceService {
     }
 
     public ServiceResponseDTO create(@Valid ServiceRequestDTO serviceRequestDTO) {
-
         User provider = userService.getById(Long.valueOf(serviceRequestDTO.getProviderId()));
         Address address;
 
         if (serviceRequestDTO.getAddress() != null) {
             Federation federation = federationService.getByCounty(Long.valueOf(serviceRequestDTO.getAddress().getCountyId()));
+
             address = Address.builder()
                     .federation(federation)
                     .district(serviceRequestDTO.getAddress().getDistrict())
@@ -94,8 +94,6 @@ public class ServiceService {
                     .number(serviceRequestDTO.getAddress().getNumber())
                     .complement(serviceRequestDTO.getAddress().getComplement())
                     .build();
-
-            addressService.save(address);
         } else {
             address = addressService.getById(provider.getAddress().getId());
         }

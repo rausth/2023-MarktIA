@@ -23,9 +23,9 @@ public class JWTService {
      */
     private static final String JWT_SECRET_KEY = "50645367566B5970337336763979244226452948404D6351655468576D5A7134";
     /**
-     * Token will be valid for 5 minutes
+     * Token will be valid for 60 minutes
      */
-    private static final Integer JWT_EXPIRATION_TIME = 1000 * 5 * 60;
+    private static final Integer JWT_EXPIRATION_TIME = 1000 * 60 * 60;
 
     private Key getSigninKey() {
         byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET_KEY);

@@ -10,10 +10,10 @@ export const FederationController = {
     },
 
     getRegionsByState(stateId: string): Promise<AxiosResponse<RegionResponseDTO[]>> {
-        return axiosAPI.get(`/federations/regions?state=${stateId}`);
+        return axiosAPI.get(`/federations/regions?stateId=${stateId}`);
     },
 
     getDistrictsByRegion(regionId: string): Promise<AxiosResponse<DistrictResponseDTO[]>> {
-        return axiosAPI.get(`/federations/districts?region=${regionId}`);
+        return axiosAPI.get(`/federations/districts?regionId=${regionId}`);
     }
 }

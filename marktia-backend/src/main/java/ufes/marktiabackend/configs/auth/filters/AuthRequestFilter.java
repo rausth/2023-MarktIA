@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import ufes.marktiabackend.exceptionhandler.custom.NonAvailableTokenException;
 import ufes.marktiabackend.services.auth.JWTService;
 import ufes.marktiabackend.services.auth.UserDetailsServiceImpl;
 
@@ -33,38 +35,43 @@ public class AuthRequestFilter extends OncePerRequestFilter {
     private final JWTService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
 
+    private final HandlerExceptionResolver handlerExceptionResolver;
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader("Authorization");
+        try {
+            String authorizationHeader = request.getHeader("Authorization");
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = authorizationHeader.replace("Bearer ", "");
-        String subject = jwtService.getSubject(token);
-
-        if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(subject);
-
-            if (userDetails != null && !jwtService.isTokenExpired(token)) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                throw new NonAvailableTokenException("Token não fornecido.");
             }
-        }
 
-        filterChain.doFilter(request, response);
+            String token = authorizationHeader.replace("Bearer ", "");
+            String subject = jwtService.getSubject(token);
+
+            if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(subject);
+
+                if (userDetails != null && !jwtService.isTokenExpired(token)) {
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }
+            }
+
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            handlerExceptionResolver.resolveException(request, response, null, e);
+        }
     }
 
     @Override

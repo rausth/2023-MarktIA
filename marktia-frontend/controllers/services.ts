@@ -36,8 +36,13 @@ const getURLParams = (servicesFilter: ServicesFilter) => {
 
     if (servicesFilter.myServices) url += `myServices=${servicesFilter.myServices}&`;
     if (servicesFilter.name) url += `name=${servicesFilter.name}&`;
-    if (servicesFilter.addressId) url += `addressId=${servicesFilter.addressId}&`;
     if (servicesFilter.type) url += `type=${servicesFilter.type}&`;
+
+    if (servicesFilter.federation) {
+        if (servicesFilter.federation.stateId) url += `stateId=${servicesFilter.federation.stateId}&`;
+        if (servicesFilter.federation.regionId) url += `stateId=${servicesFilter.federation.regionId}&`;
+        if (servicesFilter.federation.countyId) url += `countyId=${servicesFilter.federation.stateId}&`;
+    }
 
     return url;
 }

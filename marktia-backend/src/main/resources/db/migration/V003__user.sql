@@ -10,6 +10,7 @@ CREATE TABLE `user` (
     `role` INT NOT NULL,
     `dt_creation` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `dt_update` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `image_url` TEXT,
     FOREIGN KEY (`address_id`) REFERENCES `address` (`id`)
 );
 

@@ -1,5 +1,6 @@
 export type AddressRequestDTO = {
-    districtId: string;
+    countyId: string;
+    district: string;
     publicPlace: string;
     number: number;
     complement: string | null;

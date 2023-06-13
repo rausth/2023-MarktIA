@@ -1,7 +1,7 @@
 import { AddressRequestDTO } from "../addresses/addressRequestDTO";
 
 export type ServiceRequestDTO = {
-    providerId?: string;
+    providerId: string;
     title: string;
     type: number;
     description: string;

@@ -1,5 +1,7 @@
 package ufes.marktiabackend.exceptionhandler;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ufes.marktiabackend.exceptionhandler.custom.NonAvailableTokenException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +75,24 @@ public class MarktIAExceptionHandler extends ResponseEntityExceptionHandler {
         List<Error> errors = List.of(new Error(userMessage, developerMessage));
 
         return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({ExpiredJwtException.class})
+    public ResponseEntity<Object> expiredJwtExceptionHandler(ExpiredJwtException ex, WebRequest request) {
+        String userMessage = messageSource.getMessage("resource.expired-token", null, LocaleContextHolder.getLocale());
+        String developerMessage = ExceptionUtils.getRootCauseMessage(ex);
+        List<Error> errors = List.of(new Error(userMessage, developerMessage));
+
+        return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+
+    @ExceptionHandler({NonAvailableTokenException.class})
+    public ResponseEntity<Object> handleNonAvailableTokenException(NonAvailableTokenException ex, WebRequest request) {
+        String userMessage = messageSource.getMessage("resource.non-available-token", null, LocaleContextHolder.getLocale());
+        String developerMessage = ExceptionUtils.getRootCauseMessage(ex);
+        List<Error> errors = List.of(new Error(userMessage, developerMessage));
+
+        return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
     private List<Error> createErrorList(BindingResult bindingResult) {
