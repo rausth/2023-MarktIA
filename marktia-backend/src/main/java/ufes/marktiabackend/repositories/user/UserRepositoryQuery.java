@@ -1,6 +1,6 @@
 package ufes.marktiabackend.repositories.user;
 
-import ufes.marktiabackend.dtos.responses.UserResponseDTO;
+import ufes.marktiabackend.dtos.responses.user.UserResponseDTO;
 
 import java.util.List;
 

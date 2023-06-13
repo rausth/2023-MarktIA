@@ -6,7 +6,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import ufes.marktiabackend.dtos.responses.UserResponseDTO;
+import ufes.marktiabackend.dtos.responses.user.UserResponseDTO;
 import ufes.marktiabackend.entities.User;
 
 import java.util.List;
