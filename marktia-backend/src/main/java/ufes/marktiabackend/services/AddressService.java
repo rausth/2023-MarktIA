@@ -13,6 +13,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AddressService {
+    private final FederationService federationService;
 
     private final AddressRepository addressRepository;
 
@@ -33,18 +34,7 @@ public class AddressService {
     public AddressResponseDTO project(Address address) {
         return AddressResponseDTO.builder()
                 .id(address.getId().toString())
-                .state(FederationFieldResponseDTO.builder()
-                        .id(address.getFederation().getUf().toString())
-                        .name(address.getFederation().getState())
-                        .build())
-                .region(FederationFieldResponseDTO.builder()
-                        .id(address.getFederation().getMicrorregiaoGeografica().toString())
-                        .name(address.getFederation().getNomeMicrorregiao())
-                        .build())
-                .county(FederationFieldResponseDTO.builder()
-                        .id(address.getFederation().getCodigoMunicipioCompleto().toString())
-                        .name(address.getFederation().getCounty())
-                        .build())
+                .federation(federationService.project(address.getFederation()))
                 .district(address.getDistrict())
                 .publicPlace(address.getPublicPlace())
                 .number(address.getNumber())

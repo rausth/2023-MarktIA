@@ -33,7 +33,18 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
 
     const isFirstRender = useRef(true);
 
-    const fetchServices = (servicesFilter: ServicesFilter) => {
+    const [servicesFilter, setServicesFilter] = useState<ServicesFilter>({
+        providerId: null,
+        name: null,
+        type: null,
+        federation: {
+            stateId: null,
+            regionId: null,
+            countyId: null
+        }
+    });
+
+    const fetchServices = () => {
         if (session) {
             ServicesController.getAll(servicesFilter, session.user.token)
                 .then((response: AxiosResponse<ServiceBasicInfoResponseDTO[]>) => {
@@ -48,14 +59,23 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
     }
 
     useEffect(() => {
+        if (session) {
+            setServicesFilter({
+                ...servicesFilter,
+                providerId: currentExhibitedServices === 1 ? session.user.id : null
+            });
+        } else {
+            router.push("/auth/login");
+        }
+    }, [currentExhibitedServices]);
+
+    useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
         } else {
-            fetchServices({
-                myServices: currentExhibitedServices === 0 ? false : true
-            });
+            fetchServices();
         }
-    }, [currentExhibitedServices]);
+    }, [servicesFilter]);
 
     const changeCurrentExhibitedServices = (servicesToShow: number) => {
         if (availableServices.current && myServices.current) {
@@ -76,9 +96,15 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
         <SnackbarProvider>
             <div>
                 {isFilterModalVisible && (<ServicesFilterModal
-                    onSubmission={(servicesFilter: ServicesFilter) => fetchServices({
+                    onSubmission={(name: string | null, type: number | null, stateId: string | null, regionId: string | null, countyId: string | null) => setServicesFilter({
                         ...servicesFilter,
-                        myServices: currentExhibitedServices === 0 ? false : true
+                        name: name,
+                        type: type,
+                        federation: {
+                            stateId: stateId,
+                            regionId: regionId,
+                            countyId: countyId
+                        }
                     })}
                     close={() => setIsFilterModalVisible(false)}
                 />)}

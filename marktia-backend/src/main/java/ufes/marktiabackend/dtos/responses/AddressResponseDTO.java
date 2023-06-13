@@ -3,17 +3,14 @@ package ufes.marktiabackend.dtos.responses;
 import lombok.Builder;
 import lombok.Data;
 import ufes.marktiabackend.dtos.responses.federation.FederationFieldResponseDTO;
+import ufes.marktiabackend.dtos.responses.federation.FederationResponseDTO;
 
 @Data
 @Builder
 public class AddressResponseDTO {
     private String id;
 
-    private FederationFieldResponseDTO state;
-
-    private FederationFieldResponseDTO region;
-
-    private FederationFieldResponseDTO county;
+    private FederationResponseDTO federation;
 
     private String district;
 

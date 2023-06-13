@@ -48,25 +48,29 @@ const newServiceFormSchema = z.object({
             message: "O usuário do PicPay não pode ser vazio."
         }),
     state: z.number({
-            required_error: "O estado não pode ser vazio.",
-            invalid_type_error: "Estado inválido"
-        }),
+        required_error: "O estado não pode ser vazio.",
+        invalid_type_error: "Estado inválido"
+    }),
     region: z.number({
         required_error: "A região não pode ser vazia.",
         invalid_type_error: "Região inválida"
     }),
-    district: z.number({
+    county: z.number({
         required_error: "O município não pode ser vazio.",
         invalid_type_error: "Município inválido"
     }),
+    district: z.string()
+        .nonempty({
+            message: "O bairro não pode ser vazio."
+        }),
     publicPlace: z.string()
         .nonempty({
             message: "A rua não pode ser vazia."
         }),
-    number: z.number({
-        required_error: "O número não pode ser vazio.",
-        invalid_type_error: "Número inválido"
-    }),
+    number: z.string()
+        .nonempty({
+            message: "O número não pode ser vazio."
+        }),
     complement: z.string()
         .nullable()
 });
@@ -74,7 +78,7 @@ type NewServiceFormData = z.infer<typeof newServiceFormSchema>;
 
 export default function NewServiceModal({ onSubmission, close }: NewServiceModalProps) {
     const [useMyAddress, setUseMyAddress] = useState(false);
-    
+
     const { data: session } = useSession();
     const router = useRouter();
 
@@ -100,7 +104,8 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                 price: newServiceFormData.price,
                 picpayUser: newServiceFormData.picpayUser,
                 address: !useMyAddress ? {
-                    districtId: newServiceFormData.district.toString(),
+                    countyId: newServiceFormData.county.toString(),
+                    district: newServiceFormData.district,
                     publicPlace: newServiceFormData.publicPlace,
                     number: newServiceFormData.number,
                     complement: newServiceFormData.complement
@@ -128,8 +133,9 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
 
                         setValue("state", Number(address.federation.state.id));
                         setValue("region", Number(address.federation.region.id));
-                        setValue("district", Number(address.federation.district.id));
+                        setValue("county", Number(address.federation.county.id));
 
+                        setValue("district", address.district);
                         setValue("publicPlace", address.publicPlace);
                         setValue("number", address.number);
                         setValue("complement", address.complement);
@@ -198,7 +204,7 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                         <Button color="blue" onClick={() => handleUseMyAddress()}>Carregar meu endereço</Button>
                     </div>
 
-                    <AddressForm errors={errors} />
+                    <AddressForm setValue={setValue} errors={errors} />
 
                     <div className="flex justify-center items-center mt-5">
                         <Button color="gray" className="mr-2" onClick={() => {

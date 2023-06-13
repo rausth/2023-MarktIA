@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ufes.marktiabackend.dtos.responses.federation.FederationFieldResponseDTO;
+import ufes.marktiabackend.dtos.responses.federation.FederationResponseDTO;
 import ufes.marktiabackend.entities.Federation;
 import ufes.marktiabackend.repositories.FederationRepository;
 
@@ -58,5 +59,22 @@ public class FederationService {
     public Federation getByCounty(Long codigoMunicipioCompleto) {
         return federationRepository.findByCodigoMunicipioCompleto(codigoMunicipioCompleto)
                 .orElseThrow(() -> new EntityNotFoundException("Federação não encontrada."));
+    }
+
+    public FederationResponseDTO project(Federation federation) {
+        return FederationResponseDTO.builder()
+                .state(FederationFieldResponseDTO.builder()
+                        .id(federation.getUf().toString())
+                        .name(federation.getState())
+                        .build())
+                .region(FederationFieldResponseDTO.builder()
+                        .id(federation.getMicrorregiaoGeografica().toString())
+                        .name(federation.getNomeMicrorregiao())
+                        .build())
+                .county(FederationFieldResponseDTO.builder()
+                        .id(federation.getCodigoMunicipioCompleto().toString())
+                        .name(federation.getCounty())
+                        .build())
+                .build();
     }
 }
