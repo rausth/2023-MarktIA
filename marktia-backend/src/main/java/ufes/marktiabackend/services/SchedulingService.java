@@ -18,6 +18,7 @@ import ufes.marktiabackend.filters.schedulingsfilter.SchedulingsFilterSpecificat
 import ufes.marktiabackend.repositories.SchedulingRepository;
 import ufes.marktiabackend.repositories.ServiceRepository;
 
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -79,6 +80,7 @@ public class SchedulingService {
                 .consumer(optConsumer.get())
                 .provider(provider)
                 .status(SchedulingStatus.OPENED)
+                .creationDate(LocalDate.now())
                 .build();
 
         Scheduling savedSchedule = schedulingRepository.save(scheduling);
