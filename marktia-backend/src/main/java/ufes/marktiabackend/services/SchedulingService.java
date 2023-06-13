@@ -1,15 +1,13 @@
 package ufes.marktiabackend.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ufes.marktiabackend.dtos.requests.SchedulingRequestDTO;
-import ufes.marktiabackend.dtos.responses.AddressResponseDTO;
 import ufes.marktiabackend.dtos.responses.scheduling.SchedulingBasicResponseDTO;
 import ufes.marktiabackend.dtos.responses.scheduling.SchedulingResponseDTO;
 import ufes.marktiabackend.dtos.responses.user.UserBasicResponseDTO;
-import ufes.marktiabackend.dtos.responses.user.UserResponseDTO;
 import ufes.marktiabackend.entities.Scheduling;
 import ufes.marktiabackend.entities.User;
 import ufes.marktiabackend.enums.SchedulingStatus;
@@ -19,7 +17,6 @@ import ufes.marktiabackend.repositories.SchedulingRepository;
 import ufes.marktiabackend.repositories.ServiceRepository;
 
 import java.time.LocalDate;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -69,8 +66,12 @@ public class SchedulingService {
         Optional<ufes.marktiabackend.entities.Service> optService = serviceRepository.findById(Long.valueOf(schedulingRequestDTO.getServiceId()));
         Optional<User> optConsumer = userService.userById(schedulingRequestDTO.getConsumerId());
 
-        if (optService.isEmpty() || optConsumer.isEmpty()) {
-            throw new EmptyResultDataAccessException(1);
+        if (optConsumer.isEmpty()) {
+            throw new EntityNotFoundException("Usuário não encontrado.");
+        }
+
+        if (optService.isEmpty()) {
+            throw new EntityNotFoundException("Serviço não encontrado.");
         }
 
         User provider = optService.get().getProvider();
