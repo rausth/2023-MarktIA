@@ -9,7 +9,7 @@ type SchedulingSituationProps = {
 
 export default function SchedulingSituation({ scheduling, providerId }: SchedulingSituationProps) {
     return (
-        <div className="p-5">
+        <div className="w-full p-5">
             <div className="py-2"><span>Status: {scheduling.status}</span></div>
             <div className="py-2"><span>Data de Criação: <FormattedDate date={scheduling.creationDate} /></span></div>
             <div className="py-2"><span>Data de Finalização: {scheduling.completionDate ? <FormattedDate date={scheduling.completionDate} /> : ""}</span></div>

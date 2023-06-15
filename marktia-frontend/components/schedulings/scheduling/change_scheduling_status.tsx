@@ -59,7 +59,7 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
                 close={() => setIsSchedulingReviewModalVisible(false)}
             />)}
 
-            <div className="text-center">
+            <div className="flex justify-center">
                 {scheduling.status === SchedulingStatus.OPENED && (
                     <div>
                         {session?.user.id === changeSchedulingStatusProps.providerId ? (

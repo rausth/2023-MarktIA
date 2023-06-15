@@ -6,7 +6,7 @@ type SelectObjectProps = {
     objects: Array<any>;
     includeEmptyOption: boolean;
     toStringFunction: (object: any) => string;
-    onChangeFunction?: (id: string) => void;
+    onChangeFunction?: (id: string | undefined) => void;
 }
 
 export default function SelectObject({ title, name, objects, includeEmptyOption, toStringFunction, onChangeFunction }: SelectObjectProps) {
@@ -18,18 +18,21 @@ export default function SelectObject({ title, name, objects, includeEmptyOption,
             <select
                 className="w-full text-zinc-500 w-100 justify-between rounded-lg p-2 mt-1 bg-white"
                 {...register(name, {
-                    valueAsNumber: true,
                     onChange: (e) => {
+                        let newValue: string | undefined;
                         if (e.target.value) {
-                            setValue(name, e.target.value);
-
-                            if (onChangeFunction) {
-                                onChangeFunction(e.target.value);
-                            }
+                            newValue = e.target.value;
                         } else {
-                            setValue(name, undefined);
+                            newValue = undefined;
                         }
-                    }
+
+                        setValue(name, newValue);
+
+                        if (onChangeFunction) {
+                            onChangeFunction(newValue);
+                        }
+                    },
+                    setValueAs: (value) => value ? Number(value) : undefined
                 })}
                 name={name}
             >

@@ -1,7 +1,6 @@
 "use client";
 
 import { FederationController } from "@/controllers/federation";
-import { DistrictResponseDTO } from "@/dtos/responses/federations/countyResponseDTO";
 import { RegionResponseDTO } from "@/dtos/responses/federations/regionResponseDTO";
 import { StateResponseDTO } from "@/dtos/responses/federations/stateResponseDTO";
 import { AxiosResponse } from "axios";
@@ -10,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import TextField from "../common/forms/text_field";
 import TextArea from "../common/forms/textarea";
 import SelectObject from "../common/forms/select_object";
+import { CountyResponseDTO } from "@/dtos/responses/federations/countyResponseDTO";
 
 type AddressFormProps = {
     onlyFederationInfo?: boolean;
@@ -47,7 +47,7 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors }: Ad
 
     const fetchCountys = (stateId: string, regionId: string) => {
         FederationController.getCountysByStateAndRegion(stateId, regionId)
-            .then((response: AxiosResponse<DistrictResponseDTO[]>) => setCountys(response.data))
+            .then((response: AxiosResponse<CountyResponseDTO[]>) => setCountys(response.data))
             .catch(() => enqueueSnackbar("Erro ao carregar os municípios", {
                 variant: "error"
             }));
@@ -124,7 +124,7 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors }: Ad
                         objects={states}
                         includeEmptyOption={onlyFederationInfo ? true : false}
                         toStringFunction={(state: { id: string, name: string }) => state.name}
-                        onChangeFunction={(stateId: string) => setCurrentSelectedStateId(stateId)}
+                        onChangeFunction={(stateId: string | undefined) => setCurrentSelectedStateId(stateId)}
                     />
                     {errors.state && <span className="text-xs text-red mt-1">{errors.state.message}</span>}
                 </div>
@@ -135,7 +135,7 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors }: Ad
                         objects={regions}
                         includeEmptyOption={onlyFederationInfo ? true : false}
                         toStringFunction={(region: { id: string, name: string }) => region.name}
-                        onChangeFunction={(regionId: string) => setCurrentSelectedRegionId(regionId)}
+                        onChangeFunction={(regionId: string | undefined) => setCurrentSelectedRegionId(regionId)}
                     />
                     {errors.region && <span className="text-xs text-red mt-1">{errors.region.message}</span>}
                 </div>
