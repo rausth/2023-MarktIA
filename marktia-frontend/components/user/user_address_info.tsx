@@ -8,19 +8,41 @@ import AddressInfo from "../common/addressInfo";
 import TextField from "../common/forms/text_field";
 import Button from "../common/button";
 import { Address } from "@/models/address";
+import { AddressRequestDTO } from "@/dtos/requests/addresses/addressRequestDTO";
+import AddressForm from "../addresses/address_form";
 
 type UserAddressInfoProps = {
     address: Address;
-    onSubmission: (address: Address) => void;
+    onSubmission: (address: AddressRequestDTO) => void;
 }
 
 const editUserAddressFormSchema = z.object({
-    state: z.string(),
-    county: z.string(),
-    district: z.string(),
-    publicPlace: z.string(),
-    number: z.string(),
+    state: z.number({
+        required_error: "O estado não pode ser vazio.",
+        invalid_type_error: "Estado inválido"
+    }),
+    region: z.number({
+        required_error: "A região não pode ser vazia.",
+        invalid_type_error: "Região inválida"
+    }),
+    county: z.number({
+        required_error: "O município não pode ser vazio.",
+        invalid_type_error: "Município inválido"
+    }),
+    district: z.string()
+        .nonempty({
+            message: "O bairro não pode ser vazio."
+        }),
+    publicPlace: z.string()
+        .nonempty({
+            message: "A rua não pode ser vazia."
+        }),
+    number: z.string()
+        .nonempty({
+            message: "O número não pode ser vazio."
+        }),
     complement: z.string()
+        .nullable()
 });
 type EditUserAddressFormData = z.infer<typeof editUserAddressFormSchema>;
 
@@ -30,15 +52,16 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
     const editUserAddressForm = useForm<EditUserAddressFormData>({
         resolver: zodResolver(editUserAddressFormSchema),
         defaultValues: {
-            state: address.state,
-            county: address.county,
+            state: undefined,
+            region: undefined,
+            county: undefined,
             district: address.district,
             publicPlace: address.publicPlace,
             number: address.number,
             complement: address.complement
         }
     });
-    const { handleSubmit, formState: { errors }, reset } = editUserAddressForm;
+    const { handleSubmit, formState: { errors }, reset, setValue } = editUserAddressForm;
 
     return (
         <div className="p-2">
@@ -48,63 +71,14 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
                 <div>
                     <FormProvider {...editUserAddressForm} >
                         <form onSubmit={handleSubmit((editUserAddressFormData: EditUserAddressFormData) => onSubmission({
-                            ...editUserAddressFormData,
-                            id: address.id
+                            countyId: editUserAddressFormData.county.toString(),
+                            district: editUserAddressFormData.district,
+                            publicPlace: editUserAddressFormData.publicPlace,
+                            number: editUserAddressFormData.number,
+                            complement: editUserAddressFormData.complement
                         }))}>
-                            <div className="grid grid-cols-2 gap-2 p-1">
-                                <div>
-                                    <TextField
-                                        type="text"
-                                        label="Estado"
-                                        name="state"
-                                    />
-                                    {errors.state && <span className="text-xs text-red mt-1">{errors.state.message}</span>}
-                                </div>
-                                <div>
-                                    <TextField
-                                        type="text"
-                                        label="Município"
-                                        name="county"
-                                    />
-                                    {errors.county && <span className="text-xs text-red mt-1">{errors.county.message}</span>}
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-2 p-1">
-                                <div>
-                                    <TextField
-                                        type="text"
-                                        label="Bairro"
-                                        name="district"
-                                    />
-                                    {errors.district && <span className="text-xs text-red mt-1">{errors.district.message}</span>}
-                                </div>
-                                <div>
-                                    <TextField
-                                        type="text"
-                                        label="Rua"
-                                        name="publicPlace"
-                                    />
-                                    {errors.publicPlace && <span className="text-xs text-red mt-1">{errors.publicPlace.message}</span>}
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-2 p-1">
-                                <div>
-                                    <TextField
-                                        type="text"
-                                        label="Número"
-                                        name="number"
-                                    />
-                                    {errors.number && <span className="text-xs text-red mt-1">{errors.number.message}</span>}
-                                </div>
-                                <div>
-                                    <TextField
-                                        type="text"
-                                        label="Complemento"
-                                        name="complement"
-                                    />
-                                    {errors.complement && <span className="text-xs text-red mt-1">{errors.complement.message}</span>}
-                                </div>
-                            </div>
+                            <AddressForm errors={errors} setValue={setValue} initialStateId={address.federation.state.id} />
+
                             <div className="mt-5 pb-2">
                                 <div className="flex justify-center my-5">
                                     <Button color="gray" className="mr-5" onClick={() => {

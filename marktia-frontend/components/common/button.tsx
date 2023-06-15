@@ -1,7 +1,7 @@
 "use client";
 
 type ButtonProps = {
-    color: "blue" | "green" | "gray";
+    color: "blue" | "green" | "gray" | "red";
     onClick?: () => void;
     children: React.ReactNode;
     type?: "button" | "submit" | "reset";
@@ -16,8 +16,10 @@ export default function Button({ color, onClick, children, type, className }: Bu
             className += "text-white bg-blue-dark hover:bg-blue-dark-hover";
         } else if (color === "green") {
             className += "text-white bg-green-500 hover:bg-green-600";
-        } else {
+        } else if (color === "gray") {
             className += "text-gray bg-white border border-gray-200 hover:text-white hover:bg-gray";
+        } else if (color === "red") {
+            className += "text-white bg-red hover:bg-red-hover";
         }
 
         return className;

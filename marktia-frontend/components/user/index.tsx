@@ -12,8 +12,11 @@ import { UserResponseDTO } from "@/dtos/responses/users/userResponseDTO";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import UserPersonalInfo from "./user_personal_info";
 import { UserRoleUtils } from "@/enums/userRole";
-import { Address } from "@/models/address";
 import UserImage from "./user_image";
+import { AddressRequestDTO } from "@/dtos/requests/addresses/addressRequestDTO";
+import Button from "../common/button";
+import { TiUserDelete } from "react-icons/ti";
+import UserDeletionModal from "./modals/userDeletionModal";
 
 type UserProps = {
     user?: User;
@@ -21,6 +24,7 @@ type UserProps = {
 
 export default function UserMainComponent(userProps: UserProps) {
     const [user, setUser] = useState<User | undefined>(userProps.user);
+    const [isUserDeletionModalVisible, setIsUserDeletionModalVisible] = useState(false);
 
     const { data: session } = useSession();
     const router = useRouter();
@@ -45,9 +49,23 @@ export default function UserMainComponent(userProps: UserProps) {
             {user ? (
                 <div>
                     <SnackbarProvider>
+                        {isUserDeletionModalVisible && (
+                            <UserDeletionModal 
+                                close={() => setIsUserDeletionModalVisible(false)}
+                            />
+                        )}
+
                         <div className="flex justify-between items-center border-b-2 border-black pb-2">
                             <div>
                                 <span className="text-2xl">Usuário - {user.name}</span>
+                            </div>
+                            <div>
+                                <Button color="red" onClick={() => setIsUserDeletionModalVisible(true)}>
+                                    <div className="flex items-center">
+                                        <div className="mr-2"><span>Deletar Conta</span></div>
+                                        <div><TiUserDelete /></div>
+                                    </div>
+                                </Button>
                             </div>
                         </div>
 
@@ -55,7 +73,13 @@ export default function UserMainComponent(userProps: UserProps) {
                             <div className="w-full flex justify-center mt-5 border-b-2 border-black pb-2">
                                 <UserImage imageURL={user.imageURL} onSubmission={(imageURL: string | null) => updateUser({
                                     ...user,
-                                    addressId: user.address.id,
+                                    address: {
+                                        countyId: user.address.federation.county.id.toString(),
+                                        district: user.address.district,
+                                        publicPlace: user.address.publicPlace,
+                                        number: user.address.number,
+                                        complement: user.address.complement
+                                    },
                                     imageURL: imageURL ? imageURL : undefined
                                 })} />
                             </div>
@@ -66,15 +90,21 @@ export default function UserMainComponent(userProps: UserProps) {
                                     <UserPersonalInfo user={user} onSubmission={(userPersonalData: UserPersonalData) => updateUser({
                                         ...user,
                                         ...userPersonalData,
-                                        addressId: user.address.id
+                                        address: {
+                                            countyId: user.address.federation.county.id.toString(),
+                                            district: user.address.district,
+                                            publicPlace: user.address.publicPlace,
+                                            number: user.address.number,
+                                            complement: user.address.complement
+                                        }
                                     })} />
                                 </div>
                                 <div className="p-5">
                                     <h1 className="text-xl">Endereço</h1>
 
-                                    <UserAddressInfo address={user.address} onSubmission={(address: Address) => updateUser({
+                                    <UserAddressInfo address={user.address} onSubmission={(address: AddressRequestDTO) => updateUser({
                                         ...user,
-                                        addressId: address.id
+                                        address: address
                                     })} />
                                 </div>
                             </div>

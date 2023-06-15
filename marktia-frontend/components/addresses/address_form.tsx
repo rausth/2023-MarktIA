@@ -15,9 +15,10 @@ type AddressFormProps = {
     onlyFederationInfo?: boolean;
     setValue: any;
     errors: any;
+    initialStateId?: string;
 }
 
-export default function AddressForm({ onlyFederationInfo, setValue, errors }: AddressFormProps) {
+export default function AddressForm({ onlyFederationInfo, setValue, errors, initialStateId }: AddressFormProps) {
     const [states, setStates] = useState<Array<{ id: string, name: string }>>([]);
     const [currentSelectedStateId, setCurrentSelectedStateId] = useState<string | undefined>(undefined);
 
@@ -63,7 +64,12 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors }: Ad
                 setCurrentSelectedStateId(undefined);
                 isFirstRender.current = false;
             } else {
-                setCurrentSelectedStateId(states[0].id);
+                if (!initialStateId) {
+                    setCurrentSelectedStateId(states[0].id);
+                } else {
+                    const idx = states.findIndex((state: {id: string, name: string}) => state.id === initialStateId);
+                    setCurrentSelectedStateId(states[idx].id);
+                }
             }
         } else {
             setCurrentSelectedStateId(undefined);
