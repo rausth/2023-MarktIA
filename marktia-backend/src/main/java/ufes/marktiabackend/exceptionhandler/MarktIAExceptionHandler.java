@@ -1,7 +1,6 @@
 package ufes.marktiabackend.exceptionhandler;
 
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.MessageSource;
@@ -22,6 +21,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ufes.marktiabackend.exceptionhandler.custom.NonAvailableTokenException;
 import ufes.marktiabackend.exceptionhandler.custom.NonExistentAddressException;
+import ufes.marktiabackend.exceptionhandler.custom.NonFinishedSchedulingException;
 import ufes.marktiabackend.exceptionhandler.custom.NullAddressIdException;
 
 import java.util.ArrayList;
@@ -94,7 +94,18 @@ public class MarktIAExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
-    @ExceptionHandler({MalformedJwtException.class})
+    @ExceptionHandler({ NonFinishedSchedulingException.class })
+    public ResponseEntity<Object> handleNonFinishedSchedulingException(NonFinishedSchedulingException ex, WebRequest request) {
+        ex.printStackTrace();
+
+        String userMessage = messageSource.getMessage("resource.operation-not-allowed", null, LocaleContextHolder.getLocale());
+        String developerMessage = ExceptionUtils.getRootCauseMessage(ex);
+        List<Error> errors = List.of(new Error(userMessage, developerMessage));
+
+        return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({ MalformedJwtException.class })
     public ResponseEntity<Object> malformedJwtExceptionHandler(MalformedJwtException ex, WebRequest request) {
         String userMessage = messageSource.getMessage("resource.malformed-jwt", null, LocaleContextHolder.getLocale());
         String developerMessage = ExceptionUtils.getRootCauseMessage(ex);
@@ -103,7 +114,7 @@ public class MarktIAExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
-    @ExceptionHandler({ExpiredJwtException.class})
+    @ExceptionHandler({ ExpiredJwtException.class })
     public ResponseEntity<Object> expiredJwtExceptionHandler(ExpiredJwtException ex, WebRequest request) {
         String userMessage = messageSource.getMessage("resource.expired-token", null, LocaleContextHolder.getLocale());
         String developerMessage = ExceptionUtils.getRootCauseMessage(ex);
@@ -112,7 +123,7 @@ public class MarktIAExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
-    @ExceptionHandler({NonAvailableTokenException.class})
+    @ExceptionHandler({ NonAvailableTokenException.class })
     public ResponseEntity<Object> handleNonAvailableTokenException(NonAvailableTokenException ex, WebRequest request) {
         String userMessage = messageSource.getMessage("resource.non-available-token", null, LocaleContextHolder.getLocale());
         String developerMessage = ExceptionUtils.getRootCauseMessage(ex);
