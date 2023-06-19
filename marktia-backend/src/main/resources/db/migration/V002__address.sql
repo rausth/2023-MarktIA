@@ -5,7 +5,6 @@ CREATE TABLE `address` (
     `public_place` VARCHAR(45) NOT NULL,
     `number` VARCHAR(15) NOT NULL,
     `complement` VARCHAR(45)
---     FOREIGN KEY (`federation_id`) REFERENCES `federation` (`id`)
 );
 
 INSERT INTO `address` (`federation_id`, `district`, `public_place`, `number`)
