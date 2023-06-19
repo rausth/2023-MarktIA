@@ -1,5 +1,5 @@
 import { axiosAPI } from "@/configs/axios";
-import { DistrictResponseDTO } from "@/dtos/responses/federations/countyResponseDTO";
+import { CountyResponseDTO } from "@/dtos/responses/federations/countyResponseDTO";
 import { RegionResponseDTO } from "@/dtos/responses/federations/regionResponseDTO";
 import { StateResponseDTO } from "@/dtos/responses/federations/stateResponseDTO";
 import { AxiosResponse } from "axios";
@@ -13,7 +13,7 @@ export const FederationController = {
         return axiosAPI.get(`/federations/regions?stateId=${stateId}`);
     },
 
-    getCountysByStateAndRegion(stateId: string, regionId: string): Promise<AxiosResponse<DistrictResponseDTO[]>> {
+    getCountysByStateAndRegion(stateId: string, regionId: string): Promise<AxiosResponse<CountyResponseDTO[]>> {
         return axiosAPI.get(`/federations/countys?stateId=${stateId}&regionId=${regionId}`);
     }
 }
