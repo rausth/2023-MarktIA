@@ -23,7 +23,7 @@ const useOutsideDetect = (ref: any, close: () => void) => {
         return () => {
             document.removeEventListener("mousedown", handleOutsideClick);
         }
-    }, [ref]);
+    }, [ref, close]);
 }
 
 export default function Modal({ title, children, close }: ModalProps) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { ServiceBasicInfo } from "@/models/service";
-import { createRef, useEffect, useRef, useState } from "react";
+import { createRef, useCallback, useEffect, useRef, useState } from "react";
 import Button from "../common/button";
 import { useSession } from "next-auth/react";
 import ServicesFilterModal from "./modals/services_filter_modal";
@@ -46,7 +46,7 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
         }
     });
 
-    const fetchServices = () => {
+    const fetchServices = useCallback(() => {
         if (session) {
             ServicesController.getAll(servicesFilter, session.user.token)
                 .then((response: AxiosResponse<ServiceBasicInfoResponseDTO[]>) => {
@@ -60,7 +60,7 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
         } else {
             router.push("/auth/login");
         }
-    }
+    }, [router, servicesFilter, session])
 
     useEffect(() => {
         if (session) {
@@ -71,7 +71,7 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
         } else {
             router.push("/auth/login");
         }
-    }, [currentExhibitedServices]);
+    }, [currentExhibitedServices, router, servicesFilter, session]);
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -79,7 +79,7 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
         } else {
             fetchServices();
         }
-    }, [servicesFilter]);
+    }, [servicesFilter, fetchServices]);
 
     const changeCurrentExhibitedServices = (servicesToShow: number) => {
         if (availableServices.current && myServices.current) {

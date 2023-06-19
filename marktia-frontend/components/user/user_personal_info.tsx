@@ -81,7 +81,7 @@ export default function UserPersonalInfo({ user, onSubmission }: UserPersonalInf
         setValue("telephone", user.telephone);
         setValue("cpf", user.cpf);
         setValue("cnpj", user.cnpj ? user.cnpj : null);
-    }, [user]);
+    }, [user, setValue]);
 
     return (
         <div className="p-2">
