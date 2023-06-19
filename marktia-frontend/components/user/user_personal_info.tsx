@@ -2,7 +2,7 @@
 
 import { UserRole, UserRoleUtils } from "@/enums/userRole";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { FaPencilAlt } from "react-icons/fa";
@@ -58,8 +58,7 @@ const editUserPersonalInfoFormSchema = z.object({
 });
 type EditUserPersonalInfoFormData = z.infer<typeof editUserPersonalInfoFormSchema>;
 
-export default function UserPersonalInfo(userPersonalInfoProps: UserPersonalInfoProps) {
-    const [user, setUser] = useState(userPersonalInfoProps.user);
+export default function UserPersonalInfo({ user, onSubmission }: UserPersonalInfoProps) {
     const [isEditing, setIsEditing] = useState(false);
 
     const editUserPersonalInfoForm = useForm<EditUserPersonalInfoFormData>({
@@ -73,7 +72,16 @@ export default function UserPersonalInfo(userPersonalInfoProps: UserPersonalInfo
             cnpj: user.cnpj,
         }
     });
-    const { handleSubmit, formState: { errors }, reset } = editUserPersonalInfoForm;
+    const { handleSubmit, formState: { errors }, reset, setValue } = editUserPersonalInfoForm;
+
+    useEffect(() => {
+        setValue("userRole", user.userRole);
+        setValue("name", user.name);
+        setValue("email", user.email);
+        setValue("telephone", user.telephone);
+        setValue("cpf", user.cpf);
+        setValue("cnpj", user.cnpj ? user.cnpj : null);
+    }, [user]);
 
     return (
         <div className="p-2">
@@ -99,7 +107,7 @@ export default function UserPersonalInfo(userPersonalInfoProps: UserPersonalInfo
             ) : (
                 <div>
                     <FormProvider {...editUserPersonalInfoForm} >
-                        <form onSubmit={handleSubmit((editUserPersonalInfoFormData: EditUserPersonalInfoFormData) => userPersonalInfoProps.onSubmission({
+                        <form onSubmit={handleSubmit((editUserPersonalInfoFormData: EditUserPersonalInfoFormData) => onSubmission({
                             ...editUserPersonalInfoFormData,
                             userRole: UserRoleUtils.toNumber(editUserPersonalInfoFormData.userRole)!,
                             cnpj: editUserPersonalInfoFormData.cnpj ? editUserPersonalInfoFormData.cnpj : undefined

@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Avatar from "../common/avatar";
 import Button from "../common/button";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TextField from "../common/forms/text_field";
-import { User } from "@/models/user";
 
 type UserImageProps = {
     imageURL?: string;
@@ -20,8 +19,7 @@ const editImageFormSchema = z.object({
 });
 type EditImageFormData = z.infer<typeof editImageFormSchema>;
 
-export default function UserImage(userImageProps: UserImageProps) {
-    const [imageURL, setImageURL] = useState(userImageProps.imageURL);
+export default function UserImage({ imageURL, onSubmission }: UserImageProps) {
     const [isEditing, setIsEditing] = useState(false);
 
     const editImageForm = useForm<EditImageFormData>({
@@ -30,7 +28,11 @@ export default function UserImage(userImageProps: UserImageProps) {
             imageURL: imageURL
         }
     });
-    const { handleSubmit, formState: { errors }, reset } = editImageForm;
+    const { handleSubmit, formState: { errors }, reset, setValue } = editImageForm;
+
+    useEffect(() => {
+        setValue("imageURL", imageURL ? imageURL : null);
+    }, [imageURL]);
 
     return (
         <div className="w-full">
@@ -43,7 +45,7 @@ export default function UserImage(userImageProps: UserImageProps) {
                 </div>
             ) : (
                 <FormProvider {...editImageForm}>
-                    <form onSubmit={handleSubmit((editImageFormData: EditImageFormData) => userImageProps.onSubmission(editImageFormData.imageURL, () => {
+                    <form onSubmit={handleSubmit((editImageFormData: EditImageFormData) => onSubmission(editImageFormData.imageURL, () => {
                         reset();
                         setIsEditing(false);
                     }))}>

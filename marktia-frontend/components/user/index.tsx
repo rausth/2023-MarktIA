@@ -33,11 +33,6 @@ export default function UserMainComponent(userProps: UserProps) {
         if (session) {
             UsersController.update(session.user.id, userRequestDTO, session.user.token)
                 .then((response: AxiosResponse<UserResponseDTO>) => {
-                    setUser({
-                        ...response.data,
-                        userRole: UserRoleUtils.fromNumber(response.data.userRole)
-                    });
-
                     enqueueSnackbar("Usuário atualizado com sucesso. Caso tenha alterado a classificação, relogue.", {
                         variant: "success"
                     });
@@ -45,6 +40,11 @@ export default function UserMainComponent(userProps: UserProps) {
                     if (onSuccess) {
                         onSuccess();
                     }
+
+                    setUser({
+                        ...response.data,
+                        userRole: UserRoleUtils.fromNumber(response.data.userRole)
+                    });
                 })
                 .catch(() => {
                     enqueueSnackbar("Ocorreu um erro ao atualizar o usuário.", {
