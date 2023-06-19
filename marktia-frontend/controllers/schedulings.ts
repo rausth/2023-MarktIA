@@ -1,5 +1,6 @@
 import { axiosAPI } from "@/configs/axios"
 import { SchedulingRequestDTO } from "@/dtos/requests/schedulings/schedulingRequestDTO";
+import { SchedulingStatusUpdateRequestDTO } from "@/dtos/requests/schedulings/schedulingStatusUpdateRequestDTO";
 import { SchedulingBasicInfoResponseDTO } from "@/dtos/responses/schedulings/schedulingBasicInfoResponseDTO";
 import { SchedulingResponseDTO } from "@/dtos/responses/schedulings/schedulingResponseDTO";
 import { AxiosResponse } from "axios";
@@ -29,8 +30,8 @@ export const SchedulingsController = {
         });
     },
 
-    updateStatus(userId: string, schedulingId: string, token: string): Promise<AxiosResponse<SchedulingResponseDTO>> {
-        return axiosAPI.put(`/schedulings/${schedulingId}`, userId, {
+    updateStatus(id: string, schedulingStatusUpdateRequestDTO: SchedulingStatusUpdateRequestDTO, token: string): Promise<AxiosResponse<SchedulingResponseDTO>> {
+        return axiosAPI.put(`/schedulings/${id}`, schedulingStatusUpdateRequestDTO, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

@@ -20,9 +20,4 @@ public class EvaluationController {
     public ResponseEntity<List<EvaluationResponseDTO>> getByService(@RequestParam String serviceId) {
         return ResponseEntity.ok(evaluationService.getByService(serviceId));
     }
-
-    @PostMapping
-    public ResponseEntity<EvaluationResponseDTO> crete(@RequestBody @Valid EvaluationRequestDTO evaluationRequestDTO) {
-        return ResponseEntity.ok(evaluationService.create(evaluationRequestDTO));
-    }
 }

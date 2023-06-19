@@ -42,6 +42,20 @@ public class EvaluationService {
                 .collect(Collectors.toList());
     }
 
+    public Evaluation create(@Valid EvaluationRequestDTO evaluationRequestDTO) {
+        Optional<Scheduling> scheduling = schedulingRepository.findById(Long.valueOf(evaluationRequestDTO.getSchedulingId()));
+
+        if (scheduling.isEmpty()) {
+            throw new EntityNotFoundException("Agendamento não encontrado.");
+        }
+
+        return Evaluation.builder()
+                .scheduling(scheduling.get())
+                .rating(evaluationRequestDTO.getRating())
+                .assessment(evaluationRequestDTO.getAssessment())
+                .build();
+    }
+
     private EvaluationResponseDTO project(Evaluation evaluation) {
         return EvaluationResponseDTO.builder()
                 .id(evaluation.getId().toString())
@@ -49,27 +63,5 @@ public class EvaluationService {
                 .assessment(evaluation.getAssessment())
                 .schedulingId(evaluation.getScheduling().getId().toString())
                 .build();
-    }
-
-    public EvaluationResponseDTO create(@Valid EvaluationRequestDTO evaluationRequestDTO) {
-        Optional<Scheduling> scheduling = schedulingRepository.findById(Long.valueOf(evaluationRequestDTO.getSchedulingId()));
-
-        if (scheduling.isEmpty()) {
-            throw new EntityNotFoundException("Agendamento não encontrado.");
-        }
-
-        if (scheduling.get().getStatus() != SchedulingStatus.FINISHED) {
-            throw new NonFinishedSchedulingException("Agendamento não finalizado");
-        }
-
-        Evaluation evaluation = Evaluation.builder()
-                .scheduling(scheduling.get())
-                .rating(evaluationRequestDTO.getRating())
-                .assessment(evaluationRequestDTO.getAssessment())
-                .build();
-
-        Evaluation savedEvaluation = evaluationRepository.save(evaluation);
-
-        return project(savedEvaluation);
     }
 }

@@ -1,4 +1,4 @@
-package ufes.marktiabackend.dtos.requests;
+package ufes.marktiabackend.dtos.requests.scheduling;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

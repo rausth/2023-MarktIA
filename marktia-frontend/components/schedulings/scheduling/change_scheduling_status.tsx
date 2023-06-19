@@ -12,10 +12,13 @@ import { useRouter } from "next/navigation";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { useState } from "react";
 import SchedulingReviewModal from "./modals/scheduling_review_modal";
+import { EvaluationRequestDTO } from "@/dtos/requests/evaluations/evaluationRequestDTO";
+import { SchedulingStatusUpdateRequestDTO } from '@/dtos/requests/schedulings/schedulingStatusUpdateRequestDTO';
 
 type ChangeSchedulingStatusProps = {
     scheduling: Scheduling;
     providerId: string;
+    picpayUser: string;
 }
 
 export default function ChangeSchedulingStatus(changeSchedulingStatusProps: ChangeSchedulingStatusProps) {
@@ -26,9 +29,14 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
     const { data: session } = useSession();
     const router = useRouter();
 
-    const updateStatus = () => {
+    const updateStatus = (evaluation?: EvaluationRequestDTO) => {
         if (session) {
-            SchedulingsController.updateStatus(session.user.id, scheduling.id, session.user.token)
+            const schedulingStatusUpdateRequestDTO: SchedulingStatusUpdateRequestDTO = {
+                userId: session.user.id,
+                evaluation: evaluation
+            };
+
+            SchedulingsController.updateStatus(scheduling.id, schedulingStatusUpdateRequestDTO, session.user.token)
                 .then((response: AxiosResponse<SchedulingResponseDTO>) => {
                     setScheduling({
                         ...response.data,
@@ -41,7 +49,9 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
 
                     enqueueSnackbar("Status do agendamento atualizado com sucesso!", {
                         variant: "success"
-                    })
+                    });
+
+                    setIsSchedulingReviewModalVisible(false);
                 })
                 .catch(() => enqueueSnackbar("Houve um erro ao atualizar o status do agendamento.", {
                     variant: "error"
@@ -55,7 +65,8 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
         <SnackbarProvider>
             {isSchedulingReviewModalVisible && (<SchedulingReviewModal
                 schedulingId={scheduling.id}
-                onSubmission={() => {}}
+                picpayUser={changeSchedulingStatusProps.picpayUser}
+                onSubmission={(evaluation: EvaluationRequestDTO) => updateStatus(evaluation)}
                 close={() => setIsSchedulingReviewModalVisible(false)}
             />)}
 

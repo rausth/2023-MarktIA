@@ -47,7 +47,7 @@ export default function SchedulingMainComponent({ scheduling, service }: Schedul
                         <div className="pt-5 pl-5 border-b-2 border-black">
                             <h1 className="text-xl">Andamento</h1>
 
-                            <SchedulingSituation scheduling={scheduling} providerId={service.provider.id} />
+                            <SchedulingSituation scheduling={scheduling} providerId={service.provider.id} picpayUser={service.picpayUser} />
                         </div>
                     </div>
                 </div>

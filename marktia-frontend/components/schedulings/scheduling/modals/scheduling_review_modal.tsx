@@ -8,14 +8,17 @@ import { EvaluationsController } from "@/controllers/evaluations";
 import { EvaluationRequestDTO } from '@/dtos/requests/evaluations/evaluationRequestDTO';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import { FormProvider, useForm } from "react-hook-form";
+import { SiPicpay } from "react-icons/si";
 import { z } from "zod";
 
 type SchedulingReviewModalProps = {
     schedulingId: string;
-    onSubmission: () => void;
+    picpayUser: string;
+    onSubmission: (evaluation: EvaluationRequestDTO) => void;
     close: () => void;
 }
 
@@ -30,7 +33,7 @@ const newEvaluationFormSchema = z.object({
 });
 type NewEvaluationFormData = z.infer<typeof newEvaluationFormSchema>;
 
-export default function SchedulingReviewModal({ schedulingId, onSubmission, close }: SchedulingReviewModalProps) {
+export default function SchedulingReviewModal({ schedulingId, picpayUser, onSubmission, close }: SchedulingReviewModalProps) {
     const { data: session } = useSession();
     const router = useRouter();
 
@@ -43,37 +46,32 @@ export default function SchedulingReviewModal({ schedulingId, onSubmission, clos
     });
     const { handleSubmit, formState: { errors }, reset } = newEvaluationForm;
 
-    const handleNewEvaluationFormSubmission = (newEvaluationFormData: NewEvaluationFormData) => {
-        if (session) {
-            const evaluationRequestDTO: EvaluationRequestDTO = {
-                schedulingId: schedulingId,
-                rating: newEvaluationFormData.rating,
-                assessment: newEvaluationFormData.assessment
-            }
-
-            EvaluationsController.create(evaluationRequestDTO, session.user.token)
-                .then(() => {
-                    onSubmission();
-
-                    close();
-                })
-                .catch(() => enqueueSnackbar("Houve um erro ao criar a avaliação!", {
-                    variant: "error"
-                }))
-        } else {
-            router.push("/auth/login");
-        }
-    }
-
     return (
-        <Modal title="Avaliação do Agendamento" close={close}>
+        <Modal title="Finalização do Agendamento" close={close}>
+            <div className="flex justify-center">
+                <Button color="green">
+                    <Link href={"https://picpay.me/" + picpayUser}>
+                        <div className="flex items-center">
+                            <span className="mr-2">Pagar com o PicPay</span>
+                            <SiPicpay />
+                        </div>
+                    </Link>
+                </Button>
+            </div>
             <FormProvider {...newEvaluationForm}>
-                <form onSubmit={handleSubmit((newEvaluationFormData: NewEvaluationFormData) => handleNewEvaluationFormSubmission(newEvaluationFormData))}>
+                <form onSubmit={handleSubmit((newEvaluationFormData: NewEvaluationFormData) => {
+                    onSubmission({
+                        schedulingId: schedulingId,
+                        rating: newEvaluationFormData.rating,
+                        assessment: newEvaluationFormData.assessment
+                    });
+                })}>
                     <div className="p-1">
                         <TextField
                             type="number"
                             label="Nota (0 a 5)"
                             name="rating"
+                            range={true}
                         />
                         {errors.rating && <span className="text-xs text-red mt-1">{errors.rating.message}</span>}
                     </div>
@@ -86,7 +84,7 @@ export default function SchedulingReviewModal({ schedulingId, onSubmission, clos
                     </div>
 
                     <div className="flex justify-center items-center mt-5">
-                        <Button color="gray" onClick={() => reset()}>Cancelar</Button>
+                        <Button color="gray" onClick={() => reset()} className="mr-2">Cancelar</Button>
                         <Button type="submit" color="green">Salvar</Button>
                     </div>
                 </form>

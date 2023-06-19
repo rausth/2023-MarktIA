@@ -40,6 +40,6 @@ public class Scheduling {
     @Column(name = "dt_completion")
     private LocalDate completionDate;
 
-    @OneToOne(mappedBy = "scheduling")
+    @OneToOne(mappedBy = "scheduling", cascade = CascadeType.ALL)
     private Evaluation evaluation;
 }

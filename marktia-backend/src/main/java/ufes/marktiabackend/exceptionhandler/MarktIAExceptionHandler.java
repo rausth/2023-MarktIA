@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import ufes.marktiabackend.exceptionhandler.custom.NonAvailableTokenException;
-import ufes.marktiabackend.exceptionhandler.custom.NonExistentAddressException;
-import ufes.marktiabackend.exceptionhandler.custom.NonFinishedSchedulingException;
-import ufes.marktiabackend.exceptionhandler.custom.NullAddressIdException;
+import ufes.marktiabackend.exceptionhandler.custom.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,6 +141,15 @@ public class MarktIAExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ NullAddressIdException.class })
     public ResponseEntity<Object> handleNullAddressIdException(NullAddressIdException ex) {
         String userMessage = messageSource.getMessage("resource.null-address-id", null, LocaleContextHolder.getLocale());
+        String developerMessage = ex.toString();
+        List<MarktIAExceptionHandler.Error> errors = List.of(new MarktIAExceptionHandler.Error(userMessage, developerMessage));
+
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler({InvalidSchedulingStatusUpdateException.class})
+    public ResponseEntity<Object> handleInvalidSchedulingStatusUpdateException(InvalidSchedulingStatusUpdateException ex) {
+        String userMessage = messageSource.getMessage(ex.getMessage(), null, LocaleContextHolder.getLocale());
         String developerMessage = ex.toString();
         List<MarktIAExceptionHandler.Error> errors = List.of(new MarktIAExceptionHandler.Error(userMessage, developerMessage));
 

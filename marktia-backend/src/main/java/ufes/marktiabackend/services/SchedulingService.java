@@ -4,20 +4,25 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ufes.marktiabackend.dtos.requests.SchedulingRequestDTO;
+import ufes.marktiabackend.dtos.requests.scheduling.SchedulingRequestDTO;
+import ufes.marktiabackend.dtos.requests.scheduling.SchedulingStatusUpdateRequestDTO;
 import ufes.marktiabackend.dtos.responses.scheduling.SchedulingBasicResponseDTO;
 import ufes.marktiabackend.dtos.responses.scheduling.SchedulingResponseDTO;
 import ufes.marktiabackend.dtos.responses.user.UserBasicResponseDTO;
+import ufes.marktiabackend.entities.Evaluation;
 import ufes.marktiabackend.entities.Scheduling;
 import ufes.marktiabackend.entities.User;
 import ufes.marktiabackend.enums.SchedulingStatus;
+import ufes.marktiabackend.exceptionhandler.custom.InvalidSchedulingStatusUpdateException;
 import ufes.marktiabackend.filters.schedulingsfilter.SchedulingsFilter;
 import ufes.marktiabackend.filters.schedulingsfilter.SchedulingsFilterSpecification;
 import ufes.marktiabackend.repositories.SchedulingRepository;
 import ufes.marktiabackend.repositories.ServiceRepository;
+import ufes.marktiabackend.repositories.UserRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,9 +30,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SchedulingService {
 
+    private final EvaluationService evaluationService;
     private final UserService userService;
     private final SchedulingRepository schedulingRepository;
     private final ServiceRepository serviceRepository;
+    private final UserRepository userRepository;
 
     public List<SchedulingBasicResponseDTO> getAll(String userId, Boolean asConsumer, Integer schedulingStatus) {
         SchedulingsFilter schedulingsFilter = SchedulingsFilter.builder()
@@ -89,6 +96,37 @@ public class SchedulingService {
         return project(savedSchedule);
     }
 
+    public SchedulingResponseDTO updateStatus(String schedulingId, SchedulingStatusUpdateRequestDTO schedulingStatusUpdateRequestDTO) {
+        Scheduling scheduling = schedulingRepository.findById(Long.valueOf(schedulingId))
+                .orElseThrow(() -> new EntityNotFoundException("Agendamento não encontrado."));
+
+        User user = userRepository.findById(Long.valueOf(schedulingStatusUpdateRequestDTO.getUserId()))
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
+
+        if (scheduling.getStatus() == SchedulingStatus.OPENED) {
+            if (Objects.equals(user.getId(), scheduling.getProvider().getId())) {
+                scheduling.setStatus(SchedulingStatus.DELIVERED);
+            } else {
+                throw new InvalidSchedulingStatusUpdateException("Um usuário que não é o provedor de um agendamento aberto" +
+                        "não pode alterar seu status");
+            }
+        } else if (scheduling.getStatus() == SchedulingStatus.DELIVERED) {
+            if (Objects.equals(user.getId(), scheduling.getConsumer().getId())) {
+                Evaluation evaluation = evaluationService.create(schedulingStatusUpdateRequestDTO.getEvaluation());
+
+                scheduling.setEvaluation(evaluation);
+                scheduling.setStatus(SchedulingStatus.FINISHED);
+            } else {
+                throw new InvalidSchedulingStatusUpdateException("Um usuário que não é o consumidor de um agendamento entregue" +
+                        "não pode alterar seu status");
+            }
+        }
+
+        schedulingRepository.save(scheduling);
+
+        return project(scheduling);
+    }
+
     public SchedulingResponseDTO project(Scheduling scheduling) {
         return SchedulingResponseDTO.builder()
                 .id(scheduling.getId().toString())
@@ -98,12 +136,5 @@ public class SchedulingService {
                 .creationDate(scheduling.getCreationDate().toString())
                 .completionDate(scheduling.getCompletionDate() != null ? scheduling.getCompletionDate().toString() : null)
                 .build();
-    }
-
-    public SchedulingResponseDTO updateStatus(String schedulingId, String userId) {
-        /**
-         * [TODO]
-         */
-        return null;
     }
 }

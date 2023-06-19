@@ -4,7 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ufes.marktiabackend.dtos.requests.SchedulingRequestDTO;
+import ufes.marktiabackend.dtos.requests.scheduling.SchedulingRequestDTO;
+import ufes.marktiabackend.dtos.requests.scheduling.SchedulingStatusUpdateRequestDTO;
 import ufes.marktiabackend.dtos.responses.scheduling.SchedulingBasicResponseDTO;
 import ufes.marktiabackend.dtos.responses.scheduling.SchedulingResponseDTO;
 import ufes.marktiabackend.services.SchedulingService;
@@ -39,8 +40,8 @@ public class SchedulingController {
     @PutMapping("/{scheduling-id}")
     public ResponseEntity<SchedulingResponseDTO> updateStatus(
             @PathVariable("scheduling-id") String schedulingId,
-            @RequestParam String userId
+            @RequestBody @Valid SchedulingStatusUpdateRequestDTO schedulingStatusUpdateRequestDTO
     ) {
-        return ResponseEntity.ok(schedulingService.updateStatus(schedulingId, userId));
+        return ResponseEntity.ok(schedulingService.updateStatus(schedulingId, schedulingStatusUpdateRequestDTO));
     }
 }

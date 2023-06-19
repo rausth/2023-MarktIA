@@ -7,6 +7,7 @@ interface Props {
 	label?: string;
 	name: string;
 	onChange?: (value: any) => void;
+	range?: boolean;
 }
 
 const TextField: React.FC<Props> = ({
@@ -15,6 +16,7 @@ const TextField: React.FC<Props> = ({
 	label,
 	name,
 	onChange,
+	range,
 }: any) => {
 	const { register } = useFormContext();
 
@@ -33,6 +35,8 @@ const TextField: React.FC<Props> = ({
 					}
 				})}
 				step={type === "number" ? ".01" : ""}
+				min={range ? 0 : ""}
+				max={range ? 5 : ""}
 			/>
 		</label>
 	);
