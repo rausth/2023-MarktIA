@@ -14,6 +14,8 @@ import { useEffect, useState } from "react";
 import AddressForm from "@/components/addresses/address_form";
 import { BiMap, BiUser } from "react-icons/bi";
 import UserPersonalInfoForm from "@/components/user/user_personal_info_form";
+import { AxiosError } from "axios";
+import { handleError } from "@/utils/errorHandler";
 
 const registerFormSchema = z.object({
     userRole: z.string(),
@@ -134,8 +136,8 @@ export default function RegisterPage() {
 
                 router.push("/auth/login");
             })
-            .catch(() => enqueueSnackbar("Erro ao realizar o cadastro.", {
-                variant: "error"
+            .catch((error: AxiosError) => handleError("Erro ao realizar o cadastro.", {
+                errors: error.response?.data as any
             }));
     }
 

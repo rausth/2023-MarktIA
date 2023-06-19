@@ -7,13 +7,14 @@ import { useSession } from "next-auth/react";
 import ServicesFilterModal from "./modals/services_filter_modal";
 import ServicesList from "./services_list";
 import { ServicesController } from "@/controllers/services";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { ServiceBasicInfoResponseDTO } from "@/dtos/responses/services/serviceBasicInfoResponseDTO";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { ServicesFilter } from "@/utils/servicesFilter";
 import NewServiceModal from "./modals/new_service_modal";
 import { useRouter } from "next/navigation";
 import { UserRole, UserRoleUtils } from "@/enums/userRole";
+import { handleError } from "@/utils/errorHandler";
 
 type ServicesProps = {
     services: ServiceBasicInfo[];
@@ -53,7 +54,9 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
 
                     enqueueSnackbar("Serviços atualizados com sucesso.", { variant: "success" });
                 })
-                .catch(() => enqueueSnackbar("Houve um erro ao atualizar os serviços.", { variant: "error" }));
+                .catch((error: AxiosError) => handleError("Houve um erro ao atualizar os serviços.", {
+                    errors: error.response?.data as any
+                }));
         } else {
             router.push("/auth/login");
         }

@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { UsersController } from "@/controllers/users";
 import { useState } from "react";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { UserResponseDTO } from "@/dtos/responses/users/userResponseDTO";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import UserPersonalInfo from "./user_personal_info";
@@ -17,6 +17,7 @@ import { AddressRequestDTO } from "@/dtos/requests/addresses/addressRequestDTO";
 import Button from "../common/button";
 import { TiUserDelete } from "react-icons/ti";
 import UserDeletionModal from "./modals/userDeletionModal";
+import { handleError } from "@/utils/errorHandler";
 
 type UserProps = {
     user?: User;
@@ -46,11 +47,9 @@ export default function UserMainComponent(userProps: UserProps) {
                         userRole: UserRoleUtils.fromNumber(response.data.userRole)
                     });
                 })
-                .catch(() => {
-                    enqueueSnackbar("Ocorreu um erro ao atualizar o usuário.", {
-                        variant: "error"
-                    });
-                });
+                .catch((error: AxiosError) => handleError("Ocorreu um erro ao atualizar o usuário.", {
+                    errors: error.response?.data as any
+                }));
         } else {
             router.push("/auth/login");
         }

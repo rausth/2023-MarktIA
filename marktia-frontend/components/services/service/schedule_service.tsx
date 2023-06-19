@@ -5,6 +5,8 @@ import Button from "../../common/button";
 import { useRouter } from "next/navigation";
 import { SchedulingsController } from "@/controllers/schedulings";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import { AxiosError } from "axios";
+import { handleError } from "@/utils/errorHandler";
 
 type ScheduleServiceProps = {
     serviceId: string;
@@ -23,8 +25,8 @@ export default function ScheduleService({ serviceId }: ScheduleServiceProps) {
                 .then(() => enqueueSnackbar("Agendamento criado com sucesso! Vá para a página de agendamentos para acessá-lo.", {
                     variant: "success"
                 }))
-                .catch(() => enqueueSnackbar("Ocorreu um erro ao criar o agendamento.", {
-                    variant: "error"
+                .catch((error: AxiosError) => handleError("Ocorreu um erro ao criar o agendamento.", {
+                    errors: error.response?.data as any
                 }));
         } else {
             router.push("/auth/login");

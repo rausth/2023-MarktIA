@@ -3,13 +3,14 @@
 import { FederationController } from "@/controllers/federation";
 import { RegionResponseDTO } from "@/dtos/responses/federations/regionResponseDTO";
 import { StateResponseDTO } from "@/dtos/responses/federations/stateResponseDTO";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useRef, useState } from "react";
 import TextField from "../common/forms/text_field";
 import TextArea from "../common/forms/textarea";
 import SelectObject from "../common/forms/select_object";
 import { CountyResponseDTO } from "@/dtos/responses/federations/countyResponseDTO";
+import { handleError } from "@/utils/errorHandler";
 
 type AddressFormProps = {
     onlyFederationInfo?: boolean;
@@ -33,24 +34,24 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors, init
     const fetchStates = () => {
         FederationController.getStates()
             .then((response: AxiosResponse<StateResponseDTO[]>) => setStates(response.data))
-            .catch(() => enqueueSnackbar("Erro ao carregar os estados", {
-                variant: "error"
+            .catch((error: AxiosError) => handleError("Erro ao carregar os estados.", {
+                errors: error.response?.data as any
             }));
     }
 
     const fetchRegions = (stateId: string) => {
         FederationController.getRegionsByState(stateId)
             .then((response: AxiosResponse<RegionResponseDTO[]>) => setRegions(response.data))
-            .catch(() => enqueueSnackbar("Erro ao carregar as regiões", {
-                variant: "error"
+            .catch((error: AxiosError) => handleError("Erro ao carregar as regiões.", {
+                errors: error.response?.data as any
             }));
     }
 
     const fetchCountys = (stateId: string, regionId: string) => {
         FederationController.getCountysByStateAndRegion(stateId, regionId)
             .then((response: AxiosResponse<CountyResponseDTO[]>) => setCountys(response.data))
-            .catch(() => enqueueSnackbar("Erro ao carregar os municípios", {
-                variant: "error"
+            .catch((error: AxiosError) => handleError("Erro ao carregar os municípios.", {
+                errors: error.response?.data as any
             }));
     }
 

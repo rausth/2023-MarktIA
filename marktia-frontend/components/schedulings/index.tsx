@@ -2,12 +2,13 @@
 
 import { SchedulingsController } from "@/controllers/schedulings";
 import { SchedulingBasicInfo } from "@/models/scheduling";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { useSession } from "next-auth/react";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { createRef, useEffect, useRef, useState } from "react";
 import SchedulingsList from "./schedulings_list";
 import { useRouter } from "next/navigation";
+import { handleError } from "@/utils/errorHandler";
 
 type SchedulingsProps = {
     schedulings: SchedulingBasicInfo[];
@@ -34,7 +35,9 @@ export default function SchedulingsMainComponent(schedulingsProps: SchedulingsPr
             if (session) {
                 SchedulingsController.getAll(session.user.id, isClientSelected, currentExhibitedSchedulings, session.user.token)
                     .then((response: AxiosResponse<SchedulingBasicInfo[]>) => setSchedulings(response.data))
-                    .catch(() => enqueueSnackbar("Houve um erro ao atualizar os agendamentos.", { variant: "error" }));
+                    .catch((error: AxiosError) => handleError("Houve um erro ao atualizar os agendamentos.", {
+                        errors: error.response?.data as any
+                    }));
             } else {
                 router.push("/auth/login");
             }

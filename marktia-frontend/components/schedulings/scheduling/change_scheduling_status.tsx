@@ -6,7 +6,7 @@ import { SchedulingResponseDTO } from "@/dtos/responses/schedulings/schedulingRe
 import { SchedulingStatus, SchedulingStatusUtils } from "@/enums/schedulingStatus";
 import { UserRoleUtils } from "@/enums/userRole";
 import { Scheduling } from "@/models/scheduling";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
@@ -14,6 +14,7 @@ import { useState } from "react";
 import SchedulingReviewModal from "./modals/scheduling_review_modal";
 import { EvaluationRequestDTO } from "@/dtos/requests/evaluations/evaluationRequestDTO";
 import { SchedulingStatusUpdateRequestDTO } from '@/dtos/requests/schedulings/schedulingStatusUpdateRequestDTO';
+import { handleError } from "@/utils/errorHandler";
 
 type ChangeSchedulingStatusProps = {
     scheduling: Scheduling;
@@ -53,9 +54,9 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
 
                     setIsSchedulingReviewModalVisible(false);
                 })
-                .catch(() => enqueueSnackbar("Houve um erro ao atualizar o status do agendamento.", {
-                    variant: "error"
-                }))
+                .catch((error: AxiosError) => handleError("Houve um erro ao atualizar o status do agendamento.", {
+                    errors: error.response?.data as any
+                }));
         } else {
             router.push("/auth/login");
         }

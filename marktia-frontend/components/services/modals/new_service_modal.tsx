@@ -13,8 +13,9 @@ import { AddressResponseDTO } from "@/dtos/responses/address/AddressResponseDTO"
 import { ServiceResponseDTO } from "@/dtos/responses/services/serviceResponseDTO";
 import { ServiceType, ServiceTypeUtils } from "@/enums/serviceType";
 import { Address } from "@/models/address";
+import { handleError } from "@/utils/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
@@ -118,7 +119,9 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
 
                     close();
                 })
-                .catch(() => enqueueSnackbar("Houve um erro ao criar o serviço!", { variant: "error" }))
+                .catch((error: AxiosError) => handleError("Houve um erro ao criar o serviço.", {
+                    errors: error.response?.data as any
+                }));
         } else {
             router.push("/auth/login");
         }
@@ -142,9 +145,9 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
 
                         setUseMyAddress(true);
                     })
-                    .catch(() => enqueueSnackbar("Houve um erro ao carregar o endereço do usuário!", {
-                        variant: "error"
-                    }))
+                    .catch((error: AxiosError) => handleError("Houve um erro ao carregar o endereço do usuário.", {
+                        errors: error.response?.data as any
+                    }));
             } else {
                 router.push("/auth/login");
             }

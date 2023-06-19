@@ -3,6 +3,8 @@
 import Button from "@/components/common/button";
 import Modal from "@/components/common/modal";
 import { UsersController } from "@/controllers/users";
+import { handleError } from "@/utils/errorHandler";
+import { AxiosError } from "axios";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from 'next/navigation';
 import { enqueueSnackbar } from "notistack";
@@ -19,9 +21,9 @@ export default function UserDeletionModal({ close }: UserDeletionModalProps) {
         if (session) {
             UsersController.delete(session.user.id, session.user.token)
                 .then(() => signOut())
-                .catch(() => enqueueSnackbar("Ocorreu um erro ao deletar o usuário.", {
-                    variant: "error"
-                }))
+                .catch((error: AxiosError) => handleError("Ocorreu um erro ao deletar o usuário.", {
+                    errors: error.response?.data as any
+                }));
         } else {
             router.push("/auth/login");
         }
