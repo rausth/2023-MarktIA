@@ -2,8 +2,6 @@ package ufes.marktiabackend.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,13 +9,9 @@ import ufes.marktiabackend.dtos.requests.UserRequestDTO;
 import ufes.marktiabackend.dtos.responses.AddressResponseDTO;
 import ufes.marktiabackend.dtos.responses.user.UserResponseDTO;
 import ufes.marktiabackend.entities.User;
-import ufes.marktiabackend.exceptionhandler.MarktIAExceptionHandler;
 import ufes.marktiabackend.repositories.UserRepository;
 import ufes.marktiabackend.services.UserService;
-import ufes.marktiabackend.exceptionhandler.custom.NonExistentAddressException;
-import ufes.marktiabackend.exceptionhandler.custom.NullAddressIdException;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -55,6 +49,6 @@ public class UserController {
     @DeleteMapping("/{user-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("user-id") String userId) {
-        userRepository.deleteById(Long.valueOf(userId));
+        userService.deleteById(userId);
     }
 }

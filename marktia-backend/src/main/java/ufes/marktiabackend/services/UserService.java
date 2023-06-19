@@ -9,14 +9,16 @@ import ufes.marktiabackend.dtos.responses.AddressResponseDTO;
 import ufes.marktiabackend.dtos.responses.user.UserResponseDTO;
 import ufes.marktiabackend.entities.Address;
 import ufes.marktiabackend.entities.Federation;
+import ufes.marktiabackend.entities.Scheduling;
 import ufes.marktiabackend.entities.User;
+import ufes.marktiabackend.enums.SchedulingStatus;
 import ufes.marktiabackend.enums.UserRole;
-import ufes.marktiabackend.repositories.AddressRepository;
+import ufes.marktiabackend.exceptionhandler.custom.ServiceWithSchedulingExecption;
 import ufes.marktiabackend.repositories.FederationRepository;
+import ufes.marktiabackend.repositories.SchedulingRepository;
 import ufes.marktiabackend.repositories.UserRepository;
-import ufes.marktiabackend.exceptionhandler.custom.NonExistentAddressException;
-import ufes.marktiabackend.exceptionhandler.custom.NullAddressIdException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,30 +26,12 @@ import java.util.Optional;
 public class UserService {
     private final AddressService addressService;
 
-    private final AddressRepository addressRepository;
     private final UserRepository userRepository;
     private final FederationRepository federationRepository;
+    private final SchedulingRepository schedulingRepository;
 
     public Optional<User> userById(String userId) {
         return userRepository.findById(Long.valueOf(userId));
-    }
-    public UserResponseDTO responseDTOById(String userId) {
-        Optional<User> user = userRepository.findById(Long.valueOf(userId));
-
-        return user.map(this::project).orElse(null);
-    }
-
-    public UserResponseDTO verifyAndSave(@Valid User user) {
-        Long id = user.getAddress().getId();
-        if (id == null) throw new NullAddressIdException();
-
-        Optional<Address> address = addressRepository.findById(id);
-
-        if (address.isEmpty()) throw new NonExistentAddressException();
-
-        User savedUser = userRepository.save(user);
-
-        return project(savedUser);
     }
 
     public AddressResponseDTO getAddress(String userId) {
@@ -86,6 +70,25 @@ public class UserService {
         userRepository.save(user);
 
         return project(user);
+    }
+
+    public void deleteById(String userId) {
+        checkUserForOpenSchedulings(userId);
+        userRepository.deleteById(Long.valueOf(userId));
+    }
+
+    private void checkUserForOpenSchedulings(String userId) {
+        Optional<User> user = userById(userId);
+
+        if (user.isEmpty()) {
+            throw new EntityNotFoundException("Usuário não encontrado.");
+        }
+
+        List<Scheduling> schedulings = schedulingRepository.findAllByProviderAndStatusIsNot(user.get(), SchedulingStatus.FINISHED);
+
+        if (!schedulings.isEmpty()) {
+            throw new ServiceWithSchedulingExecption("Provedor tem serviços com agendamentos não finalizados.");
+        }
     }
 
     public UserResponseDTO project(@Valid User user) {

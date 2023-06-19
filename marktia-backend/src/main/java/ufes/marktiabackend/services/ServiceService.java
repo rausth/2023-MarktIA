@@ -60,10 +60,6 @@ public class ServiceService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<ufes.marktiabackend.entities.Service> serviceById(String serviceId) {
-        return serviceRepository.findById(Long.valueOf(serviceId));
-    }
-
     public ServiceResponseDTO responseDTOById(String serviceId) {
         Optional<ufes.marktiabackend.entities.Service> service = serviceRepository.findById(Long.valueOf(serviceId));
 
@@ -124,7 +120,7 @@ public class ServiceService {
                 .picpayUser(service.getPicpayUser())
                 .schedulings(service.getSchedulings()
                         .stream()
-                        .map(scheduling -> schedulingService.project(scheduling))
+                        .map(schedulingService::project)
                         .collect(Collectors.toList())
                 )
                 .build();
