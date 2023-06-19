@@ -1,6 +1,5 @@
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation";
-import Image from 'next/image'
 
 export default async function MarktiaPage() {
     const session = await getServerSession();
@@ -9,7 +8,7 @@ export default async function MarktiaPage() {
         return (
             <div className="h-screen flex flex-col justify-center">
                 <div className="flex justify-center">
-                    <Image src="/marca_aprovada.png" className="w-1/2" alt="logo" />
+                    <img src="/marca_aprovada.png" className="w-1/2"></img>
                 </div>
                 <div className="flex justify-center text-xl mt-10">
                     <div>

@@ -32,7 +32,7 @@ export default function UserImage({ imageURL, onSubmission }: UserImageProps) {
 
     useEffect(() => {
         setValue("imageURL", imageURL ? imageURL : null);
-    }, [imageURL, setValue]);
+    }, [imageURL]);
 
     return (
         <div className="w-full">

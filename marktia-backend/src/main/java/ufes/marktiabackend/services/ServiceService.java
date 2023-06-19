@@ -17,8 +17,6 @@ import ufes.marktiabackend.filters.servicesfilter.ServicesFilter;
 import ufes.marktiabackend.filters.servicesfilter.ServicesFilterSpecification;
 import ufes.marktiabackend.repositories.ServiceRepository;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -98,7 +96,6 @@ public class ServiceService {
                         .description(serviceRequestDTO.getDescription())
                         .price(serviceRequestDTO.getPrice())
                         .picpayUser(serviceRequestDTO.getPicpayUser())
-                        .schedulings(new ArrayList<>())
                         .build();
 
         ufes.marktiabackend.entities.Service savedService = serviceRepository.save(service);

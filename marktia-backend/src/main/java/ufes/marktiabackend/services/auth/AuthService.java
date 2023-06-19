@@ -17,8 +17,6 @@ import ufes.marktiabackend.enums.UserRole;
 import ufes.marktiabackend.repositories.UserRepository;
 import ufes.marktiabackend.services.FederationService;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -64,11 +62,8 @@ public class AuthService {
     }
 
     public AuthResponseDTO authenticate(AuthRequestDTO authRequestDTO) {
-        Optional<User> user = userRepository.findByEmail(authRequestDTO.getEmail());
-
-        if (user.isEmpty() || !passwordEncoder.matches(authRequestDTO.getPassword(), user.get().getPassword())) {
-            throw new EntityNotFoundException("Usuário com as credenciais fornecidas não encontrado.");
-        }
+        User user = userRepository.findByEmail(authRequestDTO.getEmail())
+                .orElseThrow(() -> new EntityNotFoundException("Usuário com as credenciais fornecidas não encontrado."));
 
         try {
             authenticationManager.authenticate(
@@ -81,10 +76,10 @@ public class AuthService {
         }
 
         return AuthResponseDTO.builder()
-                .id(user.get().getId().toString())
-                .name(user.get().getName())
-                .userRole(user.get().getUserRole().getValue())
-                .token(jwtService.generateToken(user.get()))
+                .id(user.getId().toString())
+                .name(user.getName())
+                .userRole(user.getUserRole().getValue())
+                .token(jwtService.generateToken(user))
                 .build();
     }
 }

@@ -48,7 +48,7 @@ export default function SchedulingsMainComponent(schedulingsProps: SchedulingsPr
         } else {
             fetchSchedulings();
         }
-    }, [isClientSelected, currentExhibitedSchedulings, router, session])
+    }, [isClientSelected, currentExhibitedSchedulings])
 
     const changeIsClientSelected = (newIsClientSelectedValue: boolean) => {
         if (client.current && provider.current) {
