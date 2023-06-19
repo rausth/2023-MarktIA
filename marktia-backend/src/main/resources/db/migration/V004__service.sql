@@ -7,8 +7,8 @@ CREATE TABLE `service` (
     `description` TEXT NOT NULL,
     `price` DOUBLE PRECISION NOT NULL,
     `picpay_user` VARCHAR(100) NOT NULL,
-    FOREIGN KEY (`provider_id`) REFERENCES `user` (`id`),
-    FOREIGN KEY (`address_id`) REFERENCES `address` (`id`)
+    FOREIGN KEY (`provider_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`address_id`) REFERENCES `address` (`id`) ON DELETE CASCADE
 );
 
 INSERT INTO `service` (provider_id, address_id, title, type, description, price, picpay_user)

@@ -14,8 +14,8 @@ CREATE TABLE `user` (
     FOREIGN KEY (`address_id`) REFERENCES `address` (`id`)
 );
 
-INSERT INTO `user` (name, email, password, cpf, telephone, address_id, role)
-VALUES ('Fernando', 'fernando@gmail.com', '123456', '14772898794', '27998278371', 1, 1);
+INSERT INTO `user` (name, email, password, cpf, telephone, address_id, role, image_url)
+VALUES ('Fernando', 'fernando@gmail.com', '123456', '14772898794', '27998278371', 1, 1, 'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png');
 
-INSERT INTO `user` (name, email, password, cpf, telephone, address_id, role)
-VALUES ('Enzo', 'enzo@gmail.com', '123456', '14772898795', '27998278371', 2, 1);
+INSERT INTO `user` (name, email, password, cpf, telephone, address_id, role, image_url)
+VALUES ('Enzo', 'enzo@gmail.com', '123456', '14772898795', '27998278371', 2, 1, 'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png');

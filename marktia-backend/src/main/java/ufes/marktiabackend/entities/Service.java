@@ -24,11 +24,11 @@ public class Service {
     private Long id;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "provider_id")
     private User provider;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
 
@@ -50,7 +50,7 @@ public class Service {
     @Column(name = "picpay_user")
     private String picpayUser;
 
-    @OneToMany(mappedBy = "service", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "service", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Scheduling> schedulings;
 
 }

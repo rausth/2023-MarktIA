@@ -3,7 +3,7 @@ CREATE TABLE `evaluation` (
     `scheduling_id` INT NOT NULL,
     `rating` DECIMAL NOT NULL,
     `assessment` TEXT,
-    FOREIGN KEY (`scheduling_id`) REFERENCES `scheduling` (`id`)
+    FOREIGN KEY (`scheduling_id`) REFERENCES `scheduling` (`id`) ON DELETE CASCADE
 );
 
 INSERT INTO `evaluation` (scheduling_id, rating, assessment)
