@@ -48,7 +48,7 @@ public class AuthService {
                 .cnpj((registerRequestDTO.getCnpj() != null && !registerRequestDTO.getCnpj().isBlank()) ? registerRequestDTO.getCnpj() : null)
                 .telephone(registerRequestDTO.getTelephone())
                 .address(address)
-                .imageUrl(registerRequestDTO.getImageURL())
+                .imageUrl((registerRequestDTO.getImageURL() != null && !registerRequestDTO.getImageURL().isBlank()) ? registerRequestDTO.getImageURL() : "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png")
                 .build();
 
         userRepository.save(user);

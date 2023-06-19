@@ -100,6 +100,7 @@ public class UserService {
                 .userRole(user.getUserRole().getValue())
                 .creationDate(user.getCreationDate().toString())
                 .updateDate(user.getUpdateDate().toString())
+                .imageURL(user.getImageUrl())
                 .build();
     }
 }
