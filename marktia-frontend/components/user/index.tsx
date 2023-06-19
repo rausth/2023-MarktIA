@@ -38,7 +38,7 @@ export default function UserMainComponent(userProps: UserProps) {
                         userRole: UserRoleUtils.fromNumber(response.data.userRole)
                     });
 
-                    enqueueSnackbar("Usuário atualizado com sucesso.", {
+                    enqueueSnackbar("Usuário atualizado com sucesso. Caso tenha alterado a classificação, relogue.", {
                         variant: "success"
                     });
 

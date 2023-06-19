@@ -13,6 +13,7 @@ import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { ServicesFilter } from "@/utils/servicesFilter";
 import NewServiceModal from "./modals/new_service_modal";
 import { useRouter } from "next/navigation";
+import { UserRole, UserRoleUtils } from "@/enums/userRole";
 
 type ServicesProps = {
     services: ServiceBasicInfo[];
@@ -121,7 +122,9 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
                     </div>
                     <div className="flex justify-end">
                         <Button color="blue" className="mr-2" onClick={() => setIsFilterModalVisible(true)}>Filtrar</Button>
-                        <Button color="blue" className="ml-2" onClick={() => setIsNewServiceModalVisible(true)}>Novo</Button>
+                        {UserRole.PROVIDER === UserRoleUtils.fromNumber(session?.user.userRole!) && (
+                            <Button color="blue" className="ml-2" onClick={() => setIsNewServiceModalVisible(true)}>Novo</Button>
+                        )}
                     </div>
                 </div>
 

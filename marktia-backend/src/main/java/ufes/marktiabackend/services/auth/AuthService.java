@@ -56,6 +56,7 @@ public class AuthService {
         return AuthResponseDTO.builder()
                 .id(user.getId().toString())
                 .name(user.getName())
+                .userRole(user.getUserRole().getValue())
                 .token(jwtService.generateToken(user))
                 .build();
     }
@@ -77,6 +78,7 @@ public class AuthService {
         return AuthResponseDTO.builder()
                 .id(user.getId().toString())
                 .name(user.getName())
+                .userRole(user.getUserRole().getValue())
                 .token(jwtService.generateToken(user))
                 .build();
     }

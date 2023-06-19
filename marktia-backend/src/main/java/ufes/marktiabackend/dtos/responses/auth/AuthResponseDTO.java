@@ -10,5 +10,7 @@ public class AuthResponseDTO {
 
     private String name;
 
+    private Integer userRole;
+
     private String token;
 }
