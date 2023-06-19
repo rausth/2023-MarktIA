@@ -2,6 +2,7 @@
 
 import { SnackbarProvider } from 'notistack'
 import '../globals.css'
+import Image from 'next/image'
 
 export default function PublicRootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,7 +14,7 @@ export default function PublicRootLayout({ children }: { children: React.ReactNo
       <body>
         <div className="h-screen flex flex-col justify-center bg-white-dark">
           <div className="flex justify-center">
-            <img src="/marca_aprovada.png" className="w-1/4"></img>
+            <Image src="/marca_aprovada.png" className="w-1/4" alt="logo" />
           </div>
 
           <div className="flex justify-center mt-2">

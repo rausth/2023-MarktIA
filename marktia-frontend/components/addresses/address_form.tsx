@@ -75,7 +75,7 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors, init
         } else {
             setCurrentSelectedStateId(undefined);
         }
-    }, [states]);
+    }, [states, onlyFederationInfo, initialStateId]);
 
     useEffect(() => {
         if (currentSelectedStateId) {
@@ -85,7 +85,7 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors, init
             setValue("state", undefined);
             setRegions([]);
         }
-    }, [currentSelectedStateId]);
+    }, [currentSelectedStateId, setValue]);
 
     useEffect(() => {
         if (regions.length > 0) {
@@ -103,7 +103,7 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors, init
             setValue("region", undefined);
             setCountys([]);
         }
-    }, [currentSelectedRegionId]);
+    }, [currentSelectedRegionId, currentSelectedStateId, setValue]);
 
     useEffect(() => {
         if (countys.length > 0) {
@@ -119,7 +119,7 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors, init
         } else {
             setValue("county", undefined);
         }
-    }, [currentSelectedCountyId]);
+    }, [currentSelectedCountyId, countys, currentSelectedStateId, currentSelectedRegionId, setValue]);
 
     return (
         <div>

@@ -67,7 +67,7 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
         setValue("publicPlace", address.publicPlace);
         setValue("number", address.number);
         setValue("complement", address.complement);
-    }, [address]);
+    }, [address, setValue]);
 
     return (
         <div className="p-2">
