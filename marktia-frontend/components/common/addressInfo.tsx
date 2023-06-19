@@ -8,7 +8,7 @@ type AddressProps = {
 
 export default function AddressInfo({ address, actionOnEditButton }: AddressProps) {
     return (
-        <div className="p-5">
+        <div>
             <div className="grid grid-cols-3 py-2">
                 <div><span>Estado: {address.federation.state.name}</span></div>
                 <div><span>Região: {address.federation.region.name}</span></div>
