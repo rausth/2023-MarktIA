@@ -45,7 +45,7 @@ public class AuthService {
                 .email(registerRequestDTO.getEmail())
                 .password(passwordEncoder.encode(registerRequestDTO.getPassword()))
                 .cpf(registerRequestDTO.getCpf())
-                .cnpj(registerRequestDTO.getCnpj())
+                .cnpj((registerRequestDTO.getCnpj() != null && !registerRequestDTO.getCnpj().isBlank()) ? registerRequestDTO.getCnpj() : null)
                 .telephone(registerRequestDTO.getTelephone())
                 .address(address)
                 .imageUrl(registerRequestDTO.getImageURL())
