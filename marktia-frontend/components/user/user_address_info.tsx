@@ -5,7 +5,6 @@ import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import AddressInfo from "../common/addressInfo";
-import TextField from "../common/forms/text_field";
 import Button from "../common/button";
 import { Address } from "@/models/address";
 import { AddressRequestDTO } from "@/dtos/requests/addresses/addressRequestDTO";
@@ -13,7 +12,7 @@ import AddressForm from "../addresses/address_form";
 
 type UserAddressInfoProps = {
     address: Address;
-    onSubmission: (address: AddressRequestDTO) => void;
+    onSubmission: (address: AddressRequestDTO, onSuccess: () => void) => void;
 }
 
 const editUserAddressFormSchema = z.object({
@@ -46,8 +45,10 @@ const editUserAddressFormSchema = z.object({
 });
 type EditUserAddressFormData = z.infer<typeof editUserAddressFormSchema>;
 
-export default function UserAddressInfo({ address, onSubmission }: UserAddressInfoProps) {
+export default function UserAddressInfo(userAddressInfoProps: UserAddressInfoProps) {
+    const [address, setAddress] = useState(userAddressInfoProps.address);
     const [isEditing, setIsEditing] = useState(false);
+    const [initialStateId, setInitialStateId] = useState(address.federation.state.id);
 
     const editUserAddressForm = useForm<EditUserAddressFormData>({
         resolver: zodResolver(editUserAddressFormSchema),
@@ -70,14 +71,17 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
             ) : (
                 <div>
                     <FormProvider {...editUserAddressForm} >
-                        <form onSubmit={handleSubmit((editUserAddressFormData: EditUserAddressFormData) => onSubmission({
+                        <form onSubmit={handleSubmit((editUserAddressFormData: EditUserAddressFormData) => userAddressInfoProps.onSubmission({
                             countyId: editUserAddressFormData.county.toString(),
                             district: editUserAddressFormData.district,
                             publicPlace: editUserAddressFormData.publicPlace,
                             number: editUserAddressFormData.number,
                             complement: editUserAddressFormData.complement
+                        }, () => {
+                            reset();
+                            setIsEditing(false);
                         }))}>
-                            <AddressForm errors={errors} setValue={setValue} initialStateId={address.federation.state.id} />
+                            <AddressForm errors={errors} setValue={setValue} initialStateId={initialStateId} />
 
                             <div className="mt-5 pb-2">
                                 <div className="flex justify-center my-5">

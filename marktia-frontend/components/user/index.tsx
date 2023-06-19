@@ -29,16 +29,28 @@ export default function UserMainComponent(userProps: UserProps) {
     const { data: session } = useSession();
     const router = useRouter();
 
-    const updateUser = (userRequestDTO: UserRequestDTO) => {
+    const updateUser = (userRequestDTO: UserRequestDTO, onSuccess?: () => void) => {
         if (session) {
             UsersController.update(session.user.id, userRequestDTO, session.user.token)
-                .then((response: AxiosResponse<UserResponseDTO>) => setUser({
-                    ...response.data,
-                    userRole: UserRoleUtils.fromNumber(response.data.userRole)
-                }))
-                .catch(() => enqueueSnackbar("Ocorreu um erro ao atualizar o usuário.", {
-                    variant: "error"
-                }));
+                .then((response: AxiosResponse<UserResponseDTO>) => {
+                    setUser({
+                        ...response.data,
+                        userRole: UserRoleUtils.fromNumber(response.data.userRole)
+                    });
+
+                    enqueueSnackbar("Usuário atualizado com sucesso.", {
+                        variant: "success"
+                    });
+
+                    if (onSuccess) {
+                        onSuccess();
+                    }
+                })
+                .catch(() => {
+                    enqueueSnackbar("Ocorreu um erro ao atualizar o usuário.", {
+                        variant: "error"
+                    });
+                });
         } else {
             router.push("/auth/login");
         }
@@ -50,7 +62,7 @@ export default function UserMainComponent(userProps: UserProps) {
                 <div>
                     <SnackbarProvider>
                         {isUserDeletionModalVisible && (
-                            <UserDeletionModal 
+                            <UserDeletionModal
                                 close={() => setIsUserDeletionModalVisible(false)}
                             />
                         )}
@@ -71,24 +83,29 @@ export default function UserMainComponent(userProps: UserProps) {
 
                         <div className="mx-10">
                             <div className="w-full flex justify-center mt-5 border-b-2 border-black pb-2">
-                                <UserImage imageURL={user.imageURL} onSubmission={(imageURL: string | null) => updateUser({
-                                    ...user,
+                                <UserImage imageURL={user.imageURL} onSubmission={(imageURL: string | null, onSuccess: () => void) => updateUser({
+                                    imageURL: imageURL ? imageURL : null,
+                                    userRole: UserRoleUtils.toNumber(user.userRole)!,
+                                    name: user.name,
+                                    email: user.email,
+                                    telephone: user.telephone,
+                                    cpf: user.cpf,
+                                    cnpj: user.cnpj,
                                     address: {
                                         countyId: user.address.federation.county.id.toString(),
                                         district: user.address.district,
                                         publicPlace: user.address.publicPlace,
                                         number: user.address.number,
                                         complement: user.address.complement
-                                    },
-                                    imageURL: imageURL ? imageURL : undefined
-                                })} />
+                                    }
+                                }, onSuccess)} />
                             </div>
                             <div className="grid grid-cols-2 border-b-2 border-black">
                                 <div className="p-5 border-r-2 border-black pr-2">
                                     <h1 className="text-xl">Informações Pessoais</h1>
 
-                                    <UserPersonalInfo user={user} onSubmission={(userPersonalData: UserPersonalData) => updateUser({
-                                        ...user,
+                                    <UserPersonalInfo user={user} onSubmission={(userPersonalData: UserPersonalData, onSuccess: () => void) => updateUser({
+                                        imageURL: user.imageURL ? user.imageURL : null,
                                         ...userPersonalData,
                                         address: {
                                             countyId: user.address.federation.county.id.toString(),
@@ -97,15 +114,21 @@ export default function UserMainComponent(userProps: UserProps) {
                                             number: user.address.number,
                                             complement: user.address.complement
                                         }
-                                    })} />
+                                    }, onSuccess)} />
                                 </div>
                                 <div className="p-5">
                                     <h1 className="text-xl">Endereço</h1>
 
-                                    <UserAddressInfo address={user.address} onSubmission={(address: AddressRequestDTO) => updateUser({
-                                        ...user,
+                                    <UserAddressInfo address={user.address} onSubmission={(address: AddressRequestDTO, onSuccess: () => void) => updateUser({
+                                        imageURL: user.imageURL ? user.imageURL : null,
+                                        userRole: UserRoleUtils.toNumber(user.userRole)!,
+                                        name: user.name,
+                                        email: user.email,
+                                        telephone: user.telephone,
+                                        cpf: user.cpf,
+                                        cnpj: user.cnpj,
                                         address: address
-                                    })} />
+                                    }, onSuccess)} />
                                 </div>
                             </div>
                         </div>

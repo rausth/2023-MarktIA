@@ -12,7 +12,7 @@ import UserPersonalInfoForm from "./user_personal_info_form";
 
 type UserPersonalInfoProps = {
     user: User;
-    onSubmission: (userPersonalInfo: UserPersonalData) => void;
+    onSubmission: (userPersonalInfo: UserPersonalData, onSuccess: () => void) => void;
 }
 
 const editUserPersonalInfoFormSchema = z.object({
@@ -58,13 +58,14 @@ const editUserPersonalInfoFormSchema = z.object({
 });
 type EditUserPersonalInfoFormData = z.infer<typeof editUserPersonalInfoFormSchema>;
 
-export default function UserPersonalInfo({ user, onSubmission }: UserPersonalInfoProps) {
+export default function UserPersonalInfo(userPersonalInfoProps: UserPersonalInfoProps) {
+    const [user, setUser] = useState(userPersonalInfoProps.user);
     const [isEditing, setIsEditing] = useState(false);
 
     const editUserPersonalInfoForm = useForm<EditUserPersonalInfoFormData>({
         resolver: zodResolver(editUserPersonalInfoFormSchema),
         defaultValues: {
-            userRole: UserRole.NORMAL_USER,
+            userRole: user.userRole,
             name: user.name,
             email: user.email,
             telephone: user.telephone,
@@ -98,10 +99,13 @@ export default function UserPersonalInfo({ user, onSubmission }: UserPersonalInf
             ) : (
                 <div>
                     <FormProvider {...editUserPersonalInfoForm} >
-                        <form onSubmit={handleSubmit((editUserPersonalInfoFormData: EditUserPersonalInfoFormData) => onSubmission({
+                        <form onSubmit={handleSubmit((editUserPersonalInfoFormData: EditUserPersonalInfoFormData) => userPersonalInfoProps.onSubmission({
                             ...editUserPersonalInfoFormData,
                             userRole: UserRoleUtils.toNumber(editUserPersonalInfoFormData.userRole)!,
                             cnpj: editUserPersonalInfoFormData.cnpj ? editUserPersonalInfoFormData.cnpj : undefined
+                        }, () => {
+                            reset();
+                            setIsEditing(false);
                         }))}>
                             <UserPersonalInfoForm errors={errors} editVersion={true} />
 

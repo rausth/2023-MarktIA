@@ -7,10 +7,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TextField from "../common/forms/text_field";
+import { User } from "@/models/user";
 
 type UserImageProps = {
     imageURL?: string;
-    onSubmission: (imageURL: string | null) => void;
+    onSubmission: (imageURL: string | null, onSuccess: () => void) => void;
 }
 
 const editImageFormSchema = z.object({
@@ -19,7 +20,8 @@ const editImageFormSchema = z.object({
 });
 type EditImageFormData = z.infer<typeof editImageFormSchema>;
 
-export default function UserImage({ imageURL, onSubmission }: UserImageProps) {
+export default function UserImage(userImageProps: UserImageProps) {
+    const [imageURL, setImageURL] = useState(userImageProps.imageURL);
     const [isEditing, setIsEditing] = useState(false);
 
     const editImageForm = useForm<EditImageFormData>({
@@ -41,7 +43,10 @@ export default function UserImage({ imageURL, onSubmission }: UserImageProps) {
                 </div>
             ) : (
                 <FormProvider {...editImageForm}>
-                    <form onSubmit={handleSubmit((editImageFormData: EditImageFormData) => onSubmission(editImageFormData.imageURL))}>
+                    <form onSubmit={handleSubmit((editImageFormData: EditImageFormData) => userImageProps.onSubmission(editImageFormData.imageURL, () => {
+                        reset();
+                        setIsEditing(false);
+                    }))}>
                         <div className="p-1">
                             <TextField
                                 type="text"
