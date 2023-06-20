@@ -82,8 +82,13 @@ To get started with Marktia, follow the steps below:
    ```
    npm install
    ```
+   
+5. Run the development environment:
+   ```
+   npm run dev
+   ```
 
-4. Start the frontend development server:
+7. Start the frontend development server:
    ```
    npm start
    ```
