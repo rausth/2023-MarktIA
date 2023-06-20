@@ -1,10 +1,9 @@
 # 2023-MarktIA
-Assignment for the 2023 edition of the "Web Development and the Semantic Web" course, by Delvani Antônio Mateus, Enzo Baioco Cussuol, Fernando Azevedo Peres and Rausth Borges Junqueira
-Apologies for the confusion earlier. Here's the regenerated README for the Marktia marketplace for services:
+Assignment for the 2023 edition of the "Web Development and the Semantic Web" course, by Delvani Antônio Mateus, Enzo Baioco Cussuol, Fernando Azevedo Peres and Rausth Borges Junqueira.
 
-# Marktia Services Marketplace
+# Marktia 
 
-Welcome to the Marktia Services Marketplace project!
+Welcome to the Marktia project!
 
 ## Table of Contents
 - [Description](#description)
@@ -16,11 +15,11 @@ Welcome to the Marktia Services Marketplace project!
 
 ## Description
 
-Marktia Services Marketplace is an online platform developed for connecting service providers with service seekers. The project aims to provide a user-friendly and efficient marketplace experience for both parties. It includes features such as service listings, search and filtering options, booking and scheduling capabilities, secure payment options, and review and rating systems.
+Marktia is an online platform developed for connecting service providers with service seekers. The project aims to provide a user-friendly and efficient marketplace experience for both parties. It includes features such as service listings, search and filtering options, booking and scheduling capabilities, secure payment options, and review and rating systems.
 
 ## Technologies
 
-The following technologies are used in the development of Marktia Services Marketplace:
+The following technologies are used in the development of Marktia:
 
 **Front-end Technologies:**
 - TypeScript: A statically typed programming language that enhances JavaScript with additional features and improved scalability.
@@ -40,37 +39,57 @@ The following technologies are used in the development of Marktia Services Marke
 
 ## Installation
 
-To get started with Marktia Services Marketplace, follow the steps below:
+To get started with Marktia, follow the steps below:
 
-1. Clone the repository to your local machine:
+**Backend:**
 
+1. Ensure you have Java JDK (at least version 8) and Apache Maven installed on your machine.
+
+2. Clone the repository by running the following command in your terminal or command prompt:
    ```
-   git clone https://github.com/your-username/2023-MarktIA.git
-   ```
-
-2. Navigate to the project directory:
-
-   ```
-   cd ~/2023-Marktia/marktia-frontend/
+   git clone https://github.com/~/2023-MarktIA.git
    ```
 
-3. Install the necessary dependencies. It is recommended to set up a virtual environment before installing the dependencies.
+3. Navigate to the backend directory:
+   ```
+   cd 2023-MarktIA/backend
+   ```
 
-run:
+4. Build the backend project using Maven:
+   ```
+   mvn clean install
+   ```
+   This command will download the required dependencies, compile the source code, and package the application into a JAR file.
 
-```bash
-npm install
+5. Start the backend server:
+   ```
+   java -jar target/backend.jar
+   ```
+   Replace `backend.jar` with the actual name of the generated JAR file if it differs.
 
-```
+6. The backend server will start at `http://localhost:8080`.
 
-4. Build and configure the front-end and back-end components according to their respective instructions.
-run:
+**Frontend:**
 
-```bash
+1. Ensure you have Node.js and npm (Node Package Manager) installed on your machine.
 
-npm run build
+2. Navigate to the frontend directory:
+   ```
+   cd 2023-MarktIA/frontend
+   ```
 
-```
+3. Install the dependencies by running:
+   ```
+   npm install
+   ```
+
+4. Start the frontend development server:
+   ```
+   npm start
+   ```
+   This will start the frontend server at `http://localhost:8080` and open the application in your default browser.
+
+
 ## Usage
 
 Before running the services marketplace application, ensure that you have completed the installation steps mentioned above. Follow the instructions below to use Marktia Services Marketplace:
@@ -79,7 +98,7 @@ Before running the services marketplace application, ensure that you have comple
 
 2. Launch the front-end application using the specified command or script.
 
-3. Access Marktia Services Marketplace through your web browser at the provided URL.
+3. Access Marktia through your web browser at the provided URL.
 
 4. Explore the marketplace features, search for services, book appointments, make payments, and provide feedback through reviews and ratings.
 
