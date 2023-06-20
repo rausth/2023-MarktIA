@@ -45,19 +45,32 @@ To get started with Marktia Services Marketplace, follow the steps below:
 1. Clone the repository to your local machine:
 
    ```
-   git clone https://github.com/your-username/Marktia-Services-Marketplace.git
+   git clone https://github.com/your-username/2023-MarktIA.git
    ```
 
 2. Navigate to the project directory:
 
    ```
-   cd Marktia-Services-Marketplace
+   cd ~/2023-Marktia/marktia-frontend/
    ```
 
 3. Install the necessary dependencies. It is recommended to set up a virtual environment before installing the dependencies.
 
-4. Build and configure the front-end and back-end components according to their respective instructions.
+run:
 
+```bash
+npm install
+
+```
+
+4. Build and configure the front-end and back-end components according to their respective instructions.
+run:
+
+```bash
+
+npm run build
+
+```
 ## Usage
 
 Before running the services marketplace application, ensure that you have completed the installation steps mentioned above. Follow the instructions below to use Marktia Services Marketplace:
