@@ -57,17 +57,12 @@ To get started with Marktia, follow the steps below:
 
 4. Build the backend project using Maven:
    ```
-   mvn clean install
+   mvn spring-boot:run 
    ```
    This command will download the required dependencies, compile the source code, and package the application into a JAR file.
 
-5. Start the backend server:
-   ```
-   java -jar target/backend.jar
-   ```
-   Replace `backend.jar` with the actual name of the generated JAR file if it differs.
 
-6. The backend server will start at `http://localhost:8080`.
+5. The backend server will start at `http://localhost:8080`.
 
 **Frontend:**
 
