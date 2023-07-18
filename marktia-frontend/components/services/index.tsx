@@ -39,11 +39,8 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
         providerId: null,
         name: null,
         type: null,
-        federation: {
-            stateId: null,
-            regionId: null,
-            countyId: null
-        }
+        state: null,
+        city: null
     });
 
     const fetchServices = () => {
@@ -100,15 +97,12 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
         <SnackbarProvider>
             <div>
                 {isFilterModalVisible && (<ServicesFilterModal
-                    onSubmission={(name: string | null, type: number | null, stateId: string | null, regionId: string | null, countyId: string | null) => setServicesFilter({
+                    onSubmission={(name: string | null, type: number | null, state: string | null, city: string | null) => setServicesFilter({
                         ...servicesFilter,
                         name: name,
                         type: type,
-                        federation: {
-                            stateId: stateId,
-                            regionId: regionId,
-                            countyId: countyId
-                        }
+                        state: state,
+                        city: city
                     })}
                     close={() => setIsFilterModalVisible(false)}
                 />)}

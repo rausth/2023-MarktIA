@@ -1,8 +1,7 @@
-import { Federation } from "./federation";
-
 export type Address = {
     id: string;
-    federation: Federation;
+    state: string;
+    city: string;
     district: string;
     publicPlace: string;
     number: string;

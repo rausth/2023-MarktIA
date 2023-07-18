@@ -91,7 +91,8 @@ export default function UserMainComponent(userProps: UserProps) {
                                     cpf: user.cpf,
                                     cnpj: user.cnpj,
                                     address: {
-                                        countyId: user.address.federation.county.id.toString(),
+                                        state: user.address.state,
+                                        city: user.address.city,
                                         district: user.address.district,
                                         publicPlace: user.address.publicPlace,
                                         number: user.address.number,
@@ -107,7 +108,8 @@ export default function UserMainComponent(userProps: UserProps) {
                                         imageURL: user.imageURL ? user.imageURL : null,
                                         ...userPersonalData,
                                         address: {
-                                            countyId: user.address.federation.county.id.toString(),
+                                            state: user.address.state,
+                                            city: user.address.city,
                                             district: user.address.district,
                                             publicPlace: user.address.publicPlace,
                                             number: user.address.number,

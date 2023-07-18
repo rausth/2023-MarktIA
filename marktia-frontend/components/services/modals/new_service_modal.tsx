@@ -48,18 +48,14 @@ const newServiceFormSchema = z.object({
         .nonempty({
             message: "O usuário do PicPay não pode ser vazio."
         }),
-    state: z.number({
-        required_error: "O estado não pode ser vazio.",
-        invalid_type_error: "Estado inválido"
-    }),
-    region: z.number({
-        required_error: "A região não pode ser vazia.",
-        invalid_type_error: "Região inválida"
-    }),
-    county: z.number({
-        required_error: "O município não pode ser vazio.",
-        invalid_type_error: "Município inválido"
-    }),
+    state: z.string()
+        .nonempty({
+            message: "O estado não pode ser vazio."
+        }),
+    city: z.string()
+        .nonempty({
+            message: "A cidade não pode ser vazia."
+        }),
     district: z.string()
         .nonempty({
             message: "O bairro não pode ser vazio."
@@ -105,7 +101,8 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                 price: newServiceFormData.price,
                 picpayUser: newServiceFormData.picpayUser,
                 address: !useMyAddress ? {
-                    countyId: newServiceFormData.county.toString(),
+                    state: newServiceFormData.state,
+                    city: newServiceFormData.city,
                     district: newServiceFormData.district,
                     publicPlace: newServiceFormData.publicPlace,
                     number: newServiceFormData.number,
@@ -134,9 +131,8 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                     .then((response: AxiosResponse<AddressResponseDTO>) => {
                         const address: Address = response.data;
 
-                        setValue("state", Number(address.federation.state.id));
-                        setValue("region", Number(address.federation.region.id));
-                        setValue("county", Number(address.federation.county.id));
+                        setValue("state", address.state);
+                        setValue("city", address.city);
 
                         setValue("district", address.district);
                         setValue("publicPlace", address.publicPlace);

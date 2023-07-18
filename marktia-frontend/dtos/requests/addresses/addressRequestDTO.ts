@@ -1,5 +1,6 @@
 export type AddressRequestDTO = {
-    countyId: string;
+    state: string;
+    city: string;
     district: string;
     publicPlace: string;
     number: string;

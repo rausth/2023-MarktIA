@@ -1,56 +1,39 @@
 "use client";
 
-import { FederationController } from "@/controllers/federation";
-import { RegionResponseDTO } from "@/dtos/responses/federations/regionResponseDTO";
-import { StateResponseDTO } from "@/dtos/responses/federations/stateResponseDTO";
 import { AxiosError, AxiosResponse } from "axios";
-import { enqueueSnackbar } from "notistack";
 import { useEffect, useRef, useState } from "react";
 import TextField from "../common/forms/text_field";
 import TextArea from "../common/forms/textarea";
-import SelectObject from "../common/forms/select_object";
-import { CountyResponseDTO } from "@/dtos/responses/federations/countyResponseDTO";
 import { handleError } from "@/utils/errorHandler";
+import { AddressController } from "@/controllers/address";
+import Select from "../common/forms/select";
 
 type AddressFormProps = {
     onlyFederationInfo?: boolean;
     setValue: any;
     errors: any;
-    initialStateId?: string;
+    initialState?: string;
+    initialCity?: string;
 }
 
-export default function AddressForm({ onlyFederationInfo, setValue, errors, initialStateId }: AddressFormProps) {
-    const [states, setStates] = useState<Array<{ id: string, name: string }>>([]);
-    const [currentSelectedStateId, setCurrentSelectedStateId] = useState<string | undefined>(undefined);
-
-    const [regions, setRegions] = useState<Array<{ id: string, name: string }>>([]);
-    const [currentSelectedRegionId, setCurrentSelectedRegionId] = useState<string | undefined>(undefined);
-
-    const [countys, setCountys] = useState<Array<{ id: string, name: string }>>([]);
-    const [currentSelectedCountyId, setCurrentSelectedCountyId] = useState<string | undefined>(undefined);
+export default function AddressForm({ onlyFederationInfo, setValue, errors, initialState, initialCity }: AddressFormProps) {
+    const [states, setStates] = useState<string[]>([]);
+    const [cities, setCities] = useState<string[]>([]);
 
     const isFirstRender = useRef(true);
 
     const fetchStates = () => {
-        FederationController.getStates()
-            .then((response: AxiosResponse<StateResponseDTO[]>) => setStates(response.data))
+        AddressController.getStates()
+            .then((response: AxiosResponse<string[]>) => setStates(response.data))
             .catch((error: AxiosError) => handleError("Erro ao carregar os estados.", {
                 errors: error.response?.data as any
             }));
     }
 
-    const fetchRegions = (stateId: string) => {
-        FederationController.getRegionsByState(stateId)
-            .then((response: AxiosResponse<RegionResponseDTO[]>) => setRegions(response.data))
-            .catch((error: AxiosError) => handleError("Erro ao carregar as regiões.", {
-                errors: error.response?.data as any
-            }));
-    }
-
-    const fetchCountys = (stateId: string, regionId: string) => {
-        FederationController.getCountysByStateAndRegion(stateId, regionId)
-            .then((response: AxiosResponse<CountyResponseDTO[]>) => setCountys(response.data))
-            .catch((error: AxiosError) => handleError("Erro ao carregar os municípios.", {
+    const fetchCities = (state: string) => {
+        AddressController.getCities(state)
+            .then((response: AxiosResponse<string[]>) => setCities(response.data))
+            .catch((error: AxiosError) => handleError("Erro ao carregar as cidades.", {
                 errors: error.response?.data as any
             }));
     }
@@ -62,99 +45,71 @@ export default function AddressForm({ onlyFederationInfo, setValue, errors, init
     useEffect(() => {
         if (states.length > 0) {
             if (isFirstRender.current && onlyFederationInfo) {
-                setCurrentSelectedStateId(undefined);
                 isFirstRender.current = false;
             } else {
-                if (!initialStateId) {
-                    setCurrentSelectedStateId(states[0].id);
+                if (!initialState) {
+                    setValue("state", states[0]);
                 } else {
-                    const idx = states.findIndex((state: {id: string, name: string}) => state.id === initialStateId);
-                    setCurrentSelectedStateId(states[idx].id);
+                    setValue("state", initialState);
                 }
+                
+                fetchCities(states[0]);
             }
         } else {
-            setCurrentSelectedStateId(undefined);
+            setValue("state", "");
+            setCities([]);
         }
     }, [states]);
 
     useEffect(() => {
-        if (currentSelectedStateId) {
-            setValue("state", currentSelectedStateId);
-            fetchRegions(currentSelectedStateId);
+        if (cities.length > 0) {
+            if (!initialCity) {
+                setValue("city", cities[0]);
+            } else {
+                setValue("city", initialCity);
+            }
         } else {
-            setValue("state", undefined);
-            setRegions([]);
+            if (!initialCity) {
+                setValue("city", "");
+            } else {
+                setValue("city", initialCity);
+            }
         }
-    }, [currentSelectedStateId]);
-
-    useEffect(() => {
-        if (regions.length > 0) {
-            setCurrentSelectedRegionId(regions[0].id);
-        } else {
-            setCurrentSelectedRegionId(undefined);
-        }
-    }, [regions]);
-
-    useEffect(() => {
-        if (currentSelectedStateId && currentSelectedRegionId) {
-            setValue("region", currentSelectedRegionId);
-            fetchCountys(currentSelectedStateId, currentSelectedRegionId);
-        } else {
-            setValue("region", undefined);
-            setCountys([]);
-        }
-    }, [currentSelectedRegionId]);
-
-    useEffect(() => {
-        if (countys.length > 0) {
-            setCurrentSelectedCountyId(countys[0].id);
-        } else {
-            setCurrentSelectedCountyId(undefined);
-        }
-    }, [countys]);
-
-    useEffect(() => {
-        if (currentSelectedStateId && currentSelectedRegionId && currentSelectedCountyId) {
-            setValue("county", countys[0].id);
-        } else {
-            setValue("county", undefined);
-        }
-    }, [currentSelectedCountyId]);
+    }, [cities]);
 
     return (
         <div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
                 <div className="p-1">
-                    <SelectObject
+                    <Select
                         title="Estado"
                         name="state"
-                        objects={states}
+                        options={states}
                         includeEmptyOption={onlyFederationInfo ? true : false}
-                        toStringFunction={(state: { id: string, name: string }) => state.name}
-                        onChangeFunction={(stateId: string | undefined) => setCurrentSelectedStateId(stateId)}
+                        onChangeFunction={(state: string) => fetchCities(state)}
                     />
                     {errors.state && <span className="text-xs text-red mt-1">{errors.state.message}</span>}
                 </div>
                 <div className="p-1">
-                    <SelectObject
-                        title="Região"
-                        name="region"
-                        objects={regions}
-                        includeEmptyOption={onlyFederationInfo ? true : false}
-                        toStringFunction={(region: { id: string, name: string }) => region.name}
-                        onChangeFunction={(regionId: string | undefined) => setCurrentSelectedRegionId(regionId)}
-                    />
-                    {errors.region && <span className="text-xs text-red mt-1">{errors.region.message}</span>}
-                </div>
-                <div className="p-1">
-                    <SelectObject
-                        title="Município"
-                        name="county"
-                        objects={countys}
-                        includeEmptyOption={onlyFederationInfo ? true : false}
-                        toStringFunction={(county: { id: string, name: string }) => county.name}
-                    />
-                    {errors.county && <span className="text-xs text-red mt-1">{errors.county.message}</span>}
+                    {cities.length === 0 ? (
+                        <div>
+                            <TextField
+                                type="text"
+                                label="Cidade"
+                                name="city"
+                            />
+                        </div>
+                    ) : (
+                        <div>
+                            <Select
+                                title="Cidade"
+                                name="city"
+                                options={cities}
+                                includeEmptyOption={onlyFederationInfo ? true : false}
+                            />
+                        </div>
+                    )}
+                    {errors.city && <span className="text-xs text-red mt-1">{errors.city.message}</span>}
                 </div>
             </div>
 

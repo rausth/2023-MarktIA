@@ -1,8 +1,7 @@
-import { FederationResponseDTO } from "../federations/federationResponseDTO";
-
 export type AddressResponseDTO = {
     id: string;
-    federation: FederationResponseDTO;
+    state: string;
+    city: string;
     district: string;
     publicPlace: string;
     number: string;

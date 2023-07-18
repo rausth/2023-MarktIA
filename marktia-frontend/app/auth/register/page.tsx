@@ -63,18 +63,14 @@ const registerFormSchema = z.object({
         }),
     imageURL: z.string()
         .nullable(),
-    state: z.number({
-        required_error: "O estado não pode ser vazio.",
-        invalid_type_error: "Estado inválido"
-    }),
-    region: z.number({
-        required_error: "A região não pode ser vazia.",
-        invalid_type_error: "Região inválida"
-    }),
-    county: z.number({
-        required_error: "O município não pode ser vazio.",
-        invalid_type_error: "Município inválido"
-    }),
+    state: z.string()
+        .nonempty({
+            message: "O estado não pode ser vazio."
+        }),
+    city: z.string()
+        .nonempty({
+            message: "A cidade não pode ser vazia."
+        }),
     district: z.string()
         .nonempty({
             message: "O bairro não pode ser vazio."
@@ -109,9 +105,8 @@ export default function RegisterPage() {
             cnpj: null,
             telephone: "",
             imageURL: null,
-            state: undefined,
-            region: undefined,
-            county: undefined,
+            state: "",
+            city: "",
             district: "",
             publicPlace: "",
             number: "",
@@ -143,59 +138,62 @@ export default function RegisterPage() {
 
     return (
         <FormProvider {...registerForm}>
-            <form onSubmit={handleSubmit((registerFormData: RegisterFormData) => handleRegisterFormSubmission({
-                userRole: UserRoleUtils.toNumber(registerFormData.userRole)!,
-                name: registerFormData.name,
-                email: registerFormData.email,
-                password: registerFormData.password,
-                cpf: registerFormData.cpf,
-                cnpj: registerFormData.cnpj,
-                telephone: registerFormData.telephone,
-                address: {
-                    countyId: registerFormData.county.toString(),
-                    district: registerFormData.district,
-                    publicPlace: registerFormData.publicPlace,
-                    number: registerFormData.number,
-                    complement: registerFormData.complement
-                },
-                imageURL: registerFormData.imageURL
-            }))}>
+            <form onSubmit={handleSubmit((registerFormData: RegisterFormData) => {
+                handleRegisterFormSubmission({
+                    userRole: UserRoleUtils.toNumber(registerFormData.userRole)!,
+                    name: registerFormData.name,
+                    email: registerFormData.email,
+                    password: registerFormData.password,
+                    cpf: registerFormData.cpf,
+                    cnpj: registerFormData.cnpj,
+                    telephone: registerFormData.telephone,
+                    address: {
+                        state: registerFormData.state,
+                        city: registerFormData.city,
+                        district: registerFormData.district,
+                        publicPlace: registerFormData.publicPlace,
+                        number: registerFormData.number,
+                        complement: registerFormData.complement
+                    },
+                    imageURL: registerFormData.imageURL
+                })
+            })}>
+            {!isAddressSectionVisible ? (
+                <UserPersonalInfoForm errors={errors} />
+            ) : (
+                <AddressForm setValue={setValue} errors={errors} />
+            )}
+
+            <div className="flex justify-between items-center mt-5">
+                <div><span>Já possui uma conta? <Link href="/auth/login" className="text-blue-dark font-bold">Faça login</Link></span></div>
+
                 {!isAddressSectionVisible ? (
-                    <UserPersonalInfoForm errors={errors} />
+                    <div>
+                        <Button color="blue" onClick={() => {
+                            setTriggered(true);
+                            trigger(["name", "email", "password", "cpf", "telephone"]);
+                        }}>
+                            <div className="flex items-center">
+                                <div className="mr-2"><span>Avançar (Informações Geográficas)</span></div>
+                                <div><BiMap /></div>
+                            </div>
+                        </Button>
+                    </div>
                 ) : (
-                    <AddressForm setValue={setValue} errors={errors} />
-                )}
-
-                <div className="flex justify-between items-center mt-5">
-                    <div><span>Já possui uma conta? <Link href="/auth/login" className="text-blue-dark font-bold">Faça login</Link></span></div>
-
-                    {!isAddressSectionVisible ? (
-                        <div>
-                            <Button color="blue" onClick={() => {
-                                setTriggered(true);
-                                trigger(["name", "email", "password", "cpf", "telephone"]);
-                            }}>
+                    <div>
+                        <div className="flex">
+                            <Button color="blue" onClick={() => setIsAddressSectionVisible(false)} className="mr-2">
                                 <div className="flex items-center">
-                                    <div className="mr-2"><span>Avançar (Informações Geográficas)</span></div>
-                                    <div><BiMap /></div>
+                                    <div className="mr-2"><span>Voltar (Informações Pessoais)</span></div>
+                                    <div><BiUser /></div>
                                 </div>
                             </Button>
+                            <Button type="submit" color="blue">Registrar</Button>
                         </div>
-                    ) : (
-                        <div>
-                            <div className="flex">
-                                <Button color="blue" onClick={() => setIsAddressSectionVisible(false)} className="mr-2">
-                                    <div className="flex items-center">
-                                        <div className="mr-2"><span>Voltar (Informações Pessoais)</span></div>
-                                        <div><BiUser /></div>
-                                    </div>
-                                </Button>
-                                <Button type="submit" color="blue">Registrar</Button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </form>
-        </FormProvider>
+                    </div>
+                )}
+            </div>
+        </form>
+        </FormProvider >
     )
 }
