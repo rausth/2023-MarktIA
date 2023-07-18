@@ -4,7 +4,6 @@ import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import ufes.marktiabackend.entities.Address;
-import ufes.marktiabackend.entities.Federation;
 import ufes.marktiabackend.entities.Service;
 import ufes.marktiabackend.entities.User;
 
@@ -31,46 +30,28 @@ public class ServicesFilterSpecification implements Specification<Service> {
             predicates.add(criteriaBuilder.equal(root.get("type"), servicesFilter.type()));
         }
 
-        if (servicesFilter.stateId() != null) {
+        if (servicesFilter.state() != null) {
             if (root.get("address") != null) {
                 Join<Service, Address> serviceAddressJoin = root.join("address");
-                Join<Address, Federation> addressFederationJoin = serviceAddressJoin.join("federation");
 
-                predicates.add(criteriaBuilder.equal(addressFederationJoin.get("uf"), Long.valueOf(servicesFilter.stateId())));
+                predicates.add(criteriaBuilder.equal(serviceAddressJoin.get("state"), servicesFilter.state()));
             } else {
                 Join<Service, User> serviceUserJoin = root.join("provider");
                 Join<User, Address> userAddressJoin = serviceUserJoin.join("address");
-                Join<Address, Federation> addressFederationJoin = userAddressJoin.join("federation");
 
-                predicates.add(criteriaBuilder.equal(addressFederationJoin.get("uf"), Long.valueOf(servicesFilter.stateId())));
+                predicates.add(criteriaBuilder.equal(userAddressJoin.get("state"), servicesFilter.state()));
             }
         }
-        if (servicesFilter.regionId() != null) {
+        if (servicesFilter.city() != null) {
             if (root.get("address") != null) {
                 Join<Service, Address> serviceAddressJoin = root.join("address");
-                Join<Address, Federation> addressFederationJoin = serviceAddressJoin.join("federation");
 
-                predicates.add(criteriaBuilder.equal(addressFederationJoin.get("microrregiaoGeografica"), Long.valueOf(servicesFilter.regionId())));
+                predicates.add(criteriaBuilder.equal(serviceAddressJoin.get("city"), servicesFilter.city()));
             } else {
                 Join<Service, User> serviceUserJoin = root.join("provider");
                 Join<User, Address> userAddressJoin = serviceUserJoin.join("address");
-                Join<Address, Federation> addressFederationJoin = userAddressJoin.join("federation");
 
-                predicates.add(criteriaBuilder.equal(addressFederationJoin.get("microrregiaoGeografica"), Long.valueOf(servicesFilter.regionId())));
-            }
-        }
-        if (servicesFilter.countyId() != null) {
-            if (root.get("address") != null) {
-                Join<Service, Address> serviceAddressJoin = root.join("address");
-                Join<Address, Federation> addressFederationJoin = serviceAddressJoin.join("federation");
-
-                predicates.add(criteriaBuilder.equal(addressFederationJoin.get("codigoMunicipioCompleto"), Long.valueOf(servicesFilter.countyId())));
-            } else {
-                Join<Service, User> serviceUserJoin = root.join("provider");
-                Join<User, Address> userAddressJoin = serviceUserJoin.join("address");
-                Join<Address, Federation> addressFederationJoin = userAddressJoin.join("federation");
-
-                predicates.add(criteriaBuilder.equal(addressFederationJoin.get("codigoMunicipioCompleto"), Long.valueOf(servicesFilter.countyId())));
+                predicates.add(criteriaBuilder.equal(userAddressJoin.get("city"), servicesFilter.city()));
             }
         }
 

@@ -22,11 +22,10 @@ public class ServiceController {
             @RequestParam(required = false) String providerId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer type,
-            @RequestParam(required = false) String stateId,
-            @RequestParam(required = false) String regionId,
-            @RequestParam(required = false) String countyId
+            @RequestParam(required = false) String state,
+            @RequestParam(required = false) String city
     ) {
-        return ResponseEntity.ok(serviceService.getAll(providerId, name, type, stateId, regionId, countyId));
+        return ResponseEntity.ok(serviceService.getAll(providerId, name, type, state, city));
     }
 
     @GetMapping("/{service-id}")

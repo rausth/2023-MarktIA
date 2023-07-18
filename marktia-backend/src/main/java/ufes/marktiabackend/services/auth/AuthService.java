@@ -11,11 +11,9 @@ import ufes.marktiabackend.dtos.requests.auth.AuthRequestDTO;
 import ufes.marktiabackend.dtos.requests.auth.RegisterRequestDTO;
 import ufes.marktiabackend.dtos.responses.auth.AuthResponseDTO;
 import ufes.marktiabackend.entities.Address;
-import ufes.marktiabackend.entities.Federation;
 import ufes.marktiabackend.entities.User;
 import ufes.marktiabackend.enums.UserRole;
 import ufes.marktiabackend.repositories.UserRepository;
-import ufes.marktiabackend.services.FederationService;
 
 import java.util.Optional;
 
@@ -25,16 +23,14 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    private final FederationService federationService;
 
     private final JWTService jwtService;
     private final UserRepository userRepository;
 
     public AuthResponseDTO register(RegisterRequestDTO registerRequestDTO) {
-        Federation federation = federationService.getByCounty(Long.valueOf(registerRequestDTO.getAddress().getCountyId()));
-
         Address address = Address.builder()
-                .federation(federation)
+                .state(registerRequestDTO.getAddress().getState())
+                .city(registerRequestDTO.getAddress().getCity())
                 .district(registerRequestDTO.getAddress().getDistrict())
                 .publicPlace(registerRequestDTO.getAddress().getPublicPlace())
                 .number(registerRequestDTO.getAddress().getNumber())

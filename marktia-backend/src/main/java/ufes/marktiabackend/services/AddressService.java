@@ -1,40 +1,94 @@
 package ufes.marktiabackend.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Literal;
 import org.springframework.stereotype.Service;
 import ufes.marktiabackend.dtos.responses.AddressResponseDTO;
-import ufes.marktiabackend.dtos.responses.federation.FederationFieldResponseDTO;
 import ufes.marktiabackend.entities.Address;
-import ufes.marktiabackend.repositories.AddressRepository;
 
-import java.util.Optional;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AddressService {
-    private final FederationService federationService;
+    public List<String> getStates() {
+        String query = "PREFIX dbo: <http://dbpedia.org/ontology/>\n" +
+                "PREFIX dbp: <http://dbpedia.org/property/>\n" +
+                "PREFIX dbr: <http://dbpedia.org/resource/>\n" +
+                "SELECT ?name\n" +
+                "WHERE {\n" +
+                "    {\n" +
+                "        ?state dbo:type dbr:States_of_Brazil .\n" +
+                "    } UNION {\n" +
+                "        ?state dbo:type dbr:Federative_units_of_Brazil .\n" +
+                "    } UNION {\n" +
+                "        ?state dbo:isoCodeRegion \"BR-DF\" .\n" +
+                "    }\n" +
+                "    ?state dbp:name ?name\n" +
+                "}";
 
-    private final AddressRepository addressRepository;
+        QueryExecution queryExecution = QueryExecution
+                .service("https://dbpedia.org/sparql")
+                .query(query)
+                .build();
 
-    public Address getById(Long address_id) {
-        Optional<Address> address = addressRepository.findById(address_id);
+        ResultSet results = queryExecution.execSelect();
+        List<String> states = new LinkedList<>();
 
-        if (address.isEmpty()) {
-            throw new EmptyResultDataAccessException(1);
+        while (results.hasNext()) {
+            try {
+                QuerySolution querySolution = results.next();
+                Literal literal = querySolution.getLiteral("name");
+
+                Object state = literal.getValue();
+                states.add(state.toString());
+            } catch (Exception ignored) {}
         }
+        states.add("Espírito Santo");
 
-        return address.get();
+        return states;
     }
 
-    public Address save(Address address) {
-        return addressRepository.save(address);
+    public List<String> getCities(String state) {
+        String query = "PREFIX dbo: <http://dbpedia.org/ontology/>\n" +
+                "PREFIX dbp: <http://dbpedia.org/property/>\n" +
+                "PREFIX dbr: <http://dbpedia.org/resource/>\n" +
+                "SELECT ?city\n" +
+                "WHERE {\n" +
+                "    ?state dbp:name \"" + state + "\"@en .\n" +
+                "    ?state dbp:city ?city\n" +
+                "}";
+
+        QueryExecution queryExecution = QueryExecution
+                .service("https://dbpedia.org/sparql")
+                .query(query)
+                .build();
+
+        ResultSet results = queryExecution.execSelect();
+        List<String> cities = new LinkedList<>();
+
+        while (results.hasNext()) {
+            try {
+                QuerySolution querySolution = results.next();
+                Literal literal = querySolution.getLiteral("city");
+
+                Object city = literal.getValue();
+                cities.add(city.toString().split("\\,")[0]);
+            } catch (Exception ignored) {}
+        }
+
+        return cities;
     }
 
     public AddressResponseDTO project(Address address) {
         return AddressResponseDTO.builder()
                 .id(address.getId().toString())
-                .federation(federationService.project(address.getFederation()))
+                .state(address.getState())
+                .city(address.getCity())
                 .district(address.getDistrict())
                 .publicPlace(address.getPublicPlace())
                 .number(address.getNumber())

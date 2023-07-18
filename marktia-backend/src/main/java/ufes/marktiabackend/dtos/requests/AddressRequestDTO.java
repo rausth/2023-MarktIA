@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AddressRequestDTO {
     @NotNull
-    private String countyId;
+    private String state;
+
+    @NotNull
+    private String city;
 
     @NotNull
     private String district;

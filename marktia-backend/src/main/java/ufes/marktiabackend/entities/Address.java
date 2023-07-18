@@ -16,9 +16,11 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "federation_id")
-    private Federation federation;
+    @NotNull
+    private String state;
+
+    @NotNull
+    private String city;
 
     @NotNull
     private String district;
