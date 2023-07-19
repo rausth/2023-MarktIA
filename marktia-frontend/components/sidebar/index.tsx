@@ -1,16 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FaBars, FaBusinessTime, FaUserAlt, FaHome } from 'react-icons/fa';
 import { MdOutlineLogout } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
-import { signOut } from "next-auth/react";
+import { AuthContext } from "@/contexts/AuthContext";
 
 export default function Sidebar() {
     const [isSidebarOpened, toggleIsSidebarOpened] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
     const router = useRouter();
+
+    const { signOut } = useContext(AuthContext);
 
     const changePage = (pageURL: string, pageNumber: number) => {
         router.push(pageURL);
@@ -42,7 +44,9 @@ export default function Sidebar() {
                     </div>
                 </div>
                 <div>
-                    <MdOutlineLogout className="text-2xl cursor-pointer ml-6 mb-10 text-white" onClick={() => { signOut() }} />
+                    <MdOutlineLogout className="text-2xl cursor-pointer ml-6 mb-10 text-white" onClick={() => {
+                        signOut()
+                    }} />
                 </div>
             </div>
         </div>

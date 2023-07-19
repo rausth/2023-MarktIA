@@ -3,19 +3,15 @@
 import { SchedulingsController } from "@/controllers/schedulings";
 import { SchedulingBasicInfo } from "@/models/scheduling";
 import { AxiosError, AxiosResponse } from "axios";
-import { useSession } from "next-auth/react";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
-import { createRef, useEffect, useRef, useState } from "react";
+import { SnackbarProvider } from "notistack";
+import { createRef, useContext, useEffect, useState } from "react";
 import SchedulingsList from "./schedulings_list";
 import { useRouter } from "next/navigation";
 import { handleError } from "@/utils/errorHandler";
+import { AuthContext } from "@/contexts/AuthContext";
 
-type SchedulingsProps = {
-    schedulings: SchedulingBasicInfo[];
-}
-
-export default function SchedulingsMainComponent(schedulingsProps: SchedulingsProps) {
-    const [schedulings, setSchedulings] = useState<SchedulingBasicInfo[]>(schedulingsProps.schedulings);
+export default function SchedulingsMainComponent() {
+    const [schedulings, setSchedulings] = useState<SchedulingBasicInfo[]>([]);
 
     const [isClientSelected, setIsClientSelected] = useState(true);
     const [currentExhibitedSchedulings, setCurrentExhibitedSchedulings] = useState(0);
@@ -25,15 +21,13 @@ export default function SchedulingsMainComponent(schedulingsProps: SchedulingsPr
     const deliveredSchedulings = createRef<HTMLSpanElement>();
     const finishedSchedulings = createRef<HTMLSpanElement>();
 
-    const { data: session } = useSession();
+    const { token, user } = useContext(AuthContext);
     const router = useRouter();
-
-    const isFirstRender = useRef(true);
 
     useEffect(() => {
         const fetchSchedulings = () => {
-            if (session) {
-                SchedulingsController.getAll(session.user.id, isClientSelected, currentExhibitedSchedulings, session.user.token)
+            if (token && user) {
+                SchedulingsController.getAll(user.id, isClientSelected, currentExhibitedSchedulings, token)
                     .then((response: AxiosResponse<SchedulingBasicInfo[]>) => setSchedulings(response.data))
                     .catch((error: AxiosError) => handleError("Houve um erro ao atualizar os agendamentos.", {
                         errors: error.response?.data as any
@@ -43,11 +37,7 @@ export default function SchedulingsMainComponent(schedulingsProps: SchedulingsPr
             }
         }
 
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-        } else {
-            fetchSchedulings();
-        }
+        fetchSchedulings();
     }, [isClientSelected, currentExhibitedSchedulings])
 
     const changeIsClientSelected = (newIsClientSelectedValue: boolean) => {

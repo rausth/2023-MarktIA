@@ -120,6 +120,15 @@ public class MarktIAExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
+    @ExceptionHandler({CustomExpiredJwtException.class})
+    public ResponseEntity<Object> customExpiredJwtExceptionHandler(CustomExpiredJwtException ex, WebRequest request) {
+        String userMessage = messageSource.getMessage("resource.expired-token", null, LocaleContextHolder.getLocale());
+        String developerMessage = ExceptionUtils.getRootCauseMessage(ex);
+        List<Error> errors = List.of(new Error(userMessage, developerMessage));
+
+        return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+
     @ExceptionHandler({ NonAvailableTokenException.class })
     public ResponseEntity<Object> handleNonAvailableTokenException(NonAvailableTokenException ex, WebRequest request) {
         String userMessage = messageSource.getMessage("resource.non-available-token", null, LocaleContextHolder.getLocale());

@@ -2,6 +2,7 @@
 
 import { SnackbarProvider } from 'notistack'
 import '../globals.css'
+import { AuthProvider } from '@/contexts/AuthContext';
 
 export default function PublicRootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -18,9 +19,11 @@ export default function PublicRootLayout({ children }: { children: React.ReactNo
 
           <div className="flex justify-center mt-2">
             <div className="w-1/2 px-10 py-5 rounded-lg">
-              <SnackbarProvider>
-                {children}
-              </SnackbarProvider>
+              <AuthProvider>
+                <SnackbarProvider>
+                  {children}
+                </SnackbarProvider>
+              </AuthProvider>
             </div>
           </div>
         </div>

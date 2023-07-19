@@ -6,6 +6,7 @@ import Select from "@/components/common/forms/select";
 import TextField from "@/components/common/forms/text_field";
 import TextArea from "@/components/common/forms/textarea";
 import Modal from "@/components/common/modal";
+import { AuthContext } from "@/contexts/AuthContext";
 import { ServicesController } from "@/controllers/services";
 import { UsersController } from "@/controllers/users";
 import { ServiceRequestDTO } from "@/dtos/requests/services/serviceRequestDTO";
@@ -16,10 +17,8 @@ import { Address } from "@/models/address";
 import { handleError } from "@/utils/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError, AxiosResponse } from "axios";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { enqueueSnackbar } from "notistack";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -76,7 +75,7 @@ type NewServiceFormData = z.infer<typeof newServiceFormSchema>;
 export default function NewServiceModal({ onSubmission, close }: NewServiceModalProps) {
     const [useMyAddress, setUseMyAddress] = useState(false);
 
-    const { data: session } = useSession();
+    const { token, user } = useContext(AuthContext);
     const router = useRouter();
 
     const newServiceForm = useForm<NewServiceFormData>({
@@ -92,9 +91,9 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
     const { handleSubmit, formState: { errors }, reset, setValue } = newServiceForm;
 
     const handleNewServiceFormSubmission = (newServiceFormData: NewServiceFormData) => {
-        if (session) {
+        if (token && user) {
             const serviceRequestDTO: ServiceRequestDTO = {
-                providerId: session.user.id,
+                providerId: user.id,
                 title: newServiceFormData.title,
                 type: ServiceTypeUtils.toNumber(newServiceFormData.type)!,
                 description: newServiceFormData.description,
@@ -110,7 +109,7 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                 } : null
             }
 
-            ServicesController.create(serviceRequestDTO, session.user.token)
+            ServicesController.create(serviceRequestDTO, token)
                 .then((response: AxiosResponse<ServiceResponseDTO>) => {
                     onSubmission(response.data.title);
 
@@ -126,8 +125,8 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
 
     const handleUseMyAddress = () => {
         if (!useMyAddress) {
-            if (session) {
-                UsersController.getAddress(session.user.id, session.user.token)
+            if (token && user) {
+                UsersController.getAddress(user.id, token)
                     .then((response: AxiosResponse<AddressResponseDTO>) => {
                         const address: Address = response.data;
 

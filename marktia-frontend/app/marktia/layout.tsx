@@ -1,6 +1,6 @@
 import Sidebar from '@/components/sidebar'
 import '../globals.css'
-import AuthProvider from '@/components/common/auth_provider'
+import { AuthProvider } from '@/contexts/AuthContext'
 
 export default function AuthenticatedRootLayout({ children, }: { children: React.ReactNode }) {
   return (

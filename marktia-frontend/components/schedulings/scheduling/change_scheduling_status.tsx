@@ -7,14 +7,14 @@ import { SchedulingStatus, SchedulingStatusUtils } from "@/enums/schedulingStatu
 import { UserRoleUtils } from "@/enums/userRole";
 import { Scheduling } from "@/models/scheduling";
 import { AxiosError, AxiosResponse } from "axios";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import SchedulingReviewModal from "./modals/scheduling_review_modal";
 import { EvaluationRequestDTO } from "@/dtos/requests/evaluations/evaluationRequestDTO";
 import { SchedulingStatusUpdateRequestDTO } from '@/dtos/requests/schedulings/schedulingStatusUpdateRequestDTO';
 import { handleError } from "@/utils/errorHandler";
+import { AuthContext } from "@/contexts/AuthContext";
 
 type ChangeSchedulingStatusProps = {
     scheduling: Scheduling;
@@ -27,17 +27,17 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
 
     const [isSchedulingReviewModalVisible, setIsSchedulingReviewModalVisible] = useState(false);
 
-    const { data: session } = useSession();
+    const { token, user } = useContext(AuthContext);
     const router = useRouter();
 
     const updateStatus = (evaluation?: EvaluationRequestDTO) => {
-        if (session) {
+        if (token && user) {
             const schedulingStatusUpdateRequestDTO: SchedulingStatusUpdateRequestDTO = {
-                userId: session.user.id,
+                userId: user.id,
                 evaluation: evaluation
             };
 
-            SchedulingsController.updateStatus(scheduling.id, schedulingStatusUpdateRequestDTO, session.user.token)
+            SchedulingsController.updateStatus(scheduling.id, schedulingStatusUpdateRequestDTO, token)
                 .then((response: AxiosResponse<SchedulingResponseDTO>) => {
                     setScheduling({
                         ...response.data,
@@ -74,7 +74,7 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
             <div className="flex justify-center">
                 {scheduling.status === SchedulingStatus.OPENED && (
                     <div>
-                        {session?.user.id === changeSchedulingStatusProps.providerId ? (
+                        {user?.id === changeSchedulingStatusProps.providerId ? (
                             <div className="flex items-center">
                                 <div className="py-2 mr-2"><span>Você é o provedor desse agendamento</span></div>
                                 <div><Button color="blue" onClick={() => updateStatus()}>Marcar como entregue</Button></div>
@@ -87,7 +87,7 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
 
                 {scheduling.status === SchedulingStatus.DELIVERED && (
                     <div>
-                        {session?.user.id === scheduling.consumer.id ? (
+                        {user?.id === scheduling.consumer.id ? (
                             <div className="flex items-center">
                                 <div className="py-2 mr-2"><span>Você é o cliente desse agendamento</span></div>
                                 <div><Button color="blue" onClick={() => setIsSchedulingReviewModalVisible(true)}>Marcar como finalizado</Button></div>

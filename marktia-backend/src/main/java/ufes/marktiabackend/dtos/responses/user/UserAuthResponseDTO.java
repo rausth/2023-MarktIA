@@ -1,16 +1,14 @@
-package ufes.marktiabackend.dtos.responses.auth;
+package ufes.marktiabackend.dtos.responses.user;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class AuthResponseDTO {
+public class UserAuthResponseDTO {
     private String id;
 
     private String name;
 
     private Integer userRole;
-
-    private String token;
 }

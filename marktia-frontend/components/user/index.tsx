@@ -3,10 +3,9 @@
 import { User, UserPersonalData } from "@/models/user";
 import UserAddressInfo from "./user_address_info";
 import { UserRequestDTO } from "@/dtos/requests/users/userRequestDTO";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { UsersController } from "@/controllers/users";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AxiosError, AxiosResponse } from "axios";
 import { UserResponseDTO } from "@/dtos/responses/users/userResponseDTO";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
@@ -18,21 +17,18 @@ import Button from "../common/button";
 import { TiUserDelete } from "react-icons/ti";
 import UserDeletionModal from "./modals/userDeletionModal";
 import { handleError } from "@/utils/errorHandler";
+import { AuthContext } from "@/contexts/AuthContext";
 
-type UserProps = {
-    user?: User;
-}
-
-export default function UserMainComponent(userProps: UserProps) {
-    const [user, setUser] = useState<User | undefined>(userProps.user);
+export default function UserMainComponent() {
+    const [fullInfoUser, setFullInfoUser] = useState<User | null>(null);
     const [isUserDeletionModalVisible, setIsUserDeletionModalVisible] = useState(false);
 
-    const { data: session } = useSession();
+    const { token, user } = useContext(AuthContext);
     const router = useRouter();
 
     const updateUser = (userRequestDTO: UserRequestDTO, onSuccess?: () => void) => {
-        if (session) {
-            UsersController.update(session.user.id, userRequestDTO, session.user.token)
+        if (token && user) {
+            UsersController.update(user.id, userRequestDTO, token)
                 .then((response: AxiosResponse<UserResponseDTO>) => {
                     enqueueSnackbar("Usuário atualizado com sucesso. Caso tenha alterado a classificação, relogue.", {
                         variant: "success"
@@ -42,7 +38,7 @@ export default function UserMainComponent(userProps: UserProps) {
                         onSuccess();
                     }
 
-                    setUser({
+                    setFullInfoUser({
                         ...response.data,
                         userRole: UserRoleUtils.fromNumber(response.data.userRole)
                     });
@@ -55,9 +51,22 @@ export default function UserMainComponent(userProps: UserProps) {
         }
     }
 
+    useEffect(() => {
+        if (token && user) {
+            UsersController.getById(user.id, token)
+                .then((response: AxiosResponse<UserResponseDTO>) => setFullInfoUser({
+                    ...response.data,
+                    userRole: UserRoleUtils.fromNumber(response.data.userRole)
+                }))
+                .catch(() => {})
+        } else {
+            router.push("/auth/login");
+        }
+    }, []);
+
     return (
         <div>
-            {user ? (
+            {fullInfoUser ? (
                 <div>
                     <SnackbarProvider>
                         {isUserDeletionModalVisible && (
@@ -68,7 +77,7 @@ export default function UserMainComponent(userProps: UserProps) {
 
                         <div className="flex justify-between items-center border-b-2 border-black pb-2">
                             <div>
-                                <span className="text-2xl">Usuário - {user.name}</span>
+                                <span className="text-2xl">Usuário - {fullInfoUser.name}</span>
                             </div>
                             <div>
                                 <Button color="red" onClick={() => setIsUserDeletionModalVisible(true)}>
@@ -82,21 +91,21 @@ export default function UserMainComponent(userProps: UserProps) {
 
                         <div className="mx-10">
                             <div className="w-full flex justify-center mt-5 border-b-2 border-black pb-2">
-                                <UserImage imageURL={user.imageURL} onSubmission={(imageURL: string | null, onSuccess: () => void) => updateUser({
+                                <UserImage imageURL={fullInfoUser.imageURL} onSubmission={(imageURL: string | null, onSuccess: () => void) => updateUser({
                                     imageURL: imageURL ? imageURL : null,
-                                    userRole: UserRoleUtils.toNumber(user.userRole)!,
-                                    name: user.name,
-                                    email: user.email,
-                                    telephone: user.telephone,
-                                    cpf: user.cpf,
-                                    cnpj: user.cnpj,
+                                    userRole: UserRoleUtils.toNumber(fullInfoUser.userRole)!,
+                                    name: fullInfoUser.name,
+                                    email: fullInfoUser.email,
+                                    telephone: fullInfoUser.telephone,
+                                    cpf: fullInfoUser.cpf,
+                                    cnpj: fullInfoUser.cnpj,
                                     address: {
-                                        state: user.address.state,
-                                        city: user.address.city,
-                                        district: user.address.district,
-                                        publicPlace: user.address.publicPlace,
-                                        number: user.address.number,
-                                        complement: user.address.complement
+                                        state: fullInfoUser.address.state,
+                                        city: fullInfoUser.address.city,
+                                        district: fullInfoUser.address.district,
+                                        publicPlace: fullInfoUser.address.publicPlace,
+                                        number: fullInfoUser.address.number,
+                                        complement: fullInfoUser.address.complement
                                     }
                                 }, onSuccess)} />
                             </div>
@@ -104,30 +113,30 @@ export default function UserMainComponent(userProps: UserProps) {
                                 <div className="p-5 border-r-2 border-black pr-2">
                                     <h1 className="text-xl">Informações Pessoais</h1>
 
-                                    <UserPersonalInfo user={user} onSubmission={(userPersonalData: UserPersonalData, onSuccess: () => void) => updateUser({
-                                        imageURL: user.imageURL ? user.imageURL : null,
+                                    <UserPersonalInfo user={fullInfoUser} onSubmission={(userPersonalData: UserPersonalData, onSuccess: () => void) => updateUser({
+                                        imageURL: fullInfoUser.imageURL ? fullInfoUser.imageURL : null,
                                         ...userPersonalData,
                                         address: {
-                                            state: user.address.state,
-                                            city: user.address.city,
-                                            district: user.address.district,
-                                            publicPlace: user.address.publicPlace,
-                                            number: user.address.number,
-                                            complement: user.address.complement
+                                            state: fullInfoUser.address.state,
+                                            city: fullInfoUser.address.city,
+                                            district: fullInfoUser.address.district,
+                                            publicPlace: fullInfoUser.address.publicPlace,
+                                            number: fullInfoUser.address.number,
+                                            complement: fullInfoUser.address.complement
                                         }
                                     }, onSuccess)} />
                                 </div>
                                 <div className="p-5">
                                     <h1 className="text-xl">Endereço</h1>
 
-                                    <UserAddressInfo address={user.address} onSubmission={(address: AddressRequestDTO, onSuccess: () => void) => updateUser({
-                                        imageURL: user.imageURL ? user.imageURL : null,
-                                        userRole: UserRoleUtils.toNumber(user.userRole)!,
-                                        name: user.name,
-                                        email: user.email,
-                                        telephone: user.telephone,
-                                        cpf: user.cpf,
-                                        cnpj: user.cnpj,
+                                    <UserAddressInfo address={fullInfoUser.address} onSubmission={(address: AddressRequestDTO, onSuccess: () => void) => updateUser({
+                                        imageURL: fullInfoUser.imageURL ? fullInfoUser.imageURL : null,
+                                        userRole: UserRoleUtils.toNumber(fullInfoUser.userRole)!,
+                                        name: fullInfoUser.name,
+                                        email: fullInfoUser.email,
+                                        telephone: fullInfoUser.telephone,
+                                        cpf: fullInfoUser.cpf,
+                                        cnpj: fullInfoUser.cnpj,
                                         address: address
                                     }, onSuccess)} />
                                 </div>

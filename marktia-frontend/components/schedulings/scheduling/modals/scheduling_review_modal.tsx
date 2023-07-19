@@ -4,13 +4,9 @@ import Button from "@/components/common/button";
 import TextField from "@/components/common/forms/text_field";
 import TextArea from "@/components/common/forms/textarea";
 import Modal from "@/components/common/modal";
-import { EvaluationsController } from "@/controllers/evaluations";
 import { EvaluationRequestDTO } from '@/dtos/requests/evaluations/evaluationRequestDTO';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { enqueueSnackbar } from "notistack";
 import { FormProvider, useForm } from "react-hook-form";
 import { SiPicpay } from "react-icons/si";
 import { z } from "zod";
@@ -34,9 +30,6 @@ const newEvaluationFormSchema = z.object({
 type NewEvaluationFormData = z.infer<typeof newEvaluationFormSchema>;
 
 export default function SchedulingReviewModal({ schedulingId, picpayUser, onSubmission, close }: SchedulingReviewModalProps) {
-    const { data: session } = useSession();
-    const router = useRouter();
-
     const newEvaluationForm = useForm<NewEvaluationFormData>({
         resolver: zodResolver(newEvaluationFormSchema),
         defaultValues: {

@@ -1,27 +1,28 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import Button from "../../common/button";
 import { useRouter } from "next/navigation";
 import { SchedulingsController } from "@/controllers/schedulings";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { AxiosError } from "axios";
 import { handleError } from "@/utils/errorHandler";
+import { useContext } from "react";
+import { AuthContext } from "@/contexts/AuthContext";
 
 type ScheduleServiceProps = {
     serviceId: string;
 }
 
 export default function ScheduleService({ serviceId }: ScheduleServiceProps) {
-    const { data: session } = useSession();
+    const { token, user } = useContext(AuthContext);
     const router = useRouter();
 
     const createScheduling = () => {
-        if (session) {
+        if (token && user) {
             SchedulingsController.create({
                 serviceId: serviceId,
-                consumerId: session.user.id
-            }, session.user.token)
+                consumerId: user.id
+            }, token)
                 .then(() => enqueueSnackbar("Agendamento criado com sucesso! Vá para a página de agendamentos para acessá-lo.", {
                     variant: "success"
                 }))

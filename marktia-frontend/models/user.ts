@@ -29,3 +29,9 @@ export type UserPersonalData = {
     telephone: string;
     userRole: number;
 }
+
+export type UserAuthInfo = {
+    id: string;
+    name: string;
+    userRole: UserRole;
+}

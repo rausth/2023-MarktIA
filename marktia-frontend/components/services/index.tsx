@@ -1,9 +1,8 @@
 "use client";
 
 import { ServiceBasicInfo } from "@/models/service";
-import { createRef, useEffect, useRef, useState } from "react";
+import { createRef, useContext, useEffect, useRef, useState } from "react";
 import Button from "../common/button";
-import { useSession } from "next-auth/react";
 import ServicesFilterModal from "./modals/services_filter_modal";
 import ServicesList from "./services_list";
 import { ServicesController } from "@/controllers/services";
@@ -13,8 +12,9 @@ import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { ServicesFilter } from "@/utils/servicesFilter";
 import NewServiceModal from "./modals/new_service_modal";
 import { useRouter } from "next/navigation";
-import { UserRole, UserRoleUtils } from "@/enums/userRole";
+import { UserRole } from "@/enums/userRole";
 import { handleError } from "@/utils/errorHandler";
+import { AuthContext } from "@/contexts/AuthContext";
 
 type ServicesProps = {
     services: ServiceBasicInfo[];
@@ -30,7 +30,7 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
     const availableServices = createRef<HTMLSpanElement>();
     const myServices = createRef<HTMLSpanElement>();
 
-    const { data: session } = useSession();
+    const { token, user } = useContext(AuthContext);
     const router = useRouter();
 
     const isFirstRender = useRef(true);
@@ -44,8 +44,8 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
     });
 
     const fetchServices = () => {
-        if (session) {
-            ServicesController.getAll(servicesFilter, session.user.token)
+        if (token) {
+            ServicesController.getAll(servicesFilter, token)
                 .then((response: AxiosResponse<ServiceBasicInfoResponseDTO[]>) => {
                     setServices(response.data);
 
@@ -60,10 +60,10 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
     }
 
     useEffect(() => {
-        if (session) {
+        if (user) {
             setServicesFilter({
                 ...servicesFilter,
-                providerId: currentExhibitedServices === 1 ? session.user.id : null
+                providerId: currentExhibitedServices === 1 ? user.id : null
             });
         } else {
             router.push("/auth/login");
@@ -119,7 +119,7 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
                     </div>
                     <div className="flex justify-end">
                         <Button color="blue" className="mr-2" onClick={() => setIsFilterModalVisible(true)}>Filtrar</Button>
-                        {UserRole.PROVIDER === UserRoleUtils.fromNumber(session?.user.userRole!) && (
+                        {UserRole.PROVIDER === user?.userRole && (
                             <Button color="blue" className="ml-2" onClick={() => setIsNewServiceModalVisible(true)}>Novo</Button>
                         )}
                     </div>
