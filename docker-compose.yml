@@ -29,3 +29,15 @@ services:
     depends_on:
       mysql-db:
         condition: service_healthy
+
+  nextjs-app:
+    container_name: nextjs-app
+    image: nextjs-app
+    build:
+      context: ./marktia-frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      mysql-db:
+        condition: service_healthy
