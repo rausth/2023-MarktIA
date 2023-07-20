@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.jena.rdf.model.*;
+import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.springframework.http.MediaType;
@@ -33,10 +34,23 @@ public class ServiceController {
 
         String myNS = "http://localhost:8080/services/asRDF/";
         String grNS = "http://purl.org/goodrelations/v1#";
+        String sNS = "http://schema.org/#";
 
         model.setNsPrefix("gr", grNS);
+        model.setNsPrefix("s", sNS);
 
         Resource grOffering = ResourceFactory.createResource(grNS + "Offering");
+
+        Property grBusinessEntity = ResourceFactory.createProperty(grNS + "BusinessEntity");
+        Property grName = ResourceFactory.createProperty(grNS + "name");
+        Property sTelephone = ResourceFactory.createProperty(sNS + "telephone");
+        Property sEmail = ResourceFactory.createProperty(sNS + "email");
+
+        Property sPostalAddress = ResourceFactory.createProperty(sNS + "PostalAddress");
+        Property sAddressCountry = ResourceFactory.createProperty(sNS + "addressCountry");
+        Property sAddressRegion = ResourceFactory.createProperty(sNS + "addressRegion");
+        Property sAdressLocality = ResourceFactory.createProperty(sNS + "addressLocality");
+        Property sStreetAddress = ResourceFactory.createProperty(sNS + "streetAddress");
 
         Resource grPriceSpecification = ResourceFactory.createResource(grNS + "PriceSpecification");
         Property grHasPriceSpecification = ResourceFactory.createProperty(grNS + "hasPriceSpecification");
@@ -47,6 +61,17 @@ public class ServiceController {
                     .addProperty(RDF.type, grOffering)
                     .addProperty(RDFS.label, service.getTitle())
                     .addProperty(RDFS.comment, service.getDescription())
+                    .addProperty(grBusinessEntity, model.createResource()
+                            .addLiteral(grName, service.getProvider().getName())
+                            .addProperty(sTelephone, service.getProvider().getTelephone())
+                            .addProperty(sEmail, service.getProvider().getEmail())
+                    )
+                    .addProperty(sPostalAddress, model.createResource()
+                            .addProperty(sAddressCountry, "Brasil")
+                            .addProperty(sAddressRegion, service.getAddress().getState())
+                            .addProperty(sAdressLocality, service.getAddress().getCity() + ", " + service.getAddress().getDistrict())
+                            .addProperty(sStreetAddress, service.getAddress().getPublicPlace() + ", " + service.getAddress().getNumber())
+                    )
                     .addProperty(grHasPriceSpecification, model.createResource()
                             .addProperty(RDF.type, grPriceSpecification)
                             .addLiteral(grHasCurrencyValue, service.getPrice())
