@@ -1,17 +1,16 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ServicesMainComponent from "@/components/services";
 import { ServicesController } from "@/controllers/services";
 import { ServiceBasicInfoResponseDTO } from "@/dtos/responses/services/serviceBasicInfoResponseDTO";
 import { ServiceBasicInfo } from "@/models/service";
 import { AxiosResponse } from "axios";
-import { getServerSession } from "next-auth";
+import { cookies } from "next/dist/client/components/headers";
 import { redirect } from "next/navigation";
 
 const fetchServices = async () => {
-    const session = await getServerSession(authOptions);
+    const token = cookies().get("token");
 
-    if (session) {
-        return ServicesController.getAll({}, session.user.token)
+    if (token) {
+        return ServicesController.getAll({}, token.value)
             .then((response: AxiosResponse<ServiceBasicInfoResponseDTO[]>) => response.data)
             .catch(() => [])
     } else {
@@ -21,6 +20,8 @@ const fetchServices = async () => {
 
 export default async function ServicesPage() {
     const services: ServiceBasicInfo[] = await fetchServices();
+
+    console.log(services);
 
     return <ServicesMainComponent services={services} />;
 }

@@ -6,6 +6,7 @@ import Select from "@/components/common/forms/select";
 import TextField from "@/components/common/forms/text_field";
 import TextArea from "@/components/common/forms/textarea";
 import Modal from "@/components/common/modal";
+import { AuthContext } from "@/contexts/AuthContext";
 import { ServicesController } from "@/controllers/services";
 import { UsersController } from "@/controllers/users";
 import { ServiceRequestDTO } from "@/dtos/requests/services/serviceRequestDTO";
@@ -16,10 +17,8 @@ import { Address } from "@/models/address";
 import { handleError } from "@/utils/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError, AxiosResponse } from "axios";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { enqueueSnackbar } from "notistack";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -48,18 +47,14 @@ const newServiceFormSchema = z.object({
         .nonempty({
             message: "O usuário do PicPay não pode ser vazio."
         }),
-    state: z.number({
-        required_error: "O estado não pode ser vazio.",
-        invalid_type_error: "Estado inválido"
-    }),
-    region: z.number({
-        required_error: "A região não pode ser vazia.",
-        invalid_type_error: "Região inválida"
-    }),
-    county: z.number({
-        required_error: "O município não pode ser vazio.",
-        invalid_type_error: "Município inválido"
-    }),
+    state: z.string()
+        .nonempty({
+            message: "O estado não pode ser vazio."
+        }),
+    city: z.string()
+        .nonempty({
+            message: "A cidade não pode ser vazia."
+        }),
     district: z.string()
         .nonempty({
             message: "O bairro não pode ser vazio."
@@ -80,7 +75,7 @@ type NewServiceFormData = z.infer<typeof newServiceFormSchema>;
 export default function NewServiceModal({ onSubmission, close }: NewServiceModalProps) {
     const [useMyAddress, setUseMyAddress] = useState(false);
 
-    const { data: session } = useSession();
+    const { token, user } = useContext(AuthContext);
     const router = useRouter();
 
     const newServiceForm = useForm<NewServiceFormData>({
@@ -96,16 +91,17 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
     const { handleSubmit, formState: { errors }, reset, setValue } = newServiceForm;
 
     const handleNewServiceFormSubmission = (newServiceFormData: NewServiceFormData) => {
-        if (session) {
+        if (token && user) {
             const serviceRequestDTO: ServiceRequestDTO = {
-                providerId: session.user.id,
+                providerId: user.id,
                 title: newServiceFormData.title,
                 type: ServiceTypeUtils.toNumber(newServiceFormData.type)!,
                 description: newServiceFormData.description,
                 price: newServiceFormData.price,
                 picpayUser: newServiceFormData.picpayUser,
                 address: !useMyAddress ? {
-                    countyId: newServiceFormData.county.toString(),
+                    state: newServiceFormData.state,
+                    city: newServiceFormData.city,
                     district: newServiceFormData.district,
                     publicPlace: newServiceFormData.publicPlace,
                     number: newServiceFormData.number,
@@ -113,7 +109,7 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                 } : null
             }
 
-            ServicesController.create(serviceRequestDTO, session.user.token)
+            ServicesController.create(serviceRequestDTO, token)
                 .then((response: AxiosResponse<ServiceResponseDTO>) => {
                     onSubmission(response.data.title);
 
@@ -122,21 +118,18 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                 .catch((error: AxiosError) => handleError("Houve um erro ao criar o serviço.", {
                     errors: error.response?.data as any
                 }));
-        } else {
-            router.push("/auth/login");
         }
     }
 
     const handleUseMyAddress = () => {
         if (!useMyAddress) {
-            if (session) {
-                UsersController.getAddress(session.user.id, session.user.token)
+            if (token && user) {
+                UsersController.getAddress(user.id, token)
                     .then((response: AxiosResponse<AddressResponseDTO>) => {
                         const address: Address = response.data;
 
-                        setValue("state", Number(address.federation.state.id));
-                        setValue("region", Number(address.federation.region.id));
-                        setValue("county", Number(address.federation.county.id));
+                        setValue("state", address.state);
+                        setValue("city", address.city);
 
                         setValue("district", address.district);
                         setValue("publicPlace", address.publicPlace);
@@ -148,8 +141,6 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                     .catch((error: AxiosError) => handleError("Houve um erro ao carregar o endereço do usuário.", {
                         errors: error.response?.data as any
                     }));
-            } else {
-                router.push("/auth/login");
             }
         }
     }

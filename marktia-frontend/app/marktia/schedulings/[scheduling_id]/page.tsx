@@ -1,4 +1,3 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import SchedulingMainComponent from "@/components/schedulings/scheduling";
 import { SchedulingsController } from "@/controllers/schedulings";
 import { ServicesController } from "@/controllers/services";
@@ -10,7 +9,7 @@ import { UserRoleUtils } from "@/enums/userRole";
 import { Scheduling } from "@/models/scheduling";
 import { Service } from "@/models/service";
 import { AxiosResponse } from "axios";
-import { getServerSession } from "next-auth";
+import { cookies } from "next/dist/client/components/headers";
 import { redirect } from "next/navigation";
 
 const fetchScheduling = async (schedulingId: string, token: string) => {
@@ -60,14 +59,14 @@ const fetchService = async (serviceId: string, token: string) => {
 }
 
 export default async function SchedulingPage({ params }: { params: { scheduling_id: string } }) {
-    const session = await getServerSession(authOptions);
+    const token = cookies().get("token");
 
-    if (session) {
-        const scheduling: Scheduling | undefined = await fetchScheduling(params.scheduling_id, session.user.token);
+    if (token) {
+        const scheduling: Scheduling | undefined = await fetchScheduling(params.scheduling_id, token.value);
         let service: Service | undefined;
 
         if (scheduling) {
-            service = await fetchService(scheduling.serviceId, session.user.token);
+            service = await fetchService(scheduling.serviceId, token.value);
         }
 
         return <SchedulingMainComponent scheduling={scheduling} service={service} />

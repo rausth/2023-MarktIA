@@ -5,13 +5,15 @@ interface Props {
 	title?: string;
 	name: string;
 	includeEmptyOption?: boolean;
+	onChangeFunction?: (value: string) => void;
 }
 
 const Select: React.FC<Props> = ({
 	options,
 	title,
 	name,
-	includeEmptyOption
+	includeEmptyOption,
+	onChangeFunction
 }: Props) => {
 	const { register, setValue } = useFormContext();
 
@@ -21,7 +23,13 @@ const Select: React.FC<Props> = ({
 			<select
 				className="w-full rounded-lg p-2 mt-1 focus:border-none"
 				{...register(name, {
-					onChange: (e) => setValue(name, e.target.value)
+					onChange: (e) => {
+						setValue(name, e.target.value);
+
+						if (onChangeFunction) {
+							onChangeFunction(e.target.value);
+						}
+					}
 				})}
 			>
 				{includeEmptyOption && (

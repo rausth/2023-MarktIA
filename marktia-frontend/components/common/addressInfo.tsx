@@ -10,9 +10,8 @@ export default function AddressInfo({ address, actionOnEditButton }: AddressProp
     return (
         <div>
             <div className="grid grid-cols-3 py-2">
-                <div><span>Estado: {address.federation.state.name}</span></div>
-                <div><span>Região: {address.federation.region.name}</span></div>
-                <div><span>Município: {address.federation.county.name}</span></div>
+                <div><span>Estado: {address.state}</span></div>
+                <div><span>Cidade: {address.city}</span></div>
             </div>
             <div className="grid grid-cols-3 py-2">
                 <div><span>Bairro: {address.district}</span></div>

@@ -9,7 +9,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 
 type ServicesFilterModalProps = {
-    onSubmission: (name: string | null, type: number | null, stateId: string | null, regionId: string | null, countyId: string | null) => void;
+    onSubmission: (name: string | null, type: number | null, state: string | null, city: string | null) => void;
     close: () => void;
 }
 
@@ -18,12 +18,10 @@ const servicesFilterFormSchema = z.object({
         .nullable(),
     type: z.string()
         .nullable(),
-    state: z.number()
-        .nullish(),
-    region: z.number()
-        .nullish(),
-    county: z.number()
-        .nullish(),
+    state: z.string()
+        .nullable(),
+    city: z.string()
+        .nullable()
 });
 type ServicesFilterFormData = z.infer<typeof servicesFilterFormSchema>;
 
@@ -33,9 +31,8 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
         defaultValues: {
             name: null,
             type: null,
-            state: undefined,
-            region: undefined,
-            county: undefined
+            state: null,
+            city: null
         }
     });
     const { handleSubmit, formState: { errors }, reset, setValue } = servicesFilterForm;
@@ -46,9 +43,8 @@ export default function ServicesFilterModal({ onSubmission, close }: ServicesFil
                 <form onSubmit={handleSubmit((servicesFilterFormData: ServicesFilterFormData) => {
                     onSubmission(servicesFilterFormData.name,
                         servicesFilterFormData.type ? ServiceTypeUtils.toNumber(servicesFilterFormData.type)! : null,
-                        servicesFilterFormData.state ? servicesFilterFormData.state.toString() : null,
-                        servicesFilterFormData.region ? servicesFilterFormData.region.toString() : null,
-                        servicesFilterFormData.county ? servicesFilterFormData.county.toString() : null,
+                        servicesFilterFormData.state,
+                        servicesFilterFormData.city,
                     );
 
                     close();

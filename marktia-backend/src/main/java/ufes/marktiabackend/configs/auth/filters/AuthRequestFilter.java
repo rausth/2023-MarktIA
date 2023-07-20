@@ -24,7 +24,8 @@ import java.io.IOException;
 public class AuthRequestFilter extends OncePerRequestFilter {
     private String[] AUTH_WHITELIST = {
             "/auth",
-            "/federations",
+            "/address",
+            "/services/asRDF",
             "/swagger-ui",
             "/swagger-resources",
             "/swagger-ui.html",

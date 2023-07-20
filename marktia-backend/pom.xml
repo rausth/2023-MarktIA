@@ -104,6 +104,21 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.1.0</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.jena/apache-jena-libs -->
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>apache-jena-libs</artifactId>
+			<version>4.9.0</version>
+			<type>pom</type>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>2.15.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>

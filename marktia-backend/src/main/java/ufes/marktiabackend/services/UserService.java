@@ -8,13 +8,11 @@ import ufes.marktiabackend.dtos.requests.UserRequestDTO;
 import ufes.marktiabackend.dtos.responses.AddressResponseDTO;
 import ufes.marktiabackend.dtos.responses.user.UserResponseDTO;
 import ufes.marktiabackend.entities.Address;
-import ufes.marktiabackend.entities.Federation;
 import ufes.marktiabackend.entities.Scheduling;
 import ufes.marktiabackend.entities.User;
 import ufes.marktiabackend.enums.SchedulingStatus;
 import ufes.marktiabackend.enums.UserRole;
 import ufes.marktiabackend.exceptionhandler.custom.ServiceWithSchedulingExecption;
-import ufes.marktiabackend.repositories.FederationRepository;
 import ufes.marktiabackend.repositories.SchedulingRepository;
 import ufes.marktiabackend.repositories.UserRepository;
 
@@ -27,7 +25,6 @@ public class UserService {
     private final AddressService addressService;
 
     private final UserRepository userRepository;
-    private final FederationRepository federationRepository;
     private final SchedulingRepository schedulingRepository;
 
     public Optional<User> userById(String userId) {
@@ -45,12 +42,10 @@ public class UserService {
         User user = userRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
 
-        Federation federation = federationRepository.findByCodigoMunicipioCompleto(Long.valueOf(userRequestDTO.getAddress().getCountyId()))
-                .orElseThrow(() -> new EntityNotFoundException("Federação não encontrada."));
-
         Address address = user.getAddress();
 
-        address.setFederation(federation);
+        address.setState(userRequestDTO.getAddress().getState());
+        address.setCity(userRequestDTO.getAddress().getCity());
         address.setDistrict(userRequestDTO.getAddress().getDistrict());
         address.setPublicPlace(userRequestDTO.getAddress().getPublicPlace());
         address.setNumber(userRequestDTO.getAddress().getNumber());

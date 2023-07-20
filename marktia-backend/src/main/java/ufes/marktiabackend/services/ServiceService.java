@@ -10,13 +10,13 @@ import ufes.marktiabackend.dtos.responses.service.ServiceBasicResponseDTO;
 import ufes.marktiabackend.dtos.responses.service.ServiceResponseDTO;
 import ufes.marktiabackend.dtos.responses.user.UserBasicResponseDTO;
 import ufes.marktiabackend.entities.Address;
-import ufes.marktiabackend.entities.Federation;
 import ufes.marktiabackend.entities.User;
 import ufes.marktiabackend.enums.ServiceType;
 import ufes.marktiabackend.filters.servicesfilter.ServicesFilter;
 import ufes.marktiabackend.filters.servicesfilter.ServicesFilterSpecification;
 import ufes.marktiabackend.repositories.ServiceRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,18 +30,20 @@ public class ServiceService {
     private final SchedulingService schedulingService;
 
     private final ServiceRepository serviceRepository;
-    private final FederationService federationService;
+
+    public List<ufes.marktiabackend.entities.Service> getAllAsRDF() {
+        return serviceRepository.findAll();
+    }
 
     public List<ServiceBasicResponseDTO> getAll(String providerId, String name, Integer type,
-                                                String stateId, String regionId, String countyId) {
+                                                String state, String city) {
 
         ServicesFilter servicesFilter = ServicesFilter.builder()
                 .providerId(!providerId.isBlank() ? providerId : null)
                 .name(!name.isBlank() ? name : null)
                 .type(type)
-                .stateId(!stateId.isBlank() ? stateId : null)
-                .regionId(!regionId.isBlank() ? regionId : null)
-                .countyId(!countyId.isBlank() ? countyId : null)
+                .state(!state.isBlank() ? state : null)
+                .city(!city.isBlank() ? city : null)
                 .build();
 
         List<ufes.marktiabackend.entities.Service> services = serviceRepository.findAll(new ServicesFilterSpecification(servicesFilter));
@@ -76,10 +78,9 @@ public class ServiceService {
 
         Address address = provider.getAddress();
         if (serviceRequestDTO.getAddress() != null) {
-            Federation federation = federationService.getByCounty(Long.valueOf(serviceRequestDTO.getAddress().getCountyId()));
-
             address = Address.builder()
-                    .federation(federation)
+                    .state(serviceRequestDTO.getAddress().getState())
+                    .city(serviceRequestDTO.getAddress().getCity())
                     .district(serviceRequestDTO.getAddress().getDistrict())
                     .publicPlace(serviceRequestDTO.getAddress().getPublicPlace())
                     .number(serviceRequestDTO.getAddress().getNumber())
@@ -96,6 +97,7 @@ public class ServiceService {
                         .description(serviceRequestDTO.getDescription())
                         .price(serviceRequestDTO.getPrice())
                         .picpayUser(serviceRequestDTO.getPicpayUser())
+                        .schedulings(new ArrayList<>())
                         .build();
 
         ufes.marktiabackend.entities.Service savedService = serviceRepository.save(service);

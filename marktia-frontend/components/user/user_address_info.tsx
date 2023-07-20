@@ -16,18 +16,14 @@ type UserAddressInfoProps = {
 }
 
 const editUserAddressFormSchema = z.object({
-    state: z.number({
-        required_error: "O estado não pode ser vazio.",
-        invalid_type_error: "Estado inválido"
-    }),
-    region: z.number({
-        required_error: "A região não pode ser vazia.",
-        invalid_type_error: "Região inválida"
-    }),
-    county: z.number({
-        required_error: "O município não pode ser vazio.",
-        invalid_type_error: "Município inválido"
-    }),
+    state: z.string()
+        .nonempty({
+            message: "O estado não pode ser vazio."
+        }),
+    city: z.string()
+        .nonempty({
+            message: "A cidade não pode ser vazia."
+        }),
     district: z.string()
         .nonempty({
             message: "O bairro não pode ser vazio."
@@ -51,9 +47,6 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
     const editUserAddressForm = useForm<EditUserAddressFormData>({
         resolver: zodResolver(editUserAddressFormSchema),
         defaultValues: {
-            state: undefined,
-            region: undefined,
-            county: undefined,
             district: address.district,
             publicPlace: address.publicPlace,
             number: address.number,
@@ -77,7 +70,8 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
                 <div>
                     <FormProvider {...editUserAddressForm} >
                         <form onSubmit={handleSubmit((editUserAddressFormData: EditUserAddressFormData) => onSubmission({
-                            countyId: editUserAddressFormData.county.toString(),
+                            state: editUserAddressFormData.state,
+                            city: editUserAddressFormData.city,
                             district: editUserAddressFormData.district,
                             publicPlace: editUserAddressFormData.publicPlace,
                             number: editUserAddressFormData.number,
@@ -86,7 +80,7 @@ export default function UserAddressInfo({ address, onSubmission }: UserAddressIn
                             reset();
                             setIsEditing(false);
                         }))}>
-                            <AddressForm errors={errors} setValue={setValue} initialStateId={address.federation.state.id} />
+                            <AddressForm errors={errors} setValue={setValue} initialState={address.state} initialCity={address.city} />
 
                             <div className="mt-5 pb-2">
                                 <div className="flex justify-center my-5">

@@ -36,11 +36,10 @@ const getURLParams = (servicesFilter: ServicesFilter) => {
 
     url += `providerId=${servicesFilter.providerId ? servicesFilter.providerId : ""}&`;
     url += `name=${servicesFilter.name ? servicesFilter.name : ""}&`;
-    url += `type=${servicesFilter.type ? servicesFilter.type : ""}&`;
+    url += `type=${(servicesFilter.type !== null) ? servicesFilter.type : ""}&`;
 
-    url += `stateId=${servicesFilter.federation?.stateId ? servicesFilter.federation.stateId : ""}&`;
-    url += `regionId=${servicesFilter.federation?.regionId ? servicesFilter.federation.regionId : ""}&`;
-    url += `countyId=${servicesFilter.federation?.countyId ? servicesFilter.federation.countyId : ""}&`;
+    url += `state=${servicesFilter.state ? servicesFilter.state : ""}&`;
+    url += `city=${servicesFilter.city ? servicesFilter.city : ""}`;
 
     return url;
 }

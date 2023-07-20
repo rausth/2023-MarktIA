@@ -1,15 +1,13 @@
 package ufes.marktiabackend.controllers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ufes.marktiabackend.dtos.requests.auth.AuthRequestDTO;
 import ufes.marktiabackend.dtos.requests.auth.RegisterRequestDTO;
-import ufes.marktiabackend.dtos.responses.auth.AuthResponseDTO;
+import ufes.marktiabackend.dtos.responses.user.UserAuthResponseDTO;
 import ufes.marktiabackend.services.auth.AuthService;
 
 @RestController
@@ -19,12 +17,19 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthResponseDTO> authenticate(@RequestBody @Valid AuthRequestDTO authRequestDTO) {
+    public ResponseEntity<String> authenticate(@RequestBody @Valid AuthRequestDTO authRequestDTO) {
         return ResponseEntity.ok(authService.authenticate(authRequestDTO));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponseDTO> register(@RequestBody @Valid RegisterRequestDTO registerRequestDTO) {
-        return ResponseEntity.ok(authService.register(registerRequestDTO));
+    public ResponseEntity<String> register(@RequestBody @Valid RegisterRequestDTO registerRequestDTO) {
+        authService.register(registerRequestDTO);
+
+        return ResponseEntity.ok("Usuário criado com sucesso.");
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<UserAuthResponseDTO> getUserFromToken(@RequestParam @NotBlank String token) {
+        return ResponseEntity.ok(authService.getUserFromToken(token));
     }
 }

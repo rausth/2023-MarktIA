@@ -1,9 +1,8 @@
 "use client";
 
 import { ServiceBasicInfo } from "@/models/service";
-import { createRef, useEffect, useRef, useState } from "react";
+import { createRef, useContext, useEffect, useRef, useState } from "react";
 import Button from "../common/button";
-import { useSession } from "next-auth/react";
 import ServicesFilterModal from "./modals/services_filter_modal";
 import ServicesList from "./services_list";
 import { ServicesController } from "@/controllers/services";
@@ -13,8 +12,9 @@ import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { ServicesFilter } from "@/utils/servicesFilter";
 import NewServiceModal from "./modals/new_service_modal";
 import { useRouter } from "next/navigation";
-import { UserRole, UserRoleUtils } from "@/enums/userRole";
+import { UserRole } from "@/enums/userRole";
 import { handleError } from "@/utils/errorHandler";
+import { AuthContext } from "@/contexts/AuthContext";
 
 type ServicesProps = {
     services: ServiceBasicInfo[];
@@ -30,7 +30,7 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
     const availableServices = createRef<HTMLSpanElement>();
     const myServices = createRef<HTMLSpanElement>();
 
-    const { data: session } = useSession();
+    const { token, user } = useContext(AuthContext);
     const router = useRouter();
 
     const isFirstRender = useRef(true);
@@ -39,16 +39,13 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
         providerId: null,
         name: null,
         type: null,
-        federation: {
-            stateId: null,
-            regionId: null,
-            countyId: null
-        }
+        state: null,
+        city: null
     });
 
     const fetchServices = () => {
-        if (session) {
-            ServicesController.getAll(servicesFilter, session.user.token)
+        if (token) {
+            ServicesController.getAll(servicesFilter, token)
                 .then((response: AxiosResponse<ServiceBasicInfoResponseDTO[]>) => {
                     setServices(response.data);
 
@@ -57,19 +54,15 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
                 .catch((error: AxiosError) => handleError("Houve um erro ao atualizar os serviços.", {
                     errors: error.response?.data as any
                 }));
-        } else {
-            router.push("/auth/login");
         }
     }
 
     useEffect(() => {
-        if (session) {
+        if (user) {
             setServicesFilter({
                 ...servicesFilter,
-                providerId: currentExhibitedServices === 1 ? session.user.id : null
+                providerId: currentExhibitedServices === 1 ? user.id : null
             });
-        } else {
-            router.push("/auth/login");
         }
     }, [currentExhibitedServices]);
 
@@ -100,15 +93,12 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
         <SnackbarProvider>
             <div>
                 {isFilterModalVisible && (<ServicesFilterModal
-                    onSubmission={(name: string | null, type: number | null, stateId: string | null, regionId: string | null, countyId: string | null) => setServicesFilter({
+                    onSubmission={(name: string | null, type: number | null, state: string | null, city: string | null) => setServicesFilter({
                         ...servicesFilter,
                         name: name,
                         type: type,
-                        federation: {
-                            stateId: stateId,
-                            regionId: regionId,
-                            countyId: countyId
-                        }
+                        state: state,
+                        city: city
                     })}
                     close={() => setIsFilterModalVisible(false)}
                 />)}
@@ -125,9 +115,10 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
                     </div>
                     <div className="flex justify-end">
                         <Button color="blue" className="mr-2" onClick={() => setIsFilterModalVisible(true)}>Filtrar</Button>
-                        {UserRole.PROVIDER === UserRoleUtils.fromNumber(session?.user.userRole!) && (
-                            <Button color="blue" className="ml-2" onClick={() => setIsNewServiceModalVisible(true)}>Novo</Button>
+                        {UserRole.PROVIDER === user?.userRole && (
+                            <Button color="blue" className="mx-2" onClick={() => setIsNewServiceModalVisible(true)}>Novo</Button>
                         )}
+                        <Button color="green" onClick={() => router.push(process.env.NEXT_PUBLIC_BACKEND_URL + "/services/asRDF")}>Obter Serviços como RDF</Button>
                     </div>
                 </div>
 

@@ -41,9 +41,21 @@ The following technologies are used in the development of Marktia:
 
 To get started with Marktia, follow the steps below:
 
+### With Docker:
+
+We provide a docker-compose file, which is responsible for launching 3 containers: one for the database (MySQL), one for the backend (Spring Boot) and one for the frontend (NextJS). Just run:
+
+```
+docker-compose up
+```
+
+After everything is up (the process can take a little long), access the application at `http://localhost:3000`.
+
+### Locally (Without Docker):
+
 **Backend:**
 
-1. Ensure you have Java JDK (at least version 8) and Apache Maven installed on your machine.
+1. Ensure you have Java JDK (at least version 8) and Apache Maven installed on your machine. Also, it is necessary to have a MySQL Server instance running.
 
 2. Clone the repository by running the following command in your terminal or command prompt:
    ```
@@ -87,7 +99,7 @@ To get started with Marktia, follow the steps below:
    ```
    npm start
    ```
-   This will start the frontend server at `http://localhost:8080` and open the application in your default browser.
+   This will start the frontend server at `http://localhost:3000` and open the application in your default browser.
 
 
 ## Usage

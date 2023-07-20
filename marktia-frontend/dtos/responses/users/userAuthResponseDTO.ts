@@ -1,6 +1,5 @@
-export type AuthResponseDTO = {
+export type UserAuthResponseDTO = {
     id: string;
     name: string;
     userRole: number;
-    token: string;
 }
