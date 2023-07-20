@@ -2,11 +2,13 @@ package ufes.marktiabackend.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ufes.marktiabackend.dtos.requests.ServiceRequestDTO;
 import ufes.marktiabackend.dtos.responses.service.ServiceBasicResponseDTO;
 import ufes.marktiabackend.dtos.responses.service.ServiceResponseDTO;
+import ufes.marktiabackend.entities.Service;
 import ufes.marktiabackend.services.ServiceService;
 
 import java.util.List;
@@ -16,6 +18,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ServiceController {
     private final ServiceService serviceService;
+
+    @GetMapping(value = "/asRDF", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<List<Service>> getAllAsRDF() {
+        List<Service> services = serviceService.getAllAsRDF();
+
+        return ResponseEntity.ok(services);
+    }
 
     @GetMapping
     public ResponseEntity<List<ServiceBasicResponseDTO>> getAll(

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -36,6 +37,20 @@ public class MarktIAExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatusCode status,
+                                                                  WebRequest request) {
+        ex.printStackTrace();
+
+        String userMessage = messageSource.getMessage("invalid.message", null, LocaleContextHolder.getLocale());
+        String developerMessage = Optional.ofNullable(ex.getCause()).orElse(ex).toString();
+        List<Error> errors = List.of(new Error(userMessage, developerMessage));
+
+        return handleExceptionInternal(ex, errors, headers, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotWritable(HttpMessageNotWritableException ex,
                                                                   HttpHeaders headers,
                                                                   HttpStatusCode status,
                                                                   WebRequest request) {

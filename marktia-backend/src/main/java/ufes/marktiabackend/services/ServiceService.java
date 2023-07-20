@@ -31,6 +31,10 @@ public class ServiceService {
 
     private final ServiceRepository serviceRepository;
 
+    public List<ufes.marktiabackend.entities.Service> getAllAsRDF() {
+        return serviceRepository.findAll();
+    }
+
     public List<ServiceBasicResponseDTO> getAll(String providerId, String name, Integer type,
                                                 String state, String city) {
 
