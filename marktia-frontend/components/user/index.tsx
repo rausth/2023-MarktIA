@@ -46,8 +46,6 @@ export default function UserMainComponent() {
                 .catch((error: AxiosError) => handleError("Ocorreu um erro ao atualizar o usuário.", {
                     errors: error.response?.data as any
                 }));
-        } else {
-            router.push("/auth/login");
         }
     }
 
@@ -59,8 +57,6 @@ export default function UserMainComponent() {
                     userRole: UserRoleUtils.fromNumber(response.data.userRole)
                 }))
                 .catch(() => {})
-        } else {
-            router.push("/auth/login");
         }
     }, []);
 

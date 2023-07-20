@@ -57,8 +57,6 @@ export default function ChangeSchedulingStatus(changeSchedulingStatusProps: Chan
                 .catch((error: AxiosError) => handleError("Houve um erro ao atualizar o status do agendamento.", {
                     errors: error.response?.data as any
                 }));
-        } else {
-            router.push("/auth/login");
         }
     }
 

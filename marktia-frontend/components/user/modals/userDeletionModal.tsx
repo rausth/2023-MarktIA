@@ -24,8 +24,6 @@ export default function UserDeletionModal({ close }: UserDeletionModalProps) {
                 .catch((error: AxiosError) => handleError("Ocorreu um erro ao deletar o usuário.", {
                     errors: error.response?.data as any
                 }));
-        } else {
-            router.push("/auth/login");
         }
     }
 

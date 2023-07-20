@@ -32,8 +32,6 @@ export default function SchedulingsMainComponent() {
                     .catch((error: AxiosError) => handleError("Houve um erro ao atualizar os agendamentos.", {
                         errors: error.response?.data as any
                     }));
-            } else {
-                router.push("/auth/login");
             }
         }
 

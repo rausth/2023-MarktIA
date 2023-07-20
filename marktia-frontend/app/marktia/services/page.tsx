@@ -21,5 +21,7 @@ const fetchServices = async () => {
 export default async function ServicesPage() {
     const services: ServiceBasicInfo[] = await fetchServices();
 
+    console.log(services);
+
     return <ServicesMainComponent services={services} />;
 }

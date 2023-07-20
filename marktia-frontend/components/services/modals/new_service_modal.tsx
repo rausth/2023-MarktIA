@@ -118,8 +118,6 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                 .catch((error: AxiosError) => handleError("Houve um erro ao criar o serviço.", {
                     errors: error.response?.data as any
                 }));
-        } else {
-            router.push("/auth/login");
         }
     }
 
@@ -143,8 +141,6 @@ export default function NewServiceModal({ onSubmission, close }: NewServiceModal
                     .catch((error: AxiosError) => handleError("Houve um erro ao carregar o endereço do usuário.", {
                         errors: error.response?.data as any
                     }));
-            } else {
-                router.push("/auth/login");
             }
         }
     }

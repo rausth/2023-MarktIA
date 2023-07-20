@@ -29,8 +29,6 @@ export default function ScheduleService({ serviceId }: ScheduleServiceProps) {
                 .catch((error: AxiosError) => handleError("Ocorreu um erro ao criar o agendamento.", {
                     errors: error.response?.data as any
                 }));
-        } else {
-            router.push("/auth/login");
         }
     }
 

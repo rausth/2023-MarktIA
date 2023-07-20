@@ -54,8 +54,6 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
                 .catch((error: AxiosError) => handleError("Houve um erro ao atualizar os serviços.", {
                     errors: error.response?.data as any
                 }));
-        } else {
-            router.push("/auth/login");
         }
     }
 
@@ -65,8 +63,6 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
                 ...servicesFilter,
                 providerId: currentExhibitedServices === 1 ? user.id : null
             });
-        } else {
-            router.push("/auth/login");
         }
     }, [currentExhibitedServices]);
 
@@ -120,8 +116,9 @@ export default function ServicesMainComponent(servicesProps: ServicesProps) {
                     <div className="flex justify-end">
                         <Button color="blue" className="mr-2" onClick={() => setIsFilterModalVisible(true)}>Filtrar</Button>
                         {UserRole.PROVIDER === user?.userRole && (
-                            <Button color="blue" className="ml-2" onClick={() => setIsNewServiceModalVisible(true)}>Novo</Button>
+                            <Button color="blue" className="mx-2" onClick={() => setIsNewServiceModalVisible(true)}>Novo</Button>
                         )}
+                        <Button color="green" onClick={() => router.push(process.env.NEXT_PUBLIC_BACKEND_URL + "/services/asRDF")}>Obter Serviços como RDF</Button>
                     </div>
                 </div>
 

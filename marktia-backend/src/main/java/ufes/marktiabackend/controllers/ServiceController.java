@@ -3,7 +3,6 @@ package ufes.marktiabackend.controllers;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.jena.base.Sys;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
